@@ -1,3 +1,2 @@
 # chess
-[] Create implementations for all instances
-[] Started editing the implementations
+- check the dependencies
