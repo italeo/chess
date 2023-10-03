@@ -4,14 +4,17 @@ import java.util.Objects;
 
 public class ChessMoveImpl implements ChessMove {
 
-    private ChessPositionImpl startPosition;
-    private ChessPositionImpl endPosition;
-    private ChessPieceImpl getPiece;
+    private final ChessPositionImpl startPosition;
+    private final ChessPositionImpl endPosition;
+    private final ChessPiece.PieceType getPiece;
 
 
-    public ChessMoveImpl(ChessPositionImpl startPos, ChessPositionImpl endPos, ChessPieceImpl getPiece) {
-        this.startPosition = startPos;
-        this.endPosition = endPos;
+    // Had to type cast because it was showing up as an error in the TestFactory
+
+
+    public ChessMoveImpl(ChessPosition startPos, ChessPosition endPos, ChessPiece.PieceType getPiece) {
+        this.startPosition = (ChessPositionImpl) startPos;
+        this.endPosition = (ChessPositionImpl) endPos;
         this.getPiece = getPiece;
     }
 
@@ -28,7 +31,7 @@ public class ChessMoveImpl implements ChessMove {
     }
 
     @Override
-    public ChessPieceImpl getPromotionPiece() { return getPiece; }
+    public ChessPiece.PieceType getPromotionPiece() { return getPiece; }
 
     @Override
     public boolean equals(Object o) {

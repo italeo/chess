@@ -1,14 +1,12 @@
 package chess;
 
-import chess.*;
-
 import java.util.Collection;
 
 public abstract class ChessPieceImpl implements ChessPiece {
 
-    private ChessGame.TeamColor teamColor;
+    private final ChessGame.TeamColor teamColor;
 
-    private PieceType type;
+    private final PieceType type;
 
     public ChessPieceImpl(ChessGame.TeamColor teamColor, PieceType type) {
         this.teamColor = teamColor;

@@ -11,28 +11,35 @@ public class TestFactory {
     //Chess Functions
     //------------------------------------------------------------------------------------------------------------------
     public static ChessBoard getNewBoard(){
-        // FIXME
-		return null;
+		return new ChessBoardImpl();
     }
 
     public static ChessGame getNewGame(){
-        // FIXME
-		return null;
+		return new ChessGameImpl();
     }
 
     public static ChessPiece getNewPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type){
-        // FIXME
-		return null;
+        // if state to switch between types
+        // e.g.
+        // if type king - return KingPieceImpl
+
+        return switch (type) {
+            case KING -> new KingPieceImpl(pieceColor);
+            case QUEEN -> new QueenPieceImpl(pieceColor);
+            case BISHOP -> new BishopPieceImpl(pieceColor);
+            case ROOK -> new RookPieceImpl(pieceColor);
+            case KNIGHT -> new KnightPieceImpl(pieceColor);
+            case PAWN -> new PawnPieceImpl(pieceColor);
+        };
     }
 
     public static ChessPosition getNewPosition(Integer row, Integer col){
-        // FIXME
-		return null;
+		return new ChessPositionImpl(row, col);
     }
 
     public static ChessMove getNewMove(ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotionPiece){
         // FIXME
-		return null;
+		return new ChessMoveImpl(startPosition, endPosition, promotionPiece);
     }
     //------------------------------------------------------------------------------------------------------------------
 

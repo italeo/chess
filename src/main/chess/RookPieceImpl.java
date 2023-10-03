@@ -36,6 +36,11 @@ public class RookPieceImpl extends ChessPieceImpl {
                     ChessMove move = new ChessMoveImpl((ChessPositionImpl) myPosition, newPosition, null);
                     validMoves.add(move);
                 }
+
+                // If there is a piece in the way, then break out of query in that direction
+                if (targetPiece!= null) {
+                    break;
+                }
             }
         }
 
@@ -43,6 +48,7 @@ public class RookPieceImpl extends ChessPieceImpl {
     }
 
     public boolean isValidPosition(int row, int col) {
+
         return row >= 1 && row <= 8 && col >= 1 && col <= 8;
     }
 
