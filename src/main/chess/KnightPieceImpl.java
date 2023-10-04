@@ -29,7 +29,7 @@ public class KnightPieceImpl extends ChessPieceImpl {
                 ChessPiece targetPiece = board.getPiece(newPosition);
 
                 if (targetPiece == null || targetPiece.getTeamColor() != getTeamColor()) {
-                    ChessMove move = new ChessMoveImpl((ChessPositionImpl) myPosition, newPosition, null);
+                    ChessMove move = new ChessMoveImpl( myPosition, newPosition, null);
                     validMoves.add(move);
                 }
             }

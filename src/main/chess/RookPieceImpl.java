@@ -25,7 +25,7 @@ public class RookPieceImpl extends ChessPieceImpl {
             int newCol = myPosition.getColumn() + colDirections[i];
 
             // Checking to see if the new position is within the bounds of the board.
-            if (isValidPosition(newRow, newCol)) {
+            while (isValidPosition(newRow, newCol)) {
                 ChessPositionImpl newPosition = new ChessPositionImpl(newRow, newCol);
                 ChessPiece targetPiece = board.getPiece(newPosition);
 
@@ -33,7 +33,7 @@ public class RookPieceImpl extends ChessPieceImpl {
                 // Checking if the targeted square if empty or has an enemy piece. If it is, then it is valid.
                 // ** Possible error should I be typecasting????
                 if(targetPiece == null || targetPiece.getTeamColor() != getTeamColor()) {
-                    ChessMove move = new ChessMoveImpl((ChessPositionImpl) myPosition, newPosition, null);
+                    ChessMove move = new ChessMoveImpl( myPosition, newPosition, null);
                     validMoves.add(move);
                 }
 
@@ -41,6 +41,10 @@ public class RookPieceImpl extends ChessPieceImpl {
                 if (targetPiece!= null) {
                     break;
                 }
+
+                newRow += rowDirections[i];
+                newCol += colDirections[i];
+
             }
         }
 
@@ -51,6 +55,4 @@ public class RookPieceImpl extends ChessPieceImpl {
 
         return row >= 1 && row <= 8 && col >= 1 && col <= 8;
     }
-
-
 }

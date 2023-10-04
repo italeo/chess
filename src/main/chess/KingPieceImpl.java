@@ -31,7 +31,7 @@ public class KingPieceImpl extends ChessPieceImpl {
 
                 // If target piece square is empty or has enemy then it is valid
                 if (targetPiece == null || targetPiece.getTeamColor() != getTeamColor()) {
-                    ChessMove move = new ChessMoveImpl((ChessPositionImpl) myPosition, newPosition, null);
+                    ChessMove move = new ChessMoveImpl(myPosition, newPosition, null);
                     validMoves.add(move);
                 }
             }
