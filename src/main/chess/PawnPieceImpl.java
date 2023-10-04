@@ -63,14 +63,7 @@ public class PawnPieceImpl extends ChessPieceImpl {
 
         // Handling the promotion when a Pawn gets to the opponents end of the board
         if (ReachesPromotionRow(myPosition)) {
-
-            // Checking for white piece
-            if (getTeamColor() == ChessGame.TeamColor.WHITE) {
-                validMoves.addAll(getPromotionMoves(myPosition, List.of(PieceType.QUEEN, PieceType.BISHOP, PieceType.ROOK, PieceType.KNIGHT)));
-            }
-            else if(getTeamColor() == ChessGame.TeamColor.BLACK){
-                validMoves.addAll(getPromotionMoves(myPosition, List.of(PieceType.QUEEN, PieceType.BISHOP, PieceType.ROOK, PieceType.KNIGHT)));
-            }
+            validMoves.addAll(getPromotionMoves(myPosition, List.of(PieceType.QUEEN, PieceType.BISHOP, PieceType.KNIGHT,PieceType.ROOK)));
         }
 
         return validMoves;
