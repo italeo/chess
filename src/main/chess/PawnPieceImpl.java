@@ -59,11 +59,46 @@ public class PawnPieceImpl extends ChessPieceImpl {
                 }
             }
         }
+
+
+        // Handling the promotion when a Pawn gets to the opponents end of the board
+        if (ReachesPromotionRow(myPosition)) {
+
+            // Checking for white piece
+            if (getTeamColor() == ChessGame.TeamColor.WHITE) {
+                validMoves.addAll(getPromotionMoves(myPosition, List.of(PieceType.QUEEN, PieceType.BISHOP, PieceType.ROOK, PieceType.KNIGHT)));
+            }
+            else if(getTeamColor() == ChessGame.TeamColor.BLACK){
+                validMoves.addAll(getPromotionMoves(myPosition, List.of(PieceType.QUEEN, PieceType.BISHOP, PieceType.ROOK, PieceType.KNIGHT)));
+            }
+        }
+
         return validMoves;
     }
 
 
     private boolean isValidPosition(int row, int col) {
         return row >= 1 && row <= 8 && col >= 1 && col <= 8;
+    }
+
+
+    private boolean ReachesPromotionRow(ChessPosition position) {
+        return (getTeamColor() == ChessGame.TeamColor.WHITE && position.getRow() == 8) ||
+                (getTeamColor() == ChessGame.TeamColor.BLACK && position.getRow() == 1);
+
+    }
+
+    private List<ChessMove> getPromotionMoves(ChessPosition myPosition, List<ChessPiece.PieceType> promotionPieceTypes) {
+        List<ChessMove> promotionMoves = new ArrayList<>();
+        ChessPosition newPosition = new ChessPositionImpl(myPosition.getRow(), myPosition.getColumn());
+
+
+        for (ChessPiece.PieceType promotionPiece : promotionPieceTypes) {
+            ChessMove promotionMove = new ChessMoveImpl(newPosition, newPosition, promotionPiece);
+            promotionMoves.add(promotionMove);
+
+        }
+
+        return promotionMoves;
     }
 }
