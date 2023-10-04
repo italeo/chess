@@ -40,6 +40,25 @@ public class PawnPieceImpl extends ChessPieceImpl {
 
             }
         }
+
+        // Checking for diagonal capture
+        // Left and right
+        int[] colOffsets = {-1, 1};
+        for (int colOffset : colOffsets) {
+            newRow = myPosition.getRow() + direction;
+            newCol = myPosition.getColumn() + colOffset;
+
+            if (isValidPosition(newRow, newCol)) {
+                ChessPosition newPosition = new ChessPositionImpl(newRow, newCol);
+                ChessPiece targetPiece = board.getPiece(newPosition);
+
+
+                if (targetPiece != null && targetPiece.getTeamColor() != getTeamColor()) {
+                    ChessMove captureMove = new ChessMoveImpl(myPosition, newPosition, null);
+                    validMoves.add(captureMove);
+                }
+            }
+        }
         return validMoves;
     }
 
