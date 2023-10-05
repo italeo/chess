@@ -65,13 +65,35 @@ public class PawnPieceImpl extends ChessPieceImpl {
         // Handling the promotion when a Pawn gets to the opponents end of the board
         // Need to write the code for the promotion of pieces along with
 
+        if (ReachesPromotionRow(myPosition)) {
+            validMoves.addAll(getPromotionPieces(myPosition));
+        }
         return validMoves;
     }
-
 
     private boolean isValidPosition(int row, int col) {
         return row >= 1 && row <= 8 && col >= 1 && col <= 8;
     }
+
+    private boolean ReachesPromotionRow(ChessPosition myPosition) {
+        return (getTeamColor() == ChessGame.TeamColor.WHITE && myPosition.getRow() == 8) ||
+                (getTeamColor() == ChessGame.TeamColor.BLACK && myPosition.getRow() == 1);
+    }
+
+    private Collection<? extends ChessMove> getPromotionPieces(ChessPosition myPosition) {
+        List<ChessMove> promotionMoves = new ArrayList<>();
+        promotionMoves.add(new ChessMoveImpl(myPosition, myPosition, PieceType.ROOK));
+        promotionMoves.add(new ChessMoveImpl(myPosition, myPosition, PieceType.QUEEN));
+        promotionMoves.add(new ChessMoveImpl(myPosition, myPosition, PieceType.KNIGHT));
+        promotionMoves.add(new ChessMoveImpl(myPosition, myPosition, PieceType.BISHOP));
+
+        return promotionMoves;
+    }
+
+
+
+
+
 
 
 }

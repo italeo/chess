@@ -31,14 +31,17 @@ public class ChessMoveImpl implements ChessMove {
     }
 
     @Override
-    public ChessPiece.PieceType getPromotionPiece() { return promotePiece; }
+    public ChessPiece.PieceType getPromotionPiece() {
+        return promotePiece;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessMoveImpl chessMove = (ChessMoveImpl) o;
-        return Objects.equals(startPosition, chessMove.startPosition) && Objects.equals(endPosition, chessMove.endPosition) && Objects.equals(promotePiece, chessMove.promotePiece);
+        return Objects.equals(startPosition, chessMove.startPosition) && Objects.equals(endPosition,
+                chessMove.endPosition) && promotePiece == chessMove.promotePiece;
     }
 
     @Override
