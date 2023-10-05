@@ -1,12 +1,9 @@
 package chess;
 
-import chess.ChessBoard;
-import chess.ChessPiece;
-import chess.ChessPosition;
 
 public class ChessBoardImpl implements ChessBoard {
 
-    private ChessPiece[][] board;
+    private final ChessPiece[][] board;
 
     public ChessBoardImpl() {
         board = new ChessPieceImpl[8][8];
@@ -35,15 +32,21 @@ public class ChessBoardImpl implements ChessBoard {
             board[1][i] = new PawnPieceImpl(ChessGame.TeamColor.WHITE);
         }
 
-
         board[7][0] = new RookPieceImpl(ChessGame.TeamColor.BLACK);
         board[0][0] = new RookPieceImpl(ChessGame.TeamColor.WHITE);
+        board[7][7] = new RookPieceImpl(ChessGame.TeamColor.BLACK);
+        board[0][7] = new RookPieceImpl(ChessGame.TeamColor.WHITE);
 
         board[7][1] = new KnightPieceImpl(ChessGame.TeamColor.BLACK);
         board[0][1] = new KnightPieceImpl(ChessGame.TeamColor.WHITE);
+        board[7][6] = new KnightPieceImpl(ChessGame.TeamColor.BLACK);
+        board[0][6] = new KnightPieceImpl(ChessGame.TeamColor.WHITE);
 
         board[7][2] = new BishopPieceImpl(ChessGame.TeamColor.BLACK);
         board[0][2] = new BishopPieceImpl(ChessGame.TeamColor.WHITE);
+        board[7][5] = new BishopPieceImpl(ChessGame.TeamColor.BLACK);
+        board[0][5] = new BishopPieceImpl(ChessGame.TeamColor.WHITE);
+
 
         board[7][3] = new QueenPieceImpl(ChessGame.TeamColor.BLACK);
         board[0][3] = new QueenPieceImpl(ChessGame.TeamColor.WHITE);

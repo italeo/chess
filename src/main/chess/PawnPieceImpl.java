@@ -32,7 +32,8 @@ public class PawnPieceImpl extends ChessPieceImpl {
                 int doubleMoveRow = myPosition.getRow() + (2 * direction);
                 int doubleMoveCol = myPosition.getColumn();
 
-                if (isValidPosition(doubleMoveRow, doubleMoveCol) && board.getPiece(new ChessPositionImpl(doubleMoveRow, doubleMoveCol)) == null) {
+                if (isValidPosition(doubleMoveRow, doubleMoveCol) && board.getPiece(new ChessPositionImpl(doubleMoveRow,
+                        doubleMoveCol)) == null) {
                     ChessPosition doubleMovePosition = new ChessPositionImpl(doubleMoveRow, doubleMoveCol);
                     ChessMove doubleMove = new ChessMoveImpl(myPosition, doubleMovePosition, null);
                     validMoves.add(doubleMove);
@@ -62,9 +63,7 @@ public class PawnPieceImpl extends ChessPieceImpl {
 
 
         // Handling the promotion when a Pawn gets to the opponents end of the board
-        if (ReachesPromotionRow(myPosition)) {
-            validMoves.addAll(getPromotionMoves(myPosition, List.of(PieceType.QUEEN, PieceType.BISHOP, PieceType.KNIGHT,PieceType.ROOK)));
-        }
+        // Need to write the code for the promotion of pieces along with
 
         return validMoves;
     }
@@ -75,23 +74,4 @@ public class PawnPieceImpl extends ChessPieceImpl {
     }
 
 
-    private boolean ReachesPromotionRow(ChessPosition position) {
-        return (getTeamColor() == ChessGame.TeamColor.WHITE && position.getRow() == 8) ||
-                (getTeamColor() == ChessGame.TeamColor.BLACK && position.getRow() == 1);
-
-    }
-
-    private List<ChessMove> getPromotionMoves(ChessPosition myPosition, List<ChessPiece.PieceType> promotionPieceTypes) {
-        List<ChessMove> promotionMoves = new ArrayList<>();
-        ChessPosition newPosition = new ChessPositionImpl(myPosition.getRow(), myPosition.getColumn());
-
-
-        for (ChessPiece.PieceType promotionPiece : promotionPieceTypes) {
-            ChessMove promotionMove = new ChessMoveImpl(newPosition, newPosition, promotionPiece);
-            promotionMoves.add(promotionMove);
-
-        }
-
-        return promotionMoves;
-    }
 }
