@@ -61,14 +61,16 @@ public class PawnPieceImpl extends ChessPieceImpl {
             }
         }
 
-
         // Handling the promotion when a Pawn gets to the opponents end of the board
-        // Need to write the code for the promotion of pieces along with
-
+        List<ChessMove> promotions = new ArrayList<>();
         if (ReachesPromotionRow(myPosition)) {
-            validMoves.addAll(getPromotionPieces(myPosition));
+            for (ChessMove move : validMoves) {
+                getPromotionPieces(move, promotions);
+            }
+            return promotions;
         }
         return validMoves;
+
     }
 
     private boolean isValidPosition(int row, int col) {
@@ -76,24 +78,15 @@ public class PawnPieceImpl extends ChessPieceImpl {
     }
 
     private boolean ReachesPromotionRow(ChessPosition myPosition) {
-        return (getTeamColor() == ChessGame.TeamColor.WHITE && myPosition.getRow() == 8) ||
-                (getTeamColor() == ChessGame.TeamColor.BLACK && myPosition.getRow() == 1);
+        return (getTeamColor() == ChessGame.TeamColor.WHITE && myPosition.getRow() == 7) ||
+                (getTeamColor() == ChessGame.TeamColor.BLACK && myPosition.getRow() == 2);
     }
 
-    private Collection<? extends ChessMove> getPromotionPieces(ChessPosition myPosition) {
-        List<ChessMove> promotionMoves = new ArrayList<>();
-        promotionMoves.add(new ChessMoveImpl(myPosition, myPosition, PieceType.ROOK));
-        promotionMoves.add(new ChessMoveImpl(myPosition, myPosition, PieceType.QUEEN));
-        promotionMoves.add(new ChessMoveImpl(myPosition, myPosition, PieceType.KNIGHT));
-        promotionMoves.add(new ChessMoveImpl(myPosition, myPosition, PieceType.BISHOP));
+    private void getPromotionPieces(ChessMove move, List<ChessMove> promotions) {
+        promotions.add(new ChessMoveImpl(move.getStartPosition(), move.getEndPosition(), PieceType.QUEEN));
+        promotions.add(new ChessMoveImpl(move.getStartPosition(), move.getEndPosition(), PieceType.BISHOP));
+        promotions.add(new ChessMoveImpl(move.getStartPosition(), move.getEndPosition(), PieceType.ROOK));
+        promotions.add(new ChessMoveImpl(move.getStartPosition(), move.getEndPosition(), PieceType.KNIGHT));
 
-        return promotionMoves;
     }
-
-
-
-
-
-
-
 }
