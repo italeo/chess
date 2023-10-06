@@ -19,6 +19,10 @@ public class ChessBoardImpl implements ChessBoard {
         return board[position.getRow() - 1][position.getColumn() - 1];
     }
 
+    public void removePiece(ChessPosition position) {
+        board[position.getRow() - 1][position.getColumn() - 1] = null;
+    }
+
     @Override
     public void resetBoard() {
         for (int i = 0; i < 8; i++) {
@@ -53,6 +57,18 @@ public class ChessBoardImpl implements ChessBoard {
 
         board[7][4] = new KingPieceImpl(ChessGame.TeamColor.BLACK);
         board[0][4] = new KingPieceImpl(ChessGame.TeamColor.WHITE);
+
+
+        /*
+        |r|n|b|q|k|b|n|r|
+		|p|p|p|p|p|p|p|p|
+		| | | | | | | | |
+		| | | | | | | | |
+		| | | | | | | | |
+		| | | | | | | | |
+		|P|P|P|P|P|P|P|P|
+		|R|N|B|Q|K|B|N|R|
+         */
 
     }
 }

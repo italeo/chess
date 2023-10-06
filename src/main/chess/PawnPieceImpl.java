@@ -6,7 +6,6 @@ import java.util.List;
 
 public class PawnPieceImpl extends ChessPieceImpl {
 
-
     public PawnPieceImpl(ChessGame.TeamColor teamColor) {
         super(teamColor, PieceType.PAWN);
     }

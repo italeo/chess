@@ -8,10 +8,6 @@ public class ChessMoveImpl implements ChessMove {
     private final ChessPosition endPosition;
     private final ChessPiece.PieceType promotePiece;
 
-
-    // Had to type cast because it was showing up as an error in the TestFactory
-
-
     public ChessMoveImpl(ChessPosition startPos, ChessPosition endPos, ChessPiece.PieceType promotePiece) {
         this.startPosition = startPos;
         this.endPosition = endPos;
