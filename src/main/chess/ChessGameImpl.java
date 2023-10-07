@@ -29,9 +29,19 @@ public class ChessGameImpl implements ChessGame {
         List<ChessMove> finalMoves = new ArrayList<>();
         ChessPiece piece = getBoard().getPiece(startPosition);
         List<ChessMove> allMoves = (List<ChessMove>) piece.pieceMoves(board, startPosition);
-        for (ChessMove allMove : allMoves) {
+
+
+        for (ChessMove move : allMoves) {
+            // Make a copy of the board and apply moves to see if it leads to a valid position
+            ChessBoard tempBoard = board.copyBoard();
+
+            // Applying move to tempBoard
+            tempBoard.addPiece(move.getEndPosition(), piece);
+            tempBoard.removePiece(move.getStartPosition());
+
+            // Checking if the new move puts the king in check on the temp board
             if (!isInCheck(teamTurn)) {
-                finalMoves.add(allMove);
+                finalMoves.add(move);
             }
         }
         return finalMoves;
