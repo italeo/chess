@@ -11,6 +11,11 @@ public class BishopPieceImpl extends ChessPieceImpl {
     }
 
     @Override
+    public ChessPiece copy() {
+        return new BishopPieceImpl(getTeamColor());
+    }
+
+    @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         List<ChessMove> validMoves = new ArrayList<>();
 

@@ -78,7 +78,7 @@ public class ChessGameImpl implements ChessGame {
         }
 
         for (ChessMove chessMove : piecesPosition) {
-            if (realKingPos != null && realKingPos == chessMove.getEndPosition()) {
+            if (realKingPos != null && realKingPos.equals(chessMove.getEndPosition())) {
                 return true;
             }
         }
@@ -91,7 +91,38 @@ public class ChessGameImpl implements ChessGame {
         // call validMoves for every piece double for loop (for the right teamColor)
         // if not then checkmate --> same as bottom
         // if return an empty collection return true for checkmate
-        return false;
+
+        if (!isInCheck(teamColor)) {
+            // If not in check then it's not in checkmate
+            return false;
+        }
+
+        // Iterate through the white pieces
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition startPosition = new ChessPositionImpl(row, col);
+                ChessPiece piece = getBoard().getPiece(startPosition);
+
+                if (piece != null && piece.getTeamColor() == teamColor) {
+                    // Generate the valid moves for the piece
+                    Collection<ChessMove> validMoves = validMoves(startPosition);
+
+                    // Try each valid moves to see if it gets out of check
+                    for (ChessMove move : validMoves) {
+                        // Create a copy of the board to simulate the move
+                        ChessBoard tempBoard = board.copyBoard();
+
+                        // Apply the move to the copy board
+                        tempBoard.addPiece(move.getEndPosition(), piece);
+                        tempBoard.removePiece(move.getStartPosition());
+
+                        // Check if the king is still in check
+                        if(!isInCheck(teamColor)) { return false; }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     @Override

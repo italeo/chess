@@ -71,4 +71,21 @@ public class ChessBoardImpl implements ChessBoard {
          */
 
     }
+
+    @Override
+    public ChessBoard copyBoard() {
+        ChessBoard copiedBoard = new ChessBoardImpl();
+
+        // Copy each piece n the board;
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                ChessPiece piece = board[row][col];
+                if (piece != null) {
+                    copiedBoard.addPiece(new ChessPositionImpl(row + 1, col + 1), piece.copy());
+                }
+            }
+        }
+
+        return copiedBoard;
+    }
 }

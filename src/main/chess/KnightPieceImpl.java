@@ -12,6 +12,11 @@ public class KnightPieceImpl extends ChessPieceImpl {
     }
 
     @Override
+    public ChessPiece copy() {
+        return new KnightPieceImpl(getTeamColor());
+    }
+
+    @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         List<ChessMove> validMoves = new ArrayList<>();
 

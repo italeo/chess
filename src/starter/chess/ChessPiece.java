@@ -35,4 +35,6 @@ public interface ChessPiece {
      * @return Collection of valid moves
      */
     Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition);
+
+    ChessPiece copy();
 }
