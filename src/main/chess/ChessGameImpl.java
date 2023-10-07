@@ -87,10 +87,6 @@ public class ChessGameImpl implements ChessGame {
 
     @Override
     public boolean isInCheckmate(TeamColor teamColor) {
-        // check if king is right teamColor by calling isInCheck
-        // call validMoves for every piece double for loop (for the right teamColor)
-        // if not then checkmate --> same as bottom
-        // if return an empty collection return true for checkmate
 
         if (!isInCheck(teamColor)) {
             // If not in check then it's not in checkmate
