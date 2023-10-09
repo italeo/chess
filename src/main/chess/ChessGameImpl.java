@@ -66,9 +66,33 @@ public class ChessGameImpl implements ChessGame {
             board.addPiece(move.getEndPosition(), piece);
             board.removePiece(move.getStartPosition());
 
+            // Checking for pawn promotion
+            if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                int promotionRank = (piece.getTeamColor() == TeamColor.WHITE) ? 8 : 1;
+                if (move.getEndPosition().getRow() == promotionRank) {
+                    // Performs the promotion
+                    ChessPiece promotedPiece = createPromotedPiece(move.getPromotionPiece(), piece.getTeamColor());
+                    board.addPiece(move.getEndPosition(), promotedPiece);
+                }
+            }
+
         }
         else {
             throw  new InvalidMoveException();
+        }
+    }
+
+    private ChessPiece createPromotedPiece(ChessPiece.PieceType type, TeamColor teamColor) {
+        switch (type) {
+            case ROOK:
+                return new RookPieceImpl(teamColor);
+            case BISHOP:
+                return new BishopPieceImpl(teamColor);
+            case KNIGHT:
+                return new KnightPieceImpl(teamColor);
+            default:
+                return new QueenPieceImpl(teamColor);
+
         }
     }
 
@@ -139,6 +163,19 @@ public class ChessGameImpl implements ChessGame {
 
     @Override
     public boolean isInStalemate(TeamColor teamColor) {
+        if (isInCheck(teamColor)) {
+            // If the King is in check then it cannot be in stalemate
+            return false;
+        }
+
+        //Iterate through the piece of the team.
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+
+            }
+        }
+
+
         return false;
     }
 
