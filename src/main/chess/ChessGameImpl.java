@@ -54,10 +54,14 @@ public class ChessGameImpl implements ChessGame {
     @Override
     public void makeMove(ChessMove move) throws InvalidMoveException {
         List<ChessMove> moves = (List<ChessMove>) validMoves(move.getStartPosition());
-        if (moves.contains(move)) {
-            ChessPiece piece = getBoard().getPiece(move.getStartPosition());
+        ChessPiece piece = getBoard().getPiece(move.getStartPosition());
+
+        if (moves.contains(move) && piece != null && piece.getTeamColor() == teamTurn) {
+
             board.addPiece(move.getEndPosition(), piece);
             board.removePiece(move.getStartPosition());
+
+            teamTurn = (teamTurn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
 
             // Checking for pawn promotion
             if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
