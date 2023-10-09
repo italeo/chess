@@ -31,7 +31,7 @@ public class ChessGameImpl implements ChessGame {
         List<ChessMove> allMoves = (List<ChessMove>) piece.pieceMoves(board, startPosition);
 
         for (ChessMove allMove : allMoves) {
-            ChessBoard temp = tempBoard(allMove, board);
+           // ChessBoard temp = tempBoard(allMove, board);
             if (!isInCheck(teamTurn)) {
                 finalMoves.add(allMove);
             }
@@ -39,21 +39,21 @@ public class ChessGameImpl implements ChessGame {
         return finalMoves;
     }
 
-    private ChessBoard tempBoard(ChessMove move, ChessBoard board) {
-        ChessBoard tempBoard = new ChessBoardImpl();
-
-        for (int row = 1; row <= 8; row++) {
-            for (int col = 1; col <=8; col++) {
-                ChessPosition tempPosition = new ChessPositionImpl(row, col);
-                tempBoard.addPiece(tempPosition, board.getPiece(tempPosition));
-            }
-        }
-        ChessPiece piece = getBoard().getPiece(move.getStartPosition());
-        tempBoard.addPiece(move.getEndPosition(), piece);
-        tempBoard.removePiece(move.getStartPosition());
-
-        return tempBoard;
-    }
+//    private ChessBoard tempBoard(ChessMove move, ChessBoard board) {
+//        ChessBoard tempBoard = new ChessBoardImpl();
+//
+//        for (int row = 1; row <= 8; row++) {
+//            for (int col = 1; col <=8; col++) {
+//                ChessPosition tempPosition = new ChessPositionImpl(row, col);
+//                tempBoard.addPiece(tempPosition, board.getPiece(tempPosition));
+//            }
+//        }
+//        ChessPiece piece = getBoard().getPiece(move.getStartPosition());
+//        tempBoard.addPiece(move.getEndPosition(), piece);
+//        tempBoard.removePiece(move.getStartPosition());
+//
+//        return tempBoard;
+//    }
 
 
     // Might need to work on this portion of the code with having it being able to switch the teams from Black
@@ -171,12 +171,28 @@ public class ChessGameImpl implements ChessGame {
         //Iterate through the piece of the team.
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
+                ChessPosition startPosition = new ChessPositionImpl(row, col);
+                ChessPiece piece = board.getPiece(startPosition);
 
+                if (piece != null && piece.getTeamColor() == teamColor) {
+                    Collection<ChessMove> validMoves = validMoves(startPosition);
+
+                    //Try each valid move to see if it gets the team out of stalemate
+                    for (ChessMove move : validMoves) {
+                        ChessBoard tempBoard = board.copyBoard();
+
+                        //Apply move to tempBoard
+                        tempBoard.addPiece(move.getEndPosition(), piece);
+                        tempBoard.removePiece(move.getStartPosition());
+
+                        if (!isInCheck(teamColor)) {
+                            return false;
+                        }
+                    }
+                }
             }
         }
-
-
-        return false;
+        return true;
     }
 
     @Override
