@@ -23,6 +23,10 @@ public class BishopPieceImpl extends ChessPieceImpl {
         int[] rowDirection = {-1, -1, 1, 1};
         int[] colDirection = {-1, 1, -1, 1};
 
+
+         /* -------------------------- NEED TO HANDLE DUPLICATE IN ALL PIECES ------------------------------- */
+
+
         for (int i = 0; i < 4; i++) {
             int newRow = myPosition.getRow() + rowDirection[i];
             int newCol = myPosition.getColumn() + colDirection[i];

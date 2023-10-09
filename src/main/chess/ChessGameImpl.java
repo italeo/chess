@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class ChessGameImpl implements ChessGame {
@@ -27,37 +28,29 @@ public class ChessGameImpl implements ChessGame {
     @Override
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         List<ChessMove> finalMoves = new ArrayList<>();
-        ChessPiece piece = getBoard().getPiece(startPosition);
-        List<ChessMove> allMoves = (List<ChessMove>) piece.pieceMoves(board, startPosition);
+        ChessPiece piece = board.getPiece(startPosition);
 
-        for (ChessMove allMove : allMoves) {
+        // Checking if there is no piece in the starting position
+        if (piece == null) {
+            return Collections.emptyList();
+        }
+
+        // Generates the list of all possible moves for the piece if there is one in the starting position
+        List<ChessMove> moves = (List<ChessMove>) piece.pieceMoves(board, startPosition);
+        for (ChessMove move : moves) {
            // ChessBoard temp = tempBoard(allMove, board);
-            if (!isInCheck(teamTurn)) {
-                finalMoves.add(allMove);
+            board.addPiece(startPosition, null);
+            ChessPiece piecePosition = board.getPiece(move.getEndPosition());
+            board.addPiece(move.getEndPosition(), piece);
+            if (!isInCheck(piece.getTeamColor())) {
+                finalMoves.add(move);
             }
+            board.addPiece(startPosition, piece);
+            board.addPiece(move.getEndPosition(), piecePosition);
         }
         return finalMoves;
     }
 
-//    private ChessBoard tempBoard(ChessMove move, ChessBoard board) {
-//        ChessBoard tempBoard = new ChessBoardImpl();
-//
-//        for (int row = 1; row <= 8; row++) {
-//            for (int col = 1; col <=8; col++) {
-//                ChessPosition tempPosition = new ChessPositionImpl(row, col);
-//                tempBoard.addPiece(tempPosition, board.getPiece(tempPosition));
-//            }
-//        }
-//        ChessPiece piece = getBoard().getPiece(move.getStartPosition());
-//        tempBoard.addPiece(move.getEndPosition(), piece);
-//        tempBoard.removePiece(move.getStartPosition());
-//
-//        return tempBoard;
-//    }
-
-
-    // Might need to work on this portion of the code with having it being able to switch the teams from Black
-    // to white or vice-versa
     @Override
     public void makeMove(ChessMove move) throws InvalidMoveException {
         List<ChessMove> moves = (List<ChessMove>) validMoves(move.getStartPosition());
@@ -75,25 +68,19 @@ public class ChessGameImpl implements ChessGame {
                     board.addPiece(move.getEndPosition(), promotedPiece);
                 }
             }
-
         }
         else {
-            throw  new InvalidMoveException();
+            throw new InvalidMoveException();
         }
     }
 
     private ChessPiece createPromotedPiece(ChessPiece.PieceType type, TeamColor teamColor) {
-        switch (type) {
-            case ROOK:
-                return new RookPieceImpl(teamColor);
-            case BISHOP:
-                return new BishopPieceImpl(teamColor);
-            case KNIGHT:
-                return new KnightPieceImpl(teamColor);
-            default:
-                return new QueenPieceImpl(teamColor);
-
-        }
+        return switch (type) {
+            case ROOK -> new RookPieceImpl(teamColor);
+            case BISHOP -> new BishopPieceImpl(teamColor);
+            case KNIGHT -> new KnightPieceImpl(teamColor);
+            default -> new QueenPieceImpl(teamColor);
+        };
     }
 
     @Override
@@ -101,9 +88,9 @@ public class ChessGameImpl implements ChessGame {
 
         ChessPosition realKingPos = null;
         List<ChessMove> piecesPosition = new ArrayList<>();
-        for (int i = 1; i < 9; i++) {
-            for (int j = 1; j < 9; j++) {
-                ChessPosition position = new ChessPositionImpl(i, j);
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition position = new ChessPositionImpl(row, col);
                 ChessPiece possibleKing = board.getPiece(position);
 
                 if (possibleKing == null) {
@@ -139,26 +126,33 @@ public class ChessGameImpl implements ChessGame {
                 ChessPosition startPosition = new ChessPositionImpl(row, col);
                 ChessPiece piece = getBoard().getPiece(startPosition);
 
-                if (piece != null && piece.getTeamColor() == teamColor) {
-                    // Generate the valid moves for the piece
-                    Collection<ChessMove> validMoves = validMoves(startPosition);
-
-                    // Try each valid moves to see if it gets out of check
-                    for (ChessMove move : validMoves) {
-                        // Create a copy of the board to simulate the move
-                        ChessBoard tempBoard = board.copyBoard();
-
-                        // Apply the move to the copy board
-                        tempBoard.addPiece(move.getEndPosition(), piece);
-                        tempBoard.removePiece(move.getStartPosition());
-
-                        // Check if the king is still in check
-                        if(!isInCheck(teamColor)) { return false; }
-                    }
-                }
+                if (TeamCheck(teamColor, startPosition, piece)) return false;
             }
         }
         return true;
+    }
+
+    private boolean TeamCheck(TeamColor teamColor, ChessPosition startPosition, ChessPiece piece) {
+        if (piece != null && piece.getTeamColor() == teamColor) {
+            // Generate the valid moves for the piece
+            Collection<ChessMove> validMoves = validMoves(startPosition);
+
+            // Try each valid moves to see if it gets out of check
+            for (ChessMove move : validMoves) {
+                // Create a copy of the board to simulate the move
+                ChessBoard tempBoard = board.copyBoard();
+
+                // Apply the move to the copy board
+                tempBoard.addPiece(move.getEndPosition(), piece);
+                tempBoard.removePiece(move.getStartPosition());
+
+                // Check if the king is still in check
+                if(!isInCheck(teamColor)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -174,22 +168,7 @@ public class ChessGameImpl implements ChessGame {
                 ChessPosition startPosition = new ChessPositionImpl(row, col);
                 ChessPiece piece = board.getPiece(startPosition);
 
-                if (piece != null && piece.getTeamColor() == teamColor) {
-                    Collection<ChessMove> validMoves = validMoves(startPosition);
-
-                    //Try each valid move to see if it gets the team out of stalemate
-                    for (ChessMove move : validMoves) {
-                        ChessBoard tempBoard = board.copyBoard();
-
-                        //Apply move to tempBoard
-                        tempBoard.addPiece(move.getEndPosition(), piece);
-                        tempBoard.removePiece(move.getStartPosition());
-
-                        if (!isInCheck(teamColor)) {
-                            return false;
-                        }
-                    }
-                }
+                if (TeamCheck(teamColor, startPosition, piece)) return false;
             }
         }
         return true;
