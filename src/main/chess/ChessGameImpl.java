@@ -30,21 +30,29 @@ public class ChessGameImpl implements ChessGame {
         ChessPiece piece = getBoard().getPiece(startPosition);
         List<ChessMove> allMoves = (List<ChessMove>) piece.pieceMoves(board, startPosition);
 
-
-        for (ChessMove move : allMoves) {
-            // Make a copy of the board and apply moves to see if it leads to a valid position
-            ChessBoard tempBoard = board.copyBoard();
-
-            // Applying move to tempBoard
-            tempBoard.addPiece(move.getEndPosition(), piece);
-            tempBoard.removePiece(move.getStartPosition());
-
-            // Checking if the new move puts the king in check on the temp board
+        for (ChessMove allMove : allMoves) {
+            ChessBoard temp = tempBoard(allMove, board);
             if (!isInCheck(teamTurn)) {
-                finalMoves.add(move);
+                finalMoves.add(allMove);
             }
         }
         return finalMoves;
+    }
+
+    private ChessBoard tempBoard(ChessMove move, ChessBoard board) {
+        ChessBoard tempBoard = new ChessBoardImpl();
+
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <=8; col++) {
+                ChessPosition tempPosition = new ChessPositionImpl(row, col);
+                tempBoard.addPiece(tempPosition, board.getPiece(tempPosition));
+            }
+        }
+        ChessPiece piece = getBoard().getPiece(move.getStartPosition());
+        tempBoard.addPiece(move.getEndPosition(), piece);
+        tempBoard.removePiece(move.getStartPosition());
+
+        return tempBoard;
     }
 
 
@@ -62,8 +70,6 @@ public class ChessGameImpl implements ChessGame {
         else {
             throw  new InvalidMoveException();
         }
-
-
     }
 
     @Override
