@@ -1,6 +1,6 @@
 package model;
 
-import dao.DatabaseException;
+import chess.ChessGame;
 
 /** Sets the structure of the Chess game with the default rules that have been implemented.
  * */
@@ -8,22 +8,27 @@ public class Game {
     /** the unique ID for the game.*/
     private int gameID;
     /** The white player's identifier. */
-    private String whitePlayer;
+    private String whiteUsername;
     /** The black player's identifier. */
-    private String blackPlayer;
-    /** Could be used as a JSON representation for the chess game state. */
-    private String chessGame;
+    private String blackUsername;
+    /** name of the current chess game. */
+    private String gameName;
+    /** The implementation of the game. */
+    private ChessGame game;
 
     /** Constructs a game with default setting or basic details.
      * @param gameID - The game identifier
-     * @param whitePlayer - The white player identifier.
-     * @param blackPlayer - The black player identifier.
-     * @param chessGame - A JSON representation of the chess game state.*/
-    public Game(int gameID, String whitePlayer, String blackPlayer, String chessGame) {
+     * @param whiteUsername - The white player identifier.
+     * @param blackUsername - The black player identifier.
+     * @param gameName - A JSON representation of the chess game state.
+     * @param game - The actual game.
+     * */
+    public Game(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {
         this.gameID = gameID;
-        this.whitePlayer = whitePlayer;
-        this.blackPlayer = blackPlayer;
-        this.chessGame = chessGame;
+        this.whiteUsername = whiteUsername;
+        this.blackUsername = blackUsername;
+        this.gameName = gameName;
+        this.game = game;
     }
 
     public int getGameID() {
@@ -34,27 +39,35 @@ public class Game {
         this.gameID = gameID;
     }
 
-    public String getWhitePlayer() {
-        return whitePlayer;
+    public String getWhiteUsername() {
+        return whiteUsername;
     }
 
-    public void setWhitePlayer(String whitePlayer) {
-        this.whitePlayer = whitePlayer;
+    public void setWhiteUsername(String whiteUsername) {
+        this.whiteUsername = whiteUsername;
     }
 
-    public String getBlackPlayer() {
-        return blackPlayer;
+    public String getBlackUsername() {
+        return blackUsername;
     }
 
-    public void setBlackPlayer(String blackPlayer) {
-        this.blackPlayer = blackPlayer;
+    public void setBlackUsername(String blackUsername) {
+        this.blackUsername = blackUsername;
     }
 
-    public String getChessGame() {
-        return chessGame;
+    public String getGameName() {
+        return gameName;
     }
 
-    public void setChessGame(String chessGame) {
-        this.chessGame = chessGame;
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
+    }
+
+    public ChessGame getGame() {
+        return game;
+    }
+
+    public void setGame(ChessGame game) {
+        this.game = game;
     }
 }
