@@ -4,8 +4,11 @@ import chess.ChessGame;
 
 /** Represents the result of creating a new chess game. */
 public class CreateGameResult {
+    /** Used to indicate if game was retrieved successfully. */
     private final boolean success;
+    /** Message displayed when game was retrieved successfully. */
     private final String message;
+    /** Creates the game object. */
     private final ChessGame createdGame;
 
     /** Constructs new game from the request.

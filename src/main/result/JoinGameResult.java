@@ -2,8 +2,11 @@ package result;
 
 /** This class is responsible for the result of the join game request. */
 public class JoinGameResult {
+    /** Used to indicate if the user has join the game successfully. */
     private final boolean success;
+    /** Message to notify user if they have joined the game successfully. */
     private final String message;
+    /** Used to identify which game to join specifically */
     private final int gameID;
 
 

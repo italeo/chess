@@ -2,8 +2,11 @@ package request;
 
 /** Represents the request of joining a game. */
 public class JoinGameRequest {
+    /** The game's identifier. */
     private String gameID;
+    /** The player's color, it will either be black or white representing the color of the chess pieces. */
     private String playerColor;
+    /** The token assigned to the user during log in or registration. */
     private String AuthToken;
 
     /** constructs a new join game request with these specific parameters.

@@ -3,6 +3,7 @@ package request;
 /**
  * Represents the logout request from the user. */
 public class LogoutRequest {
+    /** The token assigned to the user. */
     private String authToken;
     /** Constructs the logout request from the user.
      * @param authToken - The unique token that allows the user to logout.

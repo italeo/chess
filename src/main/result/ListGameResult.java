@@ -2,9 +2,13 @@ package result;
 
 /** Represents the result of the list of all possible games the player could join. */
 public class ListGameResult {
+    /** Array that will contain all the gameIDs. */
     private final int[] gameIDs;
+    /** Array that will hold all the white player's usernames. */
     private final String[] whiteUsernames;
+    /** Array that will hold all the black player's usernames. */
     private final String[] blackUsernames;
+    /** Array that will hold all the game names. */
     private final String[] gameNames;
 
     /** The result returned from the list game request specified by these parameters.

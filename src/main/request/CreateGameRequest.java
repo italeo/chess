@@ -2,7 +2,9 @@ package request;
 
 /** Represents the request to create a new game. */
 public class CreateGameRequest {
+    /** The first player's identifier. */
     private String player1;
+    /** The second player's identifier. */
     private String player2;
 
 

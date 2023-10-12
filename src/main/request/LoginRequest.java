@@ -2,7 +2,9 @@ package request;
 
 /** Represents the request of the user trying to log in to the game.*/
 public class LoginRequest {
+    /** The user's username, in the game. */
     private String username;
+    /** The user's password for logging into the game. */
     private String password;
 
     /** Constructs the request needed for the user to login, storing the necessary information from these parameters:

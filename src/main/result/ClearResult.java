@@ -3,8 +3,9 @@ package result;
 
 /** This class is responsible to handle the clearing of the results that we get from the web API calls. */
 public class ClearResult {
-
+    /** Message displayed for when clearing is successful */
     String message;
+    /** Boolean to indicate if clearing was successful or not. */
     boolean success;
 
     /** The constructor for the ClearResult object responsible to clear all the requested results.

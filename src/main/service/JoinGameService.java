@@ -6,7 +6,6 @@ public class JoinGameService {
      * @param gameID - String the represents the specific gameID for a particular game.
      * @param playerName - The name of the player trying to join the game
      * */
-
     public boolean joinGame(String gameID, String playerName) {
         return false;
     }

@@ -2,7 +2,9 @@ package result;
 
 /** Represents the result from the login request, by the user.*/
 public class LoginResult {
+    /** The user's username in the game. */
     private final String username;
+    /** The user's authToken assigned to it, after logging in. */
     private final String authToken;
 
     /** Constructs the login results from the request.
