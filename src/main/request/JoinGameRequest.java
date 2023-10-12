@@ -2,9 +2,9 @@ package request;
 
 /** Represents the request of joining a game. */
 public class JoinGameRequest {
-    private final String gameID;
-    private final String playerColor;
-    private final String AuthToken;
+    private String gameID;
+    private String playerColor;
+    private String AuthToken;
 
     /** constructs a new join game request with these specific parameters.
      * @param gameID - represents the specific game the player is trying to join.
@@ -27,5 +27,17 @@ public class JoinGameRequest {
 
     public String getAuthToken() {
         return AuthToken;
+    }
+
+    public void setGameID(String gameID) {
+        this.gameID = gameID;
+    }
+
+    public void setPlayerColor(String playerColor) {
+        this.playerColor = playerColor;
+    }
+
+    public void setAuthToken(String authToken) {
+        AuthToken = authToken;
     }
 }

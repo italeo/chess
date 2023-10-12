@@ -2,8 +2,8 @@ package request;
 
 /** Represents the request of the user trying to log in to the game.*/
 public class LoginRequest {
-    private final String username;
-    private final String password;
+    private String username;
+    private String password;
 
     /** Constructs the request needed for the user to login, storing the necessary information from these parameters:
      * @param username - The username representing the user.
@@ -22,4 +22,11 @@ public class LoginRequest {
         return password;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
