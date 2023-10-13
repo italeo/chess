@@ -17,8 +17,6 @@ public class CreateGameRequest {
         this.player2 = player2;
     }
 
-
-    // -------------------------- MIGHT NOT NEED SETTERS SO COE BACK TO IT ---------------------------------
     public String getPlayer1() {
         return player1;
     }
