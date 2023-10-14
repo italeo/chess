@@ -18,21 +18,21 @@ public class UserDAO {
 
     /** Inserts a user into the database when a new user has registered or when the user logs into the game.
      * @param user - The user being inserted into the game.
-     * @throws DatabaseException - Thrown when there is an error adding the user into the database.
+     * @throws DataAccessException - Thrown when there is an error adding the user into the database.
      * */
-    public void insert(User user) throws DatabaseException {
+    public void insert(User user) throws DataAccessException {
     }
 
     /** Clears the user table from the database.
-     * @throws DatabaseException - Thrown when there is an error clearing the user table.*/
-    public void clear() throws DatabaseException {
+     * @throws DataAccessException - Thrown when there is an error clearing the user table.*/
+    public void clear() throws DataAccessException {
     }
 
     /** Allows the user to query the database to find a specific user,
      * @param username - The username the user is trying to find.
-     * @throws DatabaseException - Thrown when there is an error finding the username.
+     * @throws DataAccessException - Thrown when there is an error finding the username.
      * */
-    public User find(String username) throws DatabaseException {
+    public User find(String username) throws DataAccessException {
         return null;
     }
 }

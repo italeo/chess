@@ -18,22 +18,22 @@ public class AuthTokenDAO {
 
     /** This function will insert an authToken for a user creates a new account or logs in.
      * @param authToken - The unique token used to represent the user.
-     * @throws DatabaseException - thrown when there is a database error.
+     * @throws DataAccessException - thrown when there is a database error.
      * */
-    public void insert(AuthToken authToken) throws DatabaseException {
+    public void insert(AuthToken authToken) throws DataAccessException {
     }
 
     /** This clear function removes the authorization token from the database that belongs to the user.
      * This only occurs when the user is removed from the database.
-     * @throws DatabaseException - thrown when there is a database error.
+     * @throws DataAccessException - thrown when there is a database error.
      * */
-    public void clear() throws DatabaseException {
+    public void clear() throws DataAccessException {
     }
 
     /** This function allows us to query the  right table in the database for the specific authorization token specified by:
      * @param authToken - The specific authToken we are trying to find.
-     * @throws DatabaseException - thrown when there is a database error.*/
-    public AuthToken find(String authToken) throws DatabaseException {
+     * @throws DataAccessException - thrown when there is a database error.*/
+    public AuthToken find(String authToken) throws DataAccessException {
         return null;
     }
 }
