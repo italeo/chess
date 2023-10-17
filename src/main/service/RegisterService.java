@@ -1,15 +1,35 @@
 package service;
 
+import dao.AuthTokenDAO;
+import dao.GameDAO;
+import dao.UserDAO;
+import request.RegisterRequest;
 import result.RegisterResult;
 
 /** Service for new user registration. */
 public class RegisterService {
     /** Constructs are new user with the provided username, password and email.
-     * @param username - The username the user has chosen to represent him/her-self in the game.
-     * @param password - The user's password to be used during log ins.
-     * @param email - The email of the user used to create an account.
      * */
-    public RegisterResult register(String username, String password, String email) {
+
+    /** This variable is the logged-in user's authToken.*/
+    private final AuthTokenDAO authDAO;
+    /** This variable is in charge of setting the game object.*/
+    private final GameDAO gameDAO;
+    /** This variable is represents the user object in the game.*/
+    private final UserDAO userDAO;
+
+    /** Constructs the registering object when a new user is trying to create an account.
+     * @param authDAO - The authToken assigned from the database.
+     * @param userDAO - The user object that is stored in the database.
+     * @param gameDAO - The game object containing the information for the requested game that is stored in the database.
+     * */
+    public RegisterService(AuthTokenDAO authDAO, GameDAO gameDAO, UserDAO userDAO) {
+        this.authDAO = authDAO;
+        this.gameDAO = gameDAO;
+        this.userDAO = userDAO;
+    }
+
+    public RegisterResult register(RegisterRequest request) {
         return null;
     }
 }
