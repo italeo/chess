@@ -9,10 +9,10 @@ import java.util.List;
 /** Responsible for accessing the Games that are available from the database. */
 public class GameDAO {
 
-    /** Establishes the connection between the server and the database .*/
+    /** Establishes the connection between the Server and the database .*/
     private final Connection conn;
 
-    /** Constructs the connection between the server and the database to access the information needed for the games available
+    /** Constructs the connection between the Server and the database to access the information needed for the games available
      * in the database
      * @param conn - associated connection for data access.
      * */

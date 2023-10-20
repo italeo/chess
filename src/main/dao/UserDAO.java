@@ -6,10 +6,10 @@ import java.sql.Connection;
 
 /** Responsible for accessing the users information from the database.*/
 public class UserDAO {
-    /** Used to establish the connection between server and database.*/
+    /** Used to establish the connection between Server and database.*/
     private final Connection conn;
 
-    /** Constructs the connection between the database and the server.
+    /** Constructs the connection between the database and the Server.
      * @param conn - Associated connection for data access.
      * */
     public UserDAO(Connection conn) {
