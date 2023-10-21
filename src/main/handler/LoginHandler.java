@@ -1,17 +1,31 @@
 package handler;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import com.google.gson.Gson;
+import dao.AuthTokenDAO;
+import dao.GameDAO;
+import dao.UserDAO;
+import request.LoginRequest;
+import result.LoginResult;
+import service.LoginService;
+import spark.*;
 
-import java.io.IOException;
-/** The handler responsible to handle the http log in request from the user.*/
-public class LoginHandler implements HttpHandler {
-    /**This function handles the actual request
-     * @param exchange - The http request containing the username and password along with
-     * other possible information needed for the user to log in.
-     * */
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
 
+public class LoginHandler {
+
+    public Object handle(Request request, Response result) {
+        LoginRequest loginRequest = new Gson().fromJson(request.body(), LoginRequest.class);
+        LoginService logoutService = new LoginService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
+        LoginResult loginResult = logoutService.login(loginRequest);
+
+        if (loginResult.getMessage() == null) {
+            result.status(200);
+        }
+        else if (loginResult.getMessage().equals("Error: unauthorized")) {
+            result.status(401);
+        } else {
+            result.status(500);
+        }
+
+        return new Gson().toJson(loginResult);
     }
 }

@@ -3,6 +3,7 @@ package service;
 import dao.AuthTokenDAO;
 import dao.GameDAO;
 import dao.UserDAO;
+import model.AuthToken;
 import result.ClearResult;
 
 /** This class is responsible to handle the clearing of the game/board

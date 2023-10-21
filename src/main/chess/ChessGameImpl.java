@@ -8,6 +8,7 @@ import java.util.List;
 public class ChessGameImpl implements ChessGame {
 
     private TeamColor teamTurn;
+    private int gameID;
     private ChessBoard board = new ChessBoardImpl();
 
     public ChessGameImpl() {

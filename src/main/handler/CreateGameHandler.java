@@ -1,20 +1,34 @@
 package handler;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import com.google.gson.Gson;
+import dao.AuthTokenDAO;
+import dao.GameDAO;
+import dao.UserDAO;
+import request.CreateGameRequest;
+import result.CreateGameResult;
+import service.CreateGameService;
+import spark.*;
 
-import java.io.IOException;
+public class CreateGameHandler {
 
-/** Responsible to handle the  http CreateGameRequest.
- * */
-public class CreateGameHandler implements HttpHandler {
+    public Object handler(Request request, Response result) {
+        CreateGameRequest createGameRequest = new Gson().fromJson(request.body(), CreateGameRequest.class);
+        CreateGameService createGameService = new CreateGameService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
+        CreateGameResult createGameResult = createGameService.createGame(createGameRequest);
+        result.type("application/json");
 
-    /** Handles the http request to create a new chess game with the default settings stated in the rules.
-     * @param exchange - The http request containing the players names and other required information.
-     * @throws IOException if an I/O error occurs.
-     * */
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
+        if (createGameResult.getMessage() == null) {
+            result.status(200);
+        }
+        else if (createGameResult.getMessage().equals("Error: bad request")) {
+            result.status(400);
+        }
+        else if (createGameResult.getMessage().equals("Error: unauthorized")) {
+            result.status (401);
+        } else {
+            result.status(500);
+        }
 
+        return new Gson().toJson(result);
     }
 }

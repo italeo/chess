@@ -1,17 +1,32 @@
 package handler;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import com.google.gson.Gson;
+import dao.AuthTokenDAO;
+import dao.GameDAO;
+import dao.UserDAO;
+import request.LogoutRequest;
+import result.LoginResult;
+import result.LogoutResult;
+import service.LogoutService;
+import spark.*;
 
-import java.io.IOException;
 /** Handler for http request from user to logout. */
-public class LogoutHandler implements HttpHandler {
-    /** Function that handles the actual http request from the user to logout of the game.
-     * @param exchange - the http request containing the users authToken and other possible information.
-     * @throws IOException when an I/O error occurs.
-     * */
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
+public class LogoutHandler {
+    public Object handle(Request request, Response result) {
+        LogoutRequest logoutRequest = new Gson().fromJson(request.body(), LogoutRequest.class);
+        LogoutService logoutService = new LogoutService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
+        LogoutResult logoutResult = logoutService.logout(logoutRequest);
+        result.type("application/json");
 
+        if (logoutResult.getMessage() == null) {
+            result.status(200);
+        }
+        else if(logoutResult.getMessage().equals("Error: unauthorized")) {
+            result.status(401);
+        } else {
+            result.status(500);
+        }
+
+        return new Gson().toJson(logoutResult);
     }
 }

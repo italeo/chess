@@ -1,19 +1,33 @@
 package handler;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 
-import java.io.IOException;
+import com.google.gson.Gson;
+import dao.AuthTokenDAO;
+import dao.GameDAO;
+import dao.UserDAO;
+import request.ListGamesRequest;
+import result.ListGameResult;
+import service.ListGamesService;
+import spark.*;
 
 /** Handles the http request for listing all the games available*/
-public class ListGameHandler implements HttpHandler {
+public class ListGameHandler {
 
-    /** This is the function that handles the actual request specified by this parameter:
-     * @param exchange - The http request containing the authToken and required information so that list of games can be returned.
-     * @throws IOException - Will be thrown when there is an I/O error.
-     * */
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public Object handle(Request request, Response result) {
+        ListGamesRequest listGamesRequest = new Gson().fromJson(request.body(), ListGamesRequest.class);
+        ListGamesService listGamesService = new ListGamesService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
+        ListGameResult listGameResult = listGamesService.listAvailableGames(listGamesRequest);
+        result.type("application/json");
 
+        if (listGameResult.getMessage() == null) {
+            result.status(200);
+        }
+        else if (listGameResult.getMessage().equals("Error: unathorized")) {
+            result.status(401);
+        } else {
+            result.status(500);
+        }
+
+        return new Gson().toJson(listGameResult);
     }
 }

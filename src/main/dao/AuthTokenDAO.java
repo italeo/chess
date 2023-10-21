@@ -8,15 +8,12 @@ import java.util.Map;
 
 /** Responsible for accessing the data for the AuthToken */
 public class AuthTokenDAO {
-    /** Creates the connection between the Server and the database. */
-    private final Connection conn;
     private final Map<String, AuthToken> authTokenMap;
 
     /** Constructs the connection between the Server and the database to access the information needed for the authToken
-     * @param conn - associated connection for data access.
+     //* @param conn - associated connection for data access.
      * */
-    public AuthTokenDAO(Connection conn) {
-        this.conn = conn;
+    public AuthTokenDAO() {
         this.authTokenMap = new HashMap<>();
     }
 
@@ -25,9 +22,6 @@ public class AuthTokenDAO {
      * @throws DataAccessException - thrown when there is a database error.
      * */
     public void insert(AuthToken authToken) throws DataAccessException {
-        if (authTokenMap.containsKey(authToken.getAuthToken())) {
-            throw new DataAccessException("AuthToken already exists");
-        }
         authTokenMap.put(authToken.getAuthToken(), authToken);
     }
 
@@ -43,10 +37,10 @@ public class AuthTokenDAO {
      * @param authToken - The specific authToken we are trying to find.
      * @throws DataAccessException - thrown when there is a database error.*/
     public AuthToken find(String authToken) throws DataAccessException {
-        if (authTokenMap.containsKey(authToken)) {
-            return authTokenMap.get(authToken);
-        } else {
-            throw new DataAccessException("AuthToken not found.");
-        }
+        return authTokenMap.get(authToken);
+    }
+
+    public void delete(String token) throws DataAccessException {
+        authTokenMap.remove(token);
     }
 }

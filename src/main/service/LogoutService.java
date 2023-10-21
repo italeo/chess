@@ -3,6 +3,7 @@ package service;
 import dao.AuthTokenDAO;
 import dao.GameDAO;
 import dao.UserDAO;
+import request.LogoutRequest;
 import result.LogoutResult;
 
 /** Service responsible for user logout. */
@@ -27,7 +28,7 @@ public class LogoutService {
 
     /** Logs the user out of the game.
      * */
-    public LogoutResult logout() {
+    public LogoutResult logout(LogoutRequest request) {
         return null;
     }
 }

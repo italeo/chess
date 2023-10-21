@@ -18,6 +18,8 @@ public interface ChessGame {
      */
     void setTeamTurn(TeamColor team);
 
+
+
     /**
      * Enum identifying the 2 possible teams in a chess game
      */

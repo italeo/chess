@@ -26,12 +26,6 @@ public class LoginService {
         this.userDAO = userDAO;
     }
 
-    /** Attempts to log in an existing user, along with returning an authToken
-     * @param request - The request from the user trying to log in
-     * */
-
-
-    // HAVE TO PASS IN REQUEST
     /** This function is in charge of handling the request from the user that is trying to log in.
      * @param request - The log in request from the user.
      * */

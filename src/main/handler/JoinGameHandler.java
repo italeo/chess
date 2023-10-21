@@ -1,18 +1,39 @@
 package handler;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import com.google.gson.Gson;
+import dao.AuthTokenDAO;
+import dao.GameDAO;
+import dao.UserDAO;
+import request.JoinGameRequest;
+import result.JoinGameResult;
+import service.JoinGameService;
+import spark.*;
 
-import java.io.IOException;
+import javax.xml.transform.Result;
 
 /** Responsible for handling the http request from a user to join a game. */
-public class JoinGameHandler implements HttpHandler {
+public class JoinGameHandler {
 
-    /** Handles the request from a player to join a specific game given the gameID
-     * @param exchange - The http request containing the gameID and other required information.
-     * @throws IOException - Is thrown when an I/O error occurs.
-     * */
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public Object handle(Request request, Response result) {
+        JoinGameRequest joinGameRequest = new Gson().fromJson(request.body(), JoinGameRequest.class);
+        JoinGameService joinGameService = new JoinGameService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
+        JoinGameResult joinGameResult = joinGameService.joinGame(joinGameRequest);
+        result.type("application/json");
+
+        if (joinGameResult.getMessage() == null) {
+            result.status(200);
+        }
+        else if (joinGameResult.getMessage().equals("Error: bad request")) {
+            result.status(400);
+        }
+        else if (joinGameResult.getMessage().equals("Error: unauthorized")) {
+            result.status (401);
+        }
+        else if (joinGameResult.getMessage().equals("Error: Already taken")) {
+
+        }else {
+            result.status(500);
+        }
+        return new Gson().toJson(result);
     }
 }

@@ -3,6 +3,7 @@ package service;
 import dao.AuthTokenDAO;
 import dao.GameDAO;
 import dao.UserDAO;
+import request.JoinGameRequest;
 import result.JoinGameResult;
 
 /** Responsible to allow players to join a game if the game is available. */
@@ -28,6 +29,10 @@ public class JoinGameService {
 
     /** Checks if the game is available or not. */
     public JoinGameResult isGameAvailable() {
+        return null;
+    }
+
+    public JoinGameResult joinGame(JoinGameRequest request) {
         return null;
     }
 

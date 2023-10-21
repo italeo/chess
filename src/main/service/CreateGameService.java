@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dao.AuthTokenDAO;
 import dao.GameDAO;
 import dao.UserDAO;
@@ -30,7 +31,8 @@ public class CreateGameService {
     /** Creates a new Chess game with the default settings stated from the rules, and from the game request.
      * @param request - The request from the user to creat a new game.
      * */
-    public CreateGameResult createNewGame(CreateGameRequest request) {
+    public CreateGameResult createGame(CreateGameRequest request) {
+
         return null;
     }
 }

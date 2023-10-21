@@ -22,23 +22,8 @@ public class AuthToken {
         return authToken;
     }
 
-    public void setAuthToken(String authToken) {
-        this.authToken = authToken;
-    }
-
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    /** Compares the authToken from the database to see if we have the right authToken.
-     * @param obj - The authToken returned from the database.
-     * */
-    @Override
-    public boolean equals(Object obj) {
-        return false;
-    }
 }
