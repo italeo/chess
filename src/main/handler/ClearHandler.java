@@ -9,19 +9,19 @@ import service.ClearService;
 import spark.*;
 
 /** The Http handler for clearing request. */
-public class ClearHandler {
+public class ClearHandler implements Route {
 
-    public Object handle(Response result) {
-        ClearService service = new ClearService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
-        ClearResult clearResult = service.clear();
-        result.type("application/json");
+    //
+    public Object handle(Request request, Response response) {
+        ClearService service = new ClearService(new GameDAO(), new UserDAO());
+        ClearResult result = service.clear();
+        response.type("application/json");
 
-        if (clearResult.getMessage() == null) {
-            result.status(200);
+        if (result.isSuccess()) {
+            response.status(200);
         } else {
-            result.status(500);
+            response.status(500);
         }
-
-        return new Gson().toJson(clearResult);
+        return new Gson().toJson(result);
     }
 }

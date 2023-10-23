@@ -12,28 +12,28 @@ import spark.*;
 import javax.xml.transform.Result;
 
 /** Responsible for handling the http request from a user to join a game. */
-public class JoinGameHandler {
+public class JoinGameHandler implements Route {
 
-    public Object handle(Request request, Response result) {
+    public Object handle(Request request, Response response) {
         JoinGameRequest joinGameRequest = new Gson().fromJson(request.body(), JoinGameRequest.class);
-        JoinGameService joinGameService = new JoinGameService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
-        JoinGameResult joinGameResult = joinGameService.joinGame(joinGameRequest);
-        result.type("application/json");
+        JoinGameService service = new JoinGameService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
+        JoinGameResult result = service.joinGame(joinGameRequest);
+        response.type("application/json");
 
-        if (joinGameResult.getMessage() == null) {
-            result.status(200);
+        if (result.getMessage() == null) {
+            response.status(200);
         }
-        else if (joinGameResult.getMessage().equals("Error: bad request")) {
-            result.status(400);
+        else if (result.getMessage().equals("Error: bad request")) {
+            response.status(400);
         }
-        else if (joinGameResult.getMessage().equals("Error: unauthorized")) {
-            result.status (401);
+        else if (result.getMessage().equals("Error: unauthorized")) {
+            response.status (401);
         }
-        else if (joinGameResult.getMessage().equals("Error: Already taken")) {
+        else if (result.getMessage().equals("Error: Already taken")) {
 
         }else {
-            result.status(500);
+            response.status(500);
         }
-        return new Gson().toJson(result);
+        return new Gson().toJson(response);
     }
 }

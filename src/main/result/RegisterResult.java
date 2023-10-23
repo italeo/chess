@@ -3,11 +3,14 @@ package result;
 /** Represents the result returned from the register request. */
 public class RegisterResult {
 
-    private final String message;
+    private String message;
     /** The username the user wishes to represent him/her-self in the game. */
-    private final String username;
+    private String username;
     /** The unique authToken assigned to the user after registration was successful. */
-    private final String authToken;
+    private String authToken;
+
+    public RegisterResult() {
+    }
 
     public RegisterResult(String message, String username, String authToken) {
         this.message = message;

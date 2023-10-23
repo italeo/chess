@@ -10,22 +10,23 @@ import service.LoginService;
 import spark.*;
 
 
-public class LoginHandler {
+public class LoginHandler implements Route {
 
-    public Object handle(Request request, Response result) {
+    public Object handle(Request request, Response response) {
         LoginRequest loginRequest = new Gson().fromJson(request.body(), LoginRequest.class);
-        LoginService logoutService = new LoginService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
-        LoginResult loginResult = logoutService.login(loginRequest);
+        LoginService service = new LoginService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
+        LoginResult result = service.login(loginRequest);
+        response.type("application/json");
 
-        if (loginResult.getMessage() == null) {
-            result.status(200);
+        if (result.getMessage() == null) {
+            response.status(200);
         }
-        else if (loginResult.getMessage().equals("Error: unauthorized")) {
-            result.status(401);
+        else if (result.getMessage().equals("Error: unauthorized")) {
+            response.status(401);
         } else {
-            result.status(500);
+            response.status(500);
         }
 
-        return new Gson().toJson(loginResult);
+        return new Gson().toJson(result);
     }
 }

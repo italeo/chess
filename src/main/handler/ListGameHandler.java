@@ -11,23 +11,23 @@ import service.ListGamesService;
 import spark.*;
 
 /** Handles the http request for listing all the games available*/
-public class ListGameHandler {
+public class ListGameHandler implements Route {
 
-    public Object handle(Request request, Response result) {
+    public Object handle(Request request, Response response) {
         ListGamesRequest listGamesRequest = new Gson().fromJson(request.body(), ListGamesRequest.class);
-        ListGamesService listGamesService = new ListGamesService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
-        ListGameResult listGameResult = listGamesService.listAvailableGames(listGamesRequest);
-        result.type("application/json");
+        ListGamesService service = new ListGamesService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
+        ListGameResult result = service.listAvailableGames(listGamesRequest);
+        response.type("application/json");
 
-        if (listGameResult.getMessage() == null) {
-            result.status(200);
+        if (result.getMessage() == null) {
+            response.status(200);
         }
-        else if (listGameResult.getMessage().equals("Error: unathorized")) {
-            result.status(401);
+        else if (result.getMessage().equals("Error: unauthorized")) {
+            response.status(401);
         } else {
-            result.status(500);
+            response.status(500);
         }
 
-        return new Gson().toJson(listGameResult);
+        return new Gson().toJson(result);
     }
 }

@@ -9,26 +9,26 @@ import result.CreateGameResult;
 import service.CreateGameService;
 import spark.*;
 
-public class CreateGameHandler {
+public class CreateGameHandler implements Route {
 
-    public Object handler(Request request, Response result) {
+    public Object handle(Request request, Response response) {
         CreateGameRequest createGameRequest = new Gson().fromJson(request.body(), CreateGameRequest.class);
-        CreateGameService createGameService = new CreateGameService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
-        CreateGameResult createGameResult = createGameService.createGame(createGameRequest);
-        result.type("application/json");
+        CreateGameService service = new CreateGameService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
+        CreateGameResult result = service.createGame(createGameRequest);
+        response.type("application/json");
 
-        if (createGameResult.getMessage() == null) {
-            result.status(200);
+        if (result.getMessage() == null) {
+            response.status(200);
         }
-        else if (createGameResult.getMessage().equals("Error: bad request")) {
-            result.status(400);
+        else if (result.getMessage().equals("Error: bad request")) {
+            response.status(400);
         }
-        else if (createGameResult.getMessage().equals("Error: unauthorized")) {
-            result.status (401);
+        else if (result.getMessage().equals("Error: unauthorized")) {
+            response.status (401);
         } else {
-            result.status(500);
+            response.status(500);
         }
 
-        return new Gson().toJson(result);
+        return new Gson().toJson(response);
     }
 }

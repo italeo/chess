@@ -6,9 +6,9 @@ import com.google.gson.Gson;
 /** This class is responsible to handle the clearing of the results that we get from the web API calls. */
 public class ClearResult {
     /** Message displayed for when clearing is successful */
-    String message;
+    private String message;
     /** Boolean to indicate if clearing was successful or not. */
-    boolean success;
+    private boolean success;
 
     public ClearResult() {
         this.message = new String();

@@ -30,6 +30,14 @@ public class RegisterService {
     }
 
     public RegisterResult register(RegisterRequest request) {
+        RegisterResult result = new RegisterResult();
+
+
         return null;
+    }
+
+    // FINISH IMPLEMENTING THIS FUNCTION
+    private boolean validRequest(RegisterRequest request) {
+        return false;
     }
 }

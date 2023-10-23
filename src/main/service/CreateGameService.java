@@ -32,7 +32,6 @@ public class CreateGameService {
      * @param request - The request from the user to creat a new game.
      * */
     public CreateGameResult createGame(CreateGameRequest request) {
-
         return null;
     }
 }

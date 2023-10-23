@@ -27,10 +27,6 @@ public class JoinGameService {
         this.userDAO = userDAO;
     }
 
-    /** Checks if the game is available or not. */
-    public JoinGameResult isGameAvailable() {
-        return null;
-    }
 
     public JoinGameResult joinGame(JoinGameRequest request) {
         return null;

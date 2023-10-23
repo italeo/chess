@@ -10,24 +10,24 @@ import result.RegisterResult;
 import service.RegisterService;
 import spark.*;
 
-public class RegisterHandler {
-    public Object handle(Request request, Response result) {
+public class RegisterHandler implements Route {
+    public Object handle(Request request, Response response) {
         RegisterRequest registerRequest = new Gson().fromJson(request.body(), RegisterRequest.class);
-        RegisterService registerService = new RegisterService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
-        RegisterResult registerResult = registerService.register(registerRequest);
-        result.type("application/json");
+        RegisterService service = new RegisterService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
+        RegisterResult result = service.register(registerRequest);
+        response.type("application/json");
 
-        if (registerResult.getMessage() == null) {
-            result.status(200);
+        if (result.getMessage() == null) {
+            response.status(200);
         }
-        else if (registerResult.getMessage().equals("Error: bad request")) {
-            result.status(400);
-        } else if (registerResult.getMessage().equals("Error: already taken")) {
-            result.status(403);
+        else if (result.getMessage().equals("Error: bad request")) {
+            response.status(400);
+        } else if (result.getMessage().equals("Error: already taken")) {
+            response.status(403);
         } else {
-            result.status(500);
+            response.status(500);
         }
 
-        return new Gson().toJson(registerResult);
+        return new Gson().toJson(result);
     }
 }
