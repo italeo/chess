@@ -1,7 +1,6 @@
 package service;
 
 import dao.*;
-import model.*;
 import request.*;
 import result.*;
 
@@ -22,11 +21,14 @@ public class LogoutService {
      * */
     public LogoutResult logout(LogoutRequest request) {
         LogoutResult result = new LogoutResult();
-        try {
-            AuthToken authToken = authDAO.find(request.getAuthToken());
 
-            // LOGICAL ERROR HERE??
-            if (authToken != null) {
+        if (!validRequest(request)) {
+            result.setMessage("Error: unauthorized");
+            return result;
+        }
+
+        try {
+            if (authDAO.find(request.getAuthToken()) != null) {
                 authDAO.delete(request.getAuthToken());
             } else {
                 result.setMessage("Error: unauthorized");
@@ -36,6 +38,10 @@ public class LogoutService {
             result.setMessage("Failed to logout");
         }
         return result;
+    }
+
+    private boolean validRequest(LogoutRequest request) {
+        return request.getAuthToken() != null;
     }
 
 }

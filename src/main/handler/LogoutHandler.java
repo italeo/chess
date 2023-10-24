@@ -10,7 +10,7 @@ import spark.*;
 /** Handler for http request from user to logout. */
 public class LogoutHandler implements Route {
     public Object handle(Request request, Response response) {
-        LogoutRequest logoutRequest = new Gson().fromJson(request.body(), LogoutRequest.class);
+        LogoutRequest logoutRequest = new LogoutRequest(request.headers("authorization"));
         LogoutService service = new LogoutService(new AuthTokenDAO());
         LogoutResult result = service.logout(logoutRequest);
         response.type("application/json");
