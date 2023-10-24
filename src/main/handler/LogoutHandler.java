@@ -1,12 +1,9 @@
 package handler;
 
 import com.google.gson.Gson;
-import dao.AuthTokenDAO;
-import dao.GameDAO;
-import dao.UserDAO;
-import request.LogoutRequest;
-import result.LoginResult;
-import result.LogoutResult;
+import dao.*;
+import request.*;
+import result.*;
 import service.LogoutService;
 import spark.*;
 
@@ -14,7 +11,7 @@ import spark.*;
 public class LogoutHandler implements Route {
     public Object handle(Request request, Response response) {
         LogoutRequest logoutRequest = new Gson().fromJson(request.body(), LogoutRequest.class);
-        LogoutService service = new LogoutService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
+        LogoutService service = new LogoutService(new AuthTokenDAO());
         LogoutResult result = service.logout(logoutRequest);
         response.type("application/json");
 

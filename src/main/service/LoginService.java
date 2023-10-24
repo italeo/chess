@@ -1,28 +1,24 @@
 package service;
 
-import dao.AuthTokenDAO;
-import dao.GameDAO;
-import dao.UserDAO;
-import request.LoginRequest;
-import result.LoginResult;
+import dao.*;
+import model.*;
+import request.*;
+import result.*;
+import java.util.UUID;
 
 /** Service responsible to handle user logins. */
 public class LoginService {
 
     /** This variable is the logged-in user's authToken.*/
     private final AuthTokenDAO authDAO;
-    /** This variable is in charge of setting the game object.*/
-    private final GameDAO gameDAO;
     /** This variable is represents the user object in the game.*/
     private final UserDAO userDAO;
 
     /** Constructs the log in service object for the user in the game.
      @param authDAO - The users authorization token in the game after logging in.
-     @param gameDAO - The game object for this specific game.
      @param userDAO - The object responsible for the users information from the database. */
-    public LoginService(AuthTokenDAO authDAO, GameDAO gameDAO, UserDAO userDAO) {
+    public LoginService(AuthTokenDAO authDAO, UserDAO userDAO) {
         this.authDAO = authDAO;
-        this.gameDAO = gameDAO;
         this.userDAO = userDAO;
     }
 
@@ -30,6 +26,46 @@ public class LoginService {
      * @param request - The log in request from the user.
      * */
     public LoginResult login(LoginRequest request) {
-        return null;
+        LoginResult result = new LoginResult();
+
+        if (!validRequest(request)) {
+            result.setMessage("Error: unauthorized");
+            return result;
+        }
+
+        // LOGICAL ERROR HERE?
+        try {
+            User user = userDAO.find(request.getUsername());
+
+            if (user != null && user.getUsername().equals(request.getUsername()) &&
+                    user.getPassword().equals(request.getPassword())) {
+
+                AuthToken authToken = generateAuthToken(user.getUsername());
+                authDAO.insert(authToken);
+
+                result.setUsername(user.getUsername());
+
+                result.setAuthToken(authToken.getAuthToken());
+            } else {
+                result.setMessage("Error: unauthorized");
+            }
+
+        } catch (DataAccessException exc) {
+            exc.printStackTrace();
+            result.setMessage("Error: server error");
+        }
+
+
+        return result;
+    }
+
+    private AuthToken generateAuthToken(String username) {
+        String token = UUID.randomUUID().toString();
+        return new AuthToken(token, username);
+    }
+
+    private boolean validRequest(LoginRequest request) {
+        return request.getPassword() != null &&
+                request.getUsername() != null;
     }
 }

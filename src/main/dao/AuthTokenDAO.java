@@ -1,20 +1,18 @@
 package dao;
 
 import model.AuthToken;
-
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
 /** Responsible for accessing the data for the AuthToken */
 public class AuthTokenDAO {
-    private final Map<String, AuthToken> authTokenMap;
+    private static Map<String, AuthToken> authTokenMap = new HashMap<>();
 
     /** Constructs the connection between the Server and the database to access the information needed for the authToken
      //* @param conn - associated connection for data access.
      * */
     public AuthTokenDAO() {
-        this.authTokenMap = new HashMap<>();
+        //this.authTokenMap = new HashMap<>();
     }
 
     /** This function will insert an authToken for a user creates a new account or logs in.

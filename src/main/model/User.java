@@ -9,11 +9,16 @@ public class User {
     /** The user's email address.*/
     private String email;
 
+    public User() {
+    }
+
     /** Constructs the user information that goes into the database.
      * @param username - The user's name in the game.
      * @param email - The user's email address.
      * @param password - The users password to their account.
      * */
+
+
     public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
@@ -30,5 +35,17 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

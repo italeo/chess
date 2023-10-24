@@ -8,16 +8,32 @@ public class RegisterResult {
     private String username;
     /** The unique authToken assigned to the user after registration was successful. */
     private String authToken;
+    private String email;
+    private String password;
 
     public RegisterResult() {
     }
 
-    public RegisterResult(String message, String username, String authToken) {
+    public RegisterResult(String message, String username, String authToken, String email, String password) {
         this.message = message;
         this.username = username;
         this.authToken = authToken;
+        this.email = email;
+        this.password = password;
     }
 
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
 
     public String getMessage() {
         return message;
@@ -29,5 +45,21 @@ public class RegisterResult {
 
     public String getAuthToken() {
         return authToken;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

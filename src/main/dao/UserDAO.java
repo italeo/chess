@@ -1,9 +1,6 @@
 package dao;
 
-import model.AuthToken;
 import model.User;
-
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,13 +8,13 @@ import java.util.Map;
 public class UserDAO {
     /** Used to establish the connection between Server and database.*/
    // private final Connection conn;
-    private final Map<String, User> userMap;
+    private final static Map<String, User> userMap = new HashMap<>();
 
     /** Constructs the connection between the database and the Server.
      * /@param conn - Associated connection for data access.
      * */
     public UserDAO() {
-        this.userMap = new HashMap<>();
+        //this.userMap = new HashMap<>();
     }
 
     /** Inserts a user into the database when a new user has registered or when the user logs into the game.

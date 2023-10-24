@@ -2,7 +2,6 @@ package handler;
 
 import com.google.gson.Gson;
 import dao.AuthTokenDAO;
-import dao.GameDAO;
 import dao.UserDAO;
 import request.LoginRequest;
 import result.LoginResult;
@@ -14,7 +13,7 @@ public class LoginHandler implements Route {
 
     public Object handle(Request request, Response response) {
         LoginRequest loginRequest = new Gson().fromJson(request.body(), LoginRequest.class);
-        LoginService service = new LoginService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
+        LoginService service = new LoginService(new AuthTokenDAO(), new UserDAO());
         LoginResult result = service.login(loginRequest);
         response.type("application/json");
 

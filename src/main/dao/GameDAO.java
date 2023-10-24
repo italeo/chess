@@ -1,10 +1,7 @@
 package dao;
 
-import chess.ChessGame;
 import model.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /** Responsible for accessing the Games that are available from the database. */
@@ -12,14 +9,14 @@ public class GameDAO {
 
     /** Establishes the connection between the Server and the database .*/
     //private final Connection conn;
-    private final Map<Integer, Game> gameMap;
+    private static Map<Integer, Game> gameMap = new HashMap<>();
 
     /** Constructs the connection between the Server and the database to access the information needed for the games available
      * in the database
      * /@param conn - associated connection for data access.
      * */
     public GameDAO() {
-        this.gameMap = new HashMap<>();
+        //this.gameMap = new HashMap<>();
     }
 
     /** This function is responsible for inserting games that we have created into the database.

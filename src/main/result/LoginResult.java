@@ -6,10 +6,25 @@ public class LoginResult {
     private String message;
     private String username;
 
-    public LoginResult(String username, String authToken, String message) {
-        this.username = username;
+    public LoginResult() {
+    }
+
+    public LoginResult(String authToken, String message, String username) {
         this.authToken = authToken;
         this.message = message;
+        this.username = username;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getUsername() {

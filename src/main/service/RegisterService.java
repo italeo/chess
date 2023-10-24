@@ -1,43 +1,82 @@
 package service;
 
 import dao.AuthTokenDAO;
-import dao.GameDAO;
+import dao.DataAccessException;
 import dao.UserDAO;
+import model.AuthToken;
+import model.User;
 import request.RegisterRequest;
 import result.RegisterResult;
 
+import java.util.UUID;
+
 /** Service for new user registration. */
 public class RegisterService {
-    /** Constructs are new user with the provided username, password and email.
-     * */
 
     /** This variable is the logged-in user's authToken.*/
-    private final AuthTokenDAO authDAO;
-    /** This variable is in charge of setting the game object.*/
-    private final GameDAO gameDAO;
+    private AuthTokenDAO authDAO;
     /** This variable is represents the user object in the game.*/
-    private final UserDAO userDAO;
+    private UserDAO userDAO;
+
+    public RegisterService() {
+    }
 
     /** Constructs the registering object when a new user is trying to create an account.
      * @param authDAO - The authToken assigned from the database.
      * @param userDAO - The user object that is stored in the database.
-     * @param gameDAO - The game object containing the information for the requested game that is stored in the database.
      * */
-    public RegisterService(AuthTokenDAO authDAO, GameDAO gameDAO, UserDAO userDAO) {
+
+
+    public RegisterService(AuthTokenDAO authDAO, UserDAO userDAO) {
         this.authDAO = authDAO;
-        this.gameDAO = gameDAO;
         this.userDAO = userDAO;
     }
 
     public RegisterResult register(RegisterRequest request) {
         RegisterResult result = new RegisterResult();
+        User newUser = new User();
 
+        if (!validRequest(request)) {
+            result.setMessage("Error: bad request");
+            return result;
+        }
 
-        return null;
+        try {
+            newUser.setUsername(request.getUsername());
+            newUser.setPassword(request.getPassword());
+            newUser.setEmail(request.getEmail());
+            AuthToken authToken = generateAuthToken(request.getUsername());
+
+            User existingUser = userDAO.find(newUser.getUsername());
+
+            // LOGICAL ERROR HERE?
+            if (existingUser == null) {
+
+                userDAO.insert(newUser);
+                authDAO.insert(authToken);
+
+                result.setUsername(newUser.getUsername());
+                result.setPassword(newUser.getPassword());
+                result.setEmail(newUser.getEmail());
+                result.setAuthToken(authToken.getAuthToken());
+
+            } else {
+                result.setMessage("Error: already taken");
+            }
+        } catch (DataAccessException exc) {
+            result.setMessage("Failed to register the user: " + request.getUsername());
+        }
+        return result;
     }
 
-    // FINISH IMPLEMENTING THIS FUNCTION
     private boolean validRequest(RegisterRequest request) {
-        return false;
+        return request.getEmail() != null &&
+                request.getUsername() != null &&
+                request.getPassword() != null;
+    }
+
+    private AuthToken generateAuthToken(String username) {
+        String token = UUID.randomUUID().toString();
+        return new AuthToken(token, username);
     }
 }
