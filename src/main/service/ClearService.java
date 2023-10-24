@@ -1,10 +1,7 @@
 package service;
 
-import dao.AuthTokenDAO;
-import dao.DataAccessException;
-import dao.GameDAO;
-import dao.UserDAO;
-import result.ClearResult;
+import dao.*;
+import result.*;
 
 /** This class is responsible to handle the clearing of the game/board
  * from the results that's returned from the results class. */

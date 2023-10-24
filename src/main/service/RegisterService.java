@@ -1,12 +1,9 @@
 package service;
 
-import dao.AuthTokenDAO;
-import dao.DataAccessException;
-import dao.UserDAO;
-import model.AuthToken;
-import model.User;
-import request.RegisterRequest;
-import result.RegisterResult;
+import dao.*;
+import model.*;
+import request.*;
+import result.*;
 
 import java.util.UUID;
 

@@ -3,15 +3,19 @@ package request;
 /** Represents the request to create a new game. */
 public class CreateGameRequest {
 
-    private String game;
+    private String gameName;
+    private String authToken;
 
-
-
-    public CreateGameRequest(String game) {
-       this.game = game;
+    public CreateGameRequest(String gameName, String authToken) {
+        this.gameName = gameName;
+        this.authToken = authToken;
     }
 
-    public String getGame() {
-        return game;
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public String getGameName() {
+        return gameName;
     }
 }

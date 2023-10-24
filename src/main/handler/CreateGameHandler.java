@@ -13,7 +13,7 @@ public class CreateGameHandler implements Route {
 
     public Object handle(Request request, Response response) {
         CreateGameRequest createGameRequest = new Gson().fromJson(request.body(), CreateGameRequest.class);
-        CreateGameService service = new CreateGameService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
+        CreateGameService service = new CreateGameService(new AuthTokenDAO(), new GameDAO());
         CreateGameResult result = service.createGame(createGameRequest);
         response.type("application/json");
 

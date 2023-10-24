@@ -16,6 +16,9 @@ public class Game {
     /** The implementation of the game. */
     private ChessGame game;
 
+    public Game() {
+    }
+
     /** Constructs a game with default setting or basic details.
      * @param gameID - The game identifier
      * @param whiteUsername - The white player identifier.
@@ -23,6 +26,8 @@ public class Game {
      * @param gameName - A JSON representation of the chess game state.
      * @param game - The actual game.
      * */
+
+
     public Game(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {
         this.gameID = gameID;
         this.whiteUsername = whiteUsername;
