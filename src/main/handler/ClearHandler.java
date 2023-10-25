@@ -13,7 +13,7 @@ public class ClearHandler implements Route {
 
     //
     public Object handle(Request request, Response response) {
-        ClearService service = new ClearService(new GameDAO(), new UserDAO());
+        ClearService service = new ClearService(new GameDAO(), new UserDAO(), new AuthTokenDAO());
         ClearResult result = service.clear();
         response.type("application/json");
 

@@ -6,9 +6,9 @@ public class CreateGameRequest {
     private String gameName;
     private String authToken;
 
-    public CreateGameRequest(String gameName, String authToken) {
-        this.gameName = gameName;
+    public CreateGameRequest(String authToken, String gameName) {
         this.authToken = authToken;
+        this.gameName = gameName;
     }
 
     public String getAuthToken() {

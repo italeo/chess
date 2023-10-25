@@ -11,14 +11,16 @@ public class ClearService {
     private final GameDAO gameDAO;
     /** This variable is represents the user object in the game.*/
     private final UserDAO userDAO;
+    private final AuthTokenDAO authTokenDAO;
 
     /** Constructs the service necessary to clear the game according to the users request.
      * @param userDAO - The user object containing the necessary information.
      * @param gameDAO - The game object that we are trying to clear.
      * */
-    public ClearService(GameDAO gameDAO, UserDAO userDAO) {
+    public ClearService(GameDAO gameDAO, UserDAO userDAO, AuthTokenDAO authTokenDAO) {
         this.gameDAO = gameDAO;
         this.userDAO = userDAO;
+        this.authTokenDAO = authTokenDAO;
     }
 
     /**
@@ -30,6 +32,7 @@ public class ClearService {
      try {
          gameDAO.clear();
          userDAO.clear();
+         authTokenDAO.clear();
 
          result.setSuccess(true);
          result.setMessage("User and Game successfully cleared!");

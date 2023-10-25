@@ -1,10 +1,10 @@
 package service;
 
-import dao.AuthTokenDAO;
-import dao.GameDAO;
-import dao.UserDAO;
-import request.ListGamesRequest;
-import result.ListGameResult;
+import dao.*;
+import request.*;
+import result.*;
+import model.*;
+import java.util.*;
 
 /** The service responsible for listing all chess games available. */
 public class ListGamesService {
@@ -13,24 +13,47 @@ public class ListGamesService {
     private final AuthTokenDAO authDAO;
     /** This variable is in charge of setting the game object.*/
     private final GameDAO gameDAO;
-    /** This variable is represents the user object in the game.*/
-    private final UserDAO userDAO;
 
     /**Constructs the object responsible to list out the games.
      * @param gameDAO - The object containing the necessary information about the game from the database.
-     * @param userDAO - The object stores the information for the logged-in user.
      * @param authDAO - The authorization token from the database.
      * */
-    public ListGamesService(AuthTokenDAO authDAO, GameDAO gameDAO, UserDAO userDAO) {
+    public ListGamesService(AuthTokenDAO authDAO, GameDAO gameDAO) {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
-        this.userDAO = userDAO;
     }
 
     /** This function lists the games that are available from the database.
      * @param request - Request from the user to get the list of games.
      * */
     public ListGameResult listAvailableGames(ListGamesRequest request) {
-        return null;
+        ListGameResult result = new ListGameResult();
+        List<ListGameSuccessResult> results = new ArrayList<>();
+
+
+        try {
+            if (authDAO.find(request.getAuthToken()) != null) {
+                List<Game> gamesAvailable = gameDAO.getAllGames();
+
+                for (Game game : gamesAvailable) {
+                    ListGameSuccessResult gamesResult = new ListGameSuccessResult();
+
+                    gamesResult.setGameID(game.getGameID());
+                    gamesResult.setGame(game.getGameName());
+                    gamesResult.setBlackUsername(game.getBlackUsername());
+                    gamesResult.setWhiteUsername(game.getWhiteUsername());
+
+                    results.add(gamesResult);
+                }
+
+                result.setGames(results);
+
+            }
+
+        } catch (Exception exc) {
+            result.setMessage("Error: unauthorized");
+            return result;
+        }
+        return result;
     }
 }

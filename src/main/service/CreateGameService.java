@@ -27,26 +27,34 @@ public class CreateGameService {
      * */
     public CreateGameResult createGame(CreateGameRequest request) {
         CreateGameResult result = new CreateGameResult();
+        Game newGame = new Game();
         int gameID;
 
         if (!validRequest(request)) {
             result.setMessage("Error: bad request");
             return result;
         }
-
-        result.setGameName(result.getGameName());
-
         try {
 
-            // Create a gameID
-            Random random = new Random();
-            gameID = random.nextInt(1000);
-            Game newGame = new Game();
-            result.setGameID(gameID);
-            gameDAO.insert(newGame);
+            if (authDAO.find(request.getAuthToken()) != null) {
 
+                Random random = new Random();
+                gameID = random.nextInt(10000);
+
+                newGame.setGameID(gameID);
+                gameDAO.insert(newGame);
+
+                result.setGameName(request.getGameName());
+                result.setGameID(gameID);
+
+            } else {
+                result.setMessage("Error: unauthorized");
+                result.setGameID(null);
+                return result;
+            }
         } catch (Exception exc) {
             result.setMessage("Error: Server error");
+            return result;
         }
 
 
@@ -54,6 +62,7 @@ public class CreateGameService {
     }
 
     private boolean validRequest(CreateGameRequest request) {
-        return request.getGameName() != null;
+        return request.getGameName() != null &&
+                request.getAuthToken() != null;
     }
 }

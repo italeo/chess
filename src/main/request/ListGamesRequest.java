@@ -4,5 +4,17 @@ package request;
  * */
 
 public class ListGamesRequest {
-    /** The unique token assigned to the user during log in or registration. */
+
+    private String authToken;
+    public ListGamesRequest(String authToken) {
+        this.authToken = authToken;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
 }

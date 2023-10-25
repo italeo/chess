@@ -1,22 +1,23 @@
 package handler;
-
 import com.google.gson.Gson;
-import dao.AuthTokenDAO;
-import dao.GameDAO;
-import dao.UserDAO;
-import request.JoinGameRequest;
-import result.JoinGameResult;
-import service.JoinGameService;
+import com.google.gson.JsonObject;
+import dao.*;
+import request.*;
+import result.*;
+import service.*;
 import spark.*;
-
-import javax.xml.transform.Result;
 
 /** Responsible for handling the http request from a user to join a game. */
 public class JoinGameHandler implements Route {
 
     public Object handle(Request request, Response response) {
-        JoinGameRequest joinGameRequest = new Gson().fromJson(request.body(), JoinGameRequest.class);
-        JoinGameService service = new JoinGameService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
+
+        JsonObject body = new Gson().fromJson(request.body(), JsonObject.class);
+        int gameID = body.get("gameID").getAsInt();
+        String playerColor = body.get("playerColor").getAsString();
+
+        JoinGameRequest joinGameRequest = new JoinGameRequest(request.headers("authorization"), playerColor, gameID);
+        JoinGameService service = new JoinGameService(new AuthTokenDAO(), new GameDAO());
         JoinGameResult result = service.joinGame(joinGameRequest);
         response.type("application/json");
 
@@ -29,11 +30,11 @@ public class JoinGameHandler implements Route {
         else if (result.getMessage().equals("Error: unauthorized")) {
             response.status (401);
         }
-        else if (result.getMessage().equals("Error: Already taken")) {
-
+        else if (result.getMessage().equals("Error: already taken")) {
+            response.status(403);
         }else {
             response.status(500);
         }
-        return new Gson().toJson(response);
+        return new Gson().toJson(result);
     }
 }

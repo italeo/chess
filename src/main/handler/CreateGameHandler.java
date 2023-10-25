@@ -1,18 +1,22 @@
 package handler;
 
 import com.google.gson.Gson;
-import dao.AuthTokenDAO;
-import dao.GameDAO;
-import dao.UserDAO;
-import request.CreateGameRequest;
-import result.CreateGameResult;
-import service.CreateGameService;
+import com.google.gson.JsonObject;
+import dao.*;
+import request.*;
+import result.*;
+import service.*;
 import spark.*;
+
 
 public class CreateGameHandler implements Route {
 
     public Object handle(Request request, Response response) {
-        CreateGameRequest createGameRequest = new Gson().fromJson(request.body(), CreateGameRequest.class);
+
+        JsonObject body = new Gson().fromJson(request.body(), JsonObject.class);
+        String gameName = body.get("gameName").getAsString();
+
+        CreateGameRequest createGameRequest = new CreateGameRequest(request.headers("authorization"), gameName);
         CreateGameService service = new CreateGameService(new AuthTokenDAO(), new GameDAO());
         CreateGameResult result = service.createGame(createGameRequest);
         response.type("application/json");
@@ -29,6 +33,6 @@ public class CreateGameHandler implements Route {
             response.status(500);
         }
 
-        return new Gson().toJson(response);
+        return new Gson().toJson(result);
     }
 }

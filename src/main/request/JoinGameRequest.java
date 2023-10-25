@@ -4,15 +4,22 @@ import chess.ChessGame;
 
 /** Represents the request of joining a game. */
 public class JoinGameRequest {
-    private ChessGame.TeamColor playerColor;
+    private String playerColor;
     private int gameID;
+    private String authToken;
 
-    public JoinGameRequest(ChessGame.TeamColor playerColor, int gameID) {
+
+    public JoinGameRequest(String authToken, String playerColor, int gameID) {
+        this.authToken = authToken;
         this.playerColor = playerColor;
         this.gameID = gameID;
     }
 
-    public ChessGame.TeamColor getPlayerColor() {
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public String getPlayerColor() {
         return playerColor;
     }
 

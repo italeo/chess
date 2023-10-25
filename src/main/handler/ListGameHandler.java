@@ -2,9 +2,7 @@ package handler;
 
 
 import com.google.gson.Gson;
-import dao.AuthTokenDAO;
-import dao.GameDAO;
-import dao.UserDAO;
+import dao.*;
 import request.ListGamesRequest;
 import result.ListGameResult;
 import service.ListGamesService;
@@ -14,8 +12,8 @@ import spark.*;
 public class ListGameHandler implements Route {
 
     public Object handle(Request request, Response response) {
-        ListGamesRequest listGamesRequest = new Gson().fromJson(request.body(), ListGamesRequest.class);
-        ListGamesService service = new ListGamesService(new AuthTokenDAO(), new GameDAO(), new UserDAO());
+        ListGamesRequest listGamesRequest = new ListGamesRequest(request.headers("authorization"));
+        ListGamesService service = new ListGamesService(new AuthTokenDAO(), new GameDAO());
         ListGameResult result = service.listAvailableGames(listGamesRequest);
         response.type("application/json");
 
