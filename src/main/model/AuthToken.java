@@ -9,10 +9,15 @@ public class AuthToken {
     /** The user's username, used by other players to identify the user. */
     private String username;
 
+    public AuthToken() {
+    }
+
     /** Constructs the authToken object the user gets when logged into the game
      * @param authToken - The unique token given to the user.
      * @param username - The username associate with the user.
      * */
+
+
     public AuthToken(String authToken, String username) {
         this.authToken = authToken;
         this.username = username;
@@ -20,6 +25,14 @@ public class AuthToken {
 
     public String getAuthToken() {
         return authToken;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getUsername() {
