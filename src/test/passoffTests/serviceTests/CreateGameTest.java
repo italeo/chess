@@ -1,4 +1,4 @@
-package passoffTests.serviceTest;
+package passoffTests.serviceTests;
 
 import dao.*;
 import model.*;

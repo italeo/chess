@@ -9,14 +9,19 @@ import result.*;
 public class JoinGameService {
 
     /** This variable is the logged-in user's authToken.*/
-    private final AuthTokenDAO authDAO;
+    private AuthTokenDAO authDAO;
     /** This variable is in charge of setting the game object.*/
-    private final GameDAO gameDAO;
+    private GameDAO gameDAO;
+
+    public JoinGameService() {
+    }
 
     /** Constructs the object of necessary for the user to join the game from the request and produced results.
      * @param authDAO - The users auth token from the database.
      * @param gameDAO - The game object containing the information about the requested game.
      * */
+
+
     public JoinGameService(AuthTokenDAO authDAO, GameDAO gameDAO) {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
@@ -38,43 +43,50 @@ public class JoinGameService {
            if (authDAO.find(request.getAuthToken()) != null &&
                    gameDAO.findGameByID(request.getGameID()) != null) {
 
-
-               String teamColor = request.getPlayerColor(); // either BLACK, WHITE or EMPTY
+               String teamColor = request.getPlayerColor();
 
                if (teamColor == null) {
+                   result.setSuccess(true);
                    return result;
 
                } else {
 
                    Game game = gameDAO.findGameByID(request.getGameID());
 
-
-                   //IMPLEMENT check if the team color is already taken
                    if (teamColor.equals("WHITE")) {
                        if (game.getWhiteUsername() == null) {
                            game.setWhiteUsername(authToken.getUsername());
+                           result.setSuccess(true);
                            gameDAO.updateGame(game);
 
                        } else {
                            result.setMessage("Error: already taken");
+                           result.setSuccess(false);
                            return result;
                        }
                    } else {
                        if (game.getBlackUsername() == null) {
                            game.setBlackUsername(authToken.getUsername());
+                           result.setSuccess(true);
                            gameDAO.updateGame(game);
 
                        } else {
+                           result.setSuccess(false);
                            result.setMessage("Error: already taken");
                            return result;
                        }
                    }
                }
+
+               result.setSuccess(true);
+
            } else {
+               result.setSuccess(false);
                result.setMessage("Error: unauthorized");
                return result;
            }
         } catch (Exception exc) {
+            result.setSuccess(false);
             result.setMessage("Error: unauthorized");
         }
         return result;

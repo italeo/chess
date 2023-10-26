@@ -3,16 +3,22 @@ package result;
 /** This class is responsible for the result of the join game request. */
 public class JoinGameResult {
     private String message;
+    private boolean success;
 
     public JoinGameResult() {
     }
 
-    public JoinGameResult(String message) {
+    public JoinGameResult(String message, boolean success) {
         this.message = message;
+        this.success = success;
     }
 
-    public void setGame(String message) {
-        this.message = message;
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
     public String getMessage() {
