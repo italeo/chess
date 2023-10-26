@@ -35,6 +35,7 @@ public class RegisterService {
 
         if (!validRequest(request)) {
             result.setMessage("Error: bad request");
+            result.setSuccess(false);
             return result;
         }
 
@@ -56,9 +57,12 @@ public class RegisterService {
                 result.setPassword(newUser.getPassword());
                 result.setEmail(newUser.getEmail());
                 result.setAuthToken(authToken.getAuthToken());
+                result.setSuccess(true);
 
             } else {
                 result.setMessage("Error: already taken");
+                result.setSuccess(false);
+                return result;
             }
         } catch (DataAccessException exc) {
             result.setMessage("Failed to register the user: " + request.getUsername());

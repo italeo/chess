@@ -10,18 +10,27 @@ public class RegisterResult {
     private String authToken;
     private String email;
     private String password;
+    private boolean success;
 
     public RegisterResult() {
     }
 
-    public RegisterResult(String message, String username, String authToken, String email, String password) {
+    public RegisterResult(String message, String username, String authToken, String email, String password, boolean success) {
         this.message = message;
         this.username = username;
         this.authToken = authToken;
         this.email = email;
         this.password = password;
+        this.success = success;
     }
 
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
 
     public void setMessage(String message) {
         this.message = message;
