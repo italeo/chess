@@ -5,6 +5,7 @@ public class CreateGameResult {
    private Integer gameID;
    private String message;
    private String gameName;
+   private boolean success;
 
     public CreateGameResult() {
     }
@@ -16,10 +17,23 @@ public class CreateGameResult {
 
 
 
-    public CreateGameResult(Integer gameID, String message, String gameName) {
+    public CreateGameResult(Integer gameID, String message, String gameName, boolean success) {
         this.gameID = gameID;
         this.message = message;
         this.gameName = gameName;
+        this.success = success;
+    }
+
+    public String getGameName() {
+        return gameName;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
     public Integer getGameID() {

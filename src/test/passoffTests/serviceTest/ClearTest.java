@@ -22,6 +22,7 @@ public class ClearTest {
         authTokenDAO = new AuthTokenDAO();
         userDAO = new UserDAO();
         gameDAO = new GameDAO();
+
         ChessGame chessGame = new ChessGameImpl();
 
         //Create user

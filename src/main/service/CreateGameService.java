@@ -32,6 +32,7 @@ public class CreateGameService {
 
         if (!validRequest(request)) {
             result.setMessage("Error: bad request");
+            result.setSuccess(false);
             return result;
         }
         try {
@@ -47,10 +48,12 @@ public class CreateGameService {
 
                 result.setGameName(request.getGameName());
                 result.setGameID(gameID);
+                result.setSuccess(true);
 
             } else {
                 result.setMessage("Error: unauthorized");
                 result.setGameID(null);
+                result.setSuccess(false);
                 return result;
             }
         } catch (Exception exc) {
