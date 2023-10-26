@@ -3,16 +3,16 @@ package result;
 public class ListGameSuccessResult {
     private String whiteUsername;
     private String blackUsername;
-    private String game;
+    private String gameName;
     private int gameID;
 
     public ListGameSuccessResult() {
     }
 
-    public ListGameSuccessResult(String whiteUsername, String blackUsername, String game, int gameID) {
+    public ListGameSuccessResult(String whiteUsername, String blackUsername, String gameName, int gameID) {
         this.whiteUsername = whiteUsername;
         this.blackUsername = blackUsername;
-        this.game = game;
+        this.gameName = gameName;
         this.gameID = gameID;
     }
 
@@ -24,8 +24,8 @@ public class ListGameSuccessResult {
         this.blackUsername = blackUsername;
     }
 
-    public void setGame(String game) {
-        this.game = game;
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
     }
 
     public void setGameID(int gameID) {
@@ -40,8 +40,8 @@ public class ListGameSuccessResult {
         return blackUsername;
     }
 
-    public String getGame() {
-        return game;
+    public String getGameName() {
+        return gameName;
     }
 
     public int getGameID() {

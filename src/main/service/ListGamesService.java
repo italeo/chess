@@ -38,7 +38,7 @@ public class ListGamesService {
                     ListGameSuccessResult gamesResult = new ListGameSuccessResult();
 
                     gamesResult.setGameID(game.getGameID());
-                    gamesResult.setGame(game.getGameName());
+                    gamesResult.setGameName(game.getGameName());
                     gamesResult.setBlackUsername(game.getBlackUsername());
                     gamesResult.setWhiteUsername(game.getWhiteUsername());
 
