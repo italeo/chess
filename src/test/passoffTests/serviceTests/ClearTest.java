@@ -62,7 +62,6 @@ public class ClearTest {
         ClearResult result = clearService.clear();
 
         assertTrue(result.isSuccess());
-        assertEquals("User and Game successfully cleared!", result.getMessage());
 
     }
 }

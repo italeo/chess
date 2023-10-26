@@ -35,6 +35,8 @@ public class RegisterTest {
         RegisterResult result = registerService.register(request);
 
         assertTrue(result.isSuccess());
+        assertEquals(request.getUsername(), result.getUsername());
+        assertNotNull(result.getAuthToken());
     }
 
     @Test

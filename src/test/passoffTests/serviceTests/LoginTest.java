@@ -38,6 +38,8 @@ public class LoginTest {
         LoginResult result = loginService.login(request);
 
         assertTrue(result.isSuccess());
+        assertEquals(request.getUsername(), result.getUsername());
+        assertNotNull(result.getAuthToken());
     }
 
     @Test

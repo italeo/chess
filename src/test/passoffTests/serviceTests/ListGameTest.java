@@ -51,12 +51,13 @@ public class ListGameTest {
         ListGameResult result = listGamesService.listAvailableGames(request);
 
         assertTrue(result.isSuccess());
+        assertNotNull(result.getGames());
 
     }
 
     @Test
     public void listGameTest_Unauthorized() throws DataAccessException {
-        AuthToken token = new AuthToken(null, "italeo");
+        AuthToken token = new AuthToken("validToken", "italeo");
         authTokenDAO.insert(token);
 
         Game game1 = new Game(1223, null, null, "chessGame", chessGame);
@@ -67,7 +68,7 @@ public class ListGameTest {
         gameDAO.insert(game2);
         gameDAO.insert(game3);
 
-        ListGamesRequest request = new ListGamesRequest("validToken");
+        ListGamesRequest request = new ListGamesRequest(null);
 
         ListGameResult result = listGamesService.listAvailableGames(request);
 
