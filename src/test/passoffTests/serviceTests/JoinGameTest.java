@@ -14,7 +14,6 @@ import service.JoinGameService;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class JoinGameTest {
-
     private AuthTokenDAO authTokenDAO;
     private GameDAO gameDAO;
     private JoinGameService joinGameService;

@@ -29,6 +29,7 @@ public class ListGamesService {
     public ListGameResult listAvailableGames(ListGamesRequest request) {
         ListGameResult result = new ListGameResult();
         List<ListGameSuccessResult> results = new ArrayList<>();
+        result.setSuccess(true);
 
         try {
             if (authDAO.find(request.getAuthToken()) != null) {
@@ -49,10 +50,12 @@ public class ListGamesService {
 
             } else {
                 result.setMessage("Error: unauthorized");
+                result.setSuccess(false);
                 return result;
             }
 
         } catch (Exception exc) {
+            result.setSuccess(false);
             result.setMessage("Error: unauthorized");
             return result;
         }
