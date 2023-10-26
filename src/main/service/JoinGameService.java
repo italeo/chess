@@ -38,12 +38,11 @@ public class JoinGameService {
            if (authDAO.find(request.getAuthToken()) != null &&
                    gameDAO.findGameByID(request.getGameID()) != null) {
 
+
                String teamColor = request.getPlayerColor(); // either BLACK, WHITE or EMPTY
 
                if (teamColor == null) {
-                   //Player is an observer
-                   // IMPLEMENT THE WATCH CODE
-                   gameDAO.addObserver(request.getAuthToken());
+                   return result;
 
                } else {
 

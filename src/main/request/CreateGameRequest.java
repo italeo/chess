@@ -15,6 +15,10 @@ public class CreateGameRequest {
         return authToken;
     }
 
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
+
     public String getGameName() {
         return gameName;
     }

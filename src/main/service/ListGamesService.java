@@ -30,7 +30,6 @@ public class ListGamesService {
         ListGameResult result = new ListGameResult();
         List<ListGameSuccessResult> results = new ArrayList<>();
 
-
         try {
             if (authDAO.find(request.getAuthToken()) != null) {
                 List<Game> gamesAvailable = gameDAO.getAllGames();
@@ -48,6 +47,9 @@ public class ListGamesService {
 
                 result.setGames(results);
 
+            } else {
+                result.setMessage("Error: unauthorized");
+                return result;
             }
 
         } catch (Exception exc) {

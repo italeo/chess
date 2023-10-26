@@ -9,7 +9,6 @@ public class GameDAO {
     /** Establishes the connection between the Server and the database .*/
     //private final Connection conn;
     private static Map<Integer, Game> gameMap = new HashMap<>();
-    private static ArrayList<String> observerList = new ArrayList<>();
 
     /** Constructs the connection between the Server and the database to access the information needed for the games available
      * in the database
@@ -56,10 +55,6 @@ public class GameDAO {
 
     public void removeGame(Game game) throws DataAccessException {
         gameMap.remove(game.getGameID(), game);
-    }
-
-    public void addObserver(String authToken) throws DataAccessException {
-        observerList.add(authToken);
     }
 
     public List<Game> getAllGames() {

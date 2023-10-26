@@ -42,6 +42,7 @@ public class CreateGameService {
                 gameID = random.nextInt(10000);
 
                 newGame.setGameID(gameID);
+                newGame.setGameName(request.getGameName());
                 gameDAO.insert(newGame);
 
                 result.setGameName(request.getGameName());

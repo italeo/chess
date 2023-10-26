@@ -12,11 +12,10 @@ public class JoinGameHandler implements Route {
 
     public Object handle(Request request, Response response) {
 
-        JsonObject body = new Gson().fromJson(request.body(), JsonObject.class);
-        int gameID = body.get("gameID").getAsInt();
-        String playerColor = body.get("playerColor").getAsString();
 
-        JoinGameRequest joinGameRequest = new JoinGameRequest(request.headers("authorization"), playerColor, gameID);
+        JoinGameRequest joinGameRequest = new Gson().fromJson(request.body(), JoinGameRequest.class);
+
+        joinGameRequest.setAuthToken(request.headers("authorization"));
         JoinGameService service = new JoinGameService(new AuthTokenDAO(), new GameDAO());
         JoinGameResult result = service.joinGame(joinGameRequest);
         response.type("application/json");

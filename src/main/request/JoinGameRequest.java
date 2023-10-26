@@ -23,6 +23,10 @@ public class JoinGameRequest {
         return playerColor;
     }
 
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
+
     public int getGameID() {
         return gameID;
     }
