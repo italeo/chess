@@ -5,14 +5,24 @@ public class LoginResult {
     private String authToken;
     private String message;
     private String username;
+    private boolean success;
 
     public LoginResult() {
     }
 
-    public LoginResult(String authToken, String message, String username) {
+    public LoginResult(String authToken, String message, String username, boolean success) {
         this.authToken = authToken;
         this.message = message;
         this.username = username;
+        this.success = success;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
     public void setAuthToken(String authToken) {

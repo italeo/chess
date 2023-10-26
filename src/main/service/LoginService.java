@@ -33,7 +33,6 @@ public class LoginService {
             return result;
         }
 
-        // LOGICAL ERROR HERE?
         try {
             User user = userDAO.find(request.getUsername());
 
@@ -44,17 +43,18 @@ public class LoginService {
                 authDAO.insert(authToken);
 
                 result.setUsername(user.getUsername());
-
                 result.setAuthToken(authToken.getAuthToken());
+                result.setSuccess(true);
             } else {
+                result.setSuccess(false);
                 result.setMessage("Error: unauthorized");
+                return result;
             }
 
         } catch (DataAccessException exc) {
             exc.printStackTrace();
             result.setMessage("Error: server error");
         }
-
 
         return result;
     }
