@@ -40,13 +40,14 @@ public class JoinGameTest {
         AuthToken token = new AuthToken("validToken", "italeo");
         authTokenDAO.insert(token);
 
-        Game game = new Game(1223, "italeo", "Kane", "chessGame", chessGame);
+        Game game = new Game(1223, null, null, "chessGame", chessGame);
         gameDAO.insert(game);
 
         JoinGameRequest request = new JoinGameRequest("validToken", "BLACK", 1223);
         JoinGameResult result = joinGameService.joinGame(request);
 
         assertTrue(result.isSuccess());
+
     }
 
     @Test
@@ -71,11 +72,13 @@ public class JoinGameTest {
 
     @Test
     public void joinGameTest_Taken() throws DataAccessException{
-        Game game1 = new Game(1234, "white", "black", "Championship", chessGame);
-        game1.setWhiteUsername("italeo");
-        gameDAO.insert(game1);
+        AuthToken token = new AuthToken("validToken", "italeo");
+        authTokenDAO.insert(token);
 
-        JoinGameRequest request = new JoinGameRequest("valid_token-234-5676-dfg-6g", "WHITE", 1235);
+        Game game = new Game(1234, "white", "black", "Championship", chessGame);
+        gameDAO.insert(game);
+
+        JoinGameRequest request = new JoinGameRequest("validToken", "WHITE", 1234);
 
         JoinGameResult result = joinGameService.joinGame(request);
 

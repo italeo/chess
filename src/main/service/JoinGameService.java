@@ -30,6 +30,7 @@ public class JoinGameService {
 
     public JoinGameResult joinGame(JoinGameRequest request) {
         JoinGameResult result = new JoinGameResult();
+        result.setSuccess(false);
 
         if (!validRequest(request)) {
             result.setMessage("Error: bad request");
@@ -39,54 +40,31 @@ public class JoinGameService {
         try {
 
             AuthToken authToken = authDAO.find(request.getAuthToken());
+            Game game = gameDAO.findGameByID(request.getGameID());
 
-           if (authDAO.find(request.getAuthToken()) != null &&
-                   gameDAO.findGameByID(request.getGameID()) != null) {
-
+           if (authToken != null && game != null) {
                String teamColor = request.getPlayerColor();
 
                if (teamColor == null) {
                    result.setSuccess(true);
                    return result;
-
-               } else {
-
-                   Game game = gameDAO.findGameByID(request.getGameID());
-
-                   if (teamColor.equals("WHITE")) {
-                       if (game.getWhiteUsername() == null) {
-                           game.setWhiteUsername(authToken.getUsername());
-                           result.setSuccess(true);
-                           gameDAO.updateGame(game);
-
-                       } else {
-                           result.setMessage("Error: already taken");
-                           result.setSuccess(false);
-                           return result;
-                       }
-                   } else {
-                       if (game.getBlackUsername() == null) {
-                           game.setBlackUsername(authToken.getUsername());
-                           result.setSuccess(true);
-                           gameDAO.updateGame(game);
-
-                       } else {
-                           result.setSuccess(false);
-                           result.setMessage("Error: already taken");
-                           return result;
-                       }
-                   }
                }
 
-               result.setSuccess(true);
+               if (teamColor.equals("WHITE") && game.getWhiteUsername() == null) {
+                   game.setWhiteUsername(authToken.getUsername());
+               } else if (teamColor.equals("BLACK") && game.getBlackUsername() == null) {
+                   game.setBlackUsername(authToken.getUsername());
+               } else {
+                   result.setMessage("Error: already taken");
+                   return result;
+               }
 
+               gameDAO.updateGame(game);
+               result.setSuccess(true);
            } else {
-               result.setSuccess(false);
                result.setMessage("Error: unauthorized");
-               return result;
            }
         } catch (Exception exc) {
-            result.setSuccess(false);
             result.setMessage("Error: unauthorized");
         }
         return result;
