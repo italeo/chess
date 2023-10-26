@@ -24,13 +24,16 @@ public class LogoutService {
 
         if (!validRequest(request)) {
             result.setMessage("Error: unauthorized");
+            result.setSuccess(false);
             return result;
         }
 
         try {
             if (authDAO.find(request.getAuthToken()) != null) {
                 authDAO.delete(request.getAuthToken());
+                result.setSuccess(true);
             } else {
+                result.setSuccess(false);
                 result.setMessage("Error: unauthorized");
             }
 
