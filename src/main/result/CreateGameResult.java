@@ -24,10 +24,6 @@ public class CreateGameResult {
         this.success = success;
     }
 
-    public String getGameName() {
-        return gameName;
-    }
-
     public boolean isSuccess() {
         return success;
     }

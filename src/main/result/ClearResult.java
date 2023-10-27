@@ -1,8 +1,5 @@
 package result;
 
-
-import com.google.gson.Gson;
-
 /** This class is responsible to handle the clearing of the results that we get from the web API calls. */
 public class ClearResult {
     /** Message displayed for when clearing is successful */
@@ -10,8 +7,9 @@ public class ClearResult {
     /** Boolean to indicate if clearing was successful or not. */
     private boolean success;
 
+    // Constructs the clear result to respond with a success message and a success boolean
     public ClearResult() {
-        this.message = new String();
+        this.message = "";
         this.success = false;
     }
 
@@ -28,8 +26,4 @@ public class ClearResult {
         this.success = success;
     }
 
-    public String toJson() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
-    }
 }

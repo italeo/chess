@@ -9,6 +9,7 @@ public class ListGameSuccessResult {
     public ListGameSuccessResult() {
     }
 
+    // This class is used to return the result from the list game request
     public ListGameSuccessResult(String whiteUsername, String blackUsername, String gameName, int gameID) {
         this.whiteUsername = whiteUsername;
         this.blackUsername = blackUsername;
@@ -30,18 +31,6 @@ public class ListGameSuccessResult {
 
     public void setGameID(int gameID) {
         this.gameID = gameID;
-    }
-
-    public String getWhiteUsername() {
-        return whiteUsername;
-    }
-
-    public String getBlackUsername() {
-        return blackUsername;
-    }
-
-    public String getGameName() {
-        return gameName;
     }
 
     public int getGameID() {

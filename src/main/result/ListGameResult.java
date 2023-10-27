@@ -5,7 +5,6 @@ import java.util.List;
 /** Represents the result of the list of all possible games the player could join. */
 public class ListGameResult {
     private List<ListGameSuccessResult> games;
-
     private String message;
     private boolean success;
 
