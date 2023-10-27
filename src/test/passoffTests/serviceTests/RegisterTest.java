@@ -16,6 +16,7 @@ public class RegisterTest {
     private UserDAO userDAO;
     private RegisterService registerService;
 
+    // Setting for the test by creating the db, and needed components for testing
     @BeforeEach
     public void setUp() {
         authTokenDAO = new AuthTokenDAO();
@@ -23,12 +24,15 @@ public class RegisterTest {
         registerService = new RegisterService(authTokenDAO, userDAO);
     }
 
+    // Making sure we reset everything after every tests
     @AfterEach
     public void tearDown() throws DataAccessException {
         userDAO.clear();
         authTokenDAO.clear();
     }
 
+    // This test we are creating a completely new user and add that to the db, then we just check to make sure if that is
+    // done correctly
     @Test
     public void registerTest_Success() {
         RegisterRequest request = new RegisterRequest("Ishmael", "password", "email");
@@ -39,6 +43,7 @@ public class RegisterTest {
         assertNotNull(result.getAuthToken());
     }
 
+    // Testing if a user is registering with a username that is invalid
     @Test
     public void registerTest_BadRequest() {
 
@@ -49,6 +54,7 @@ public class RegisterTest {
         assertEquals("Error: bad request", result.getMessage());
     }
 
+    // Here a user is trying to register with a username that has already been taken
     @Test
     public void registerTest_Taken() throws DataAccessException {
         User user = new User("Ishmael", "password", "italeo@gmail.com");

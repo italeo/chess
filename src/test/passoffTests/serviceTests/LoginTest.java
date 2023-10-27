@@ -16,6 +16,9 @@ public class LoginTest {
     private UserDAO userDAO;
     private LoginService loginService;
 
+    // Tests if joining a game is successful
+    // We do so but creating a valid authToken and a valid game, then add that into our db
+    // Create a valid request and check with assertions if the service class works accordingly
     @BeforeEach
     public void setUp() {
         authTokenDAO = new AuthTokenDAO();
@@ -23,12 +26,15 @@ public class LoginTest {
         loginService = new LoginService(authTokenDAO, userDAO);
     }
 
+    // Setting for the test by creating the db, and needed components for testing
     @AfterEach
     public void tearDown() throws DataAccessException {
         authTokenDAO.clear();
         userDAO.clear();
     }
 
+    // Created a user that is already in the userDAO/db, which mimicking that the user has already registered and so we are trying to
+    // log in that same user with a valid request
     @Test
     public void loginTest_Success() throws DataAccessException {
         User user = new User("Ishmael", "password", "it@gmail.com");
@@ -42,6 +48,7 @@ public class LoginTest {
         assertNotNull(result.getAuthToken());
     }
 
+    // Testing that a user that has not registered to try log in, and making sure that the service is handling that correctly
     @Test
     public void loginTest_Unauthorized() throws DataAccessException {
         User user = new User("Ishmael", "password", "it@gmail.com");

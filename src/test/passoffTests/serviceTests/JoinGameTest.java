@@ -19,6 +19,7 @@ public class JoinGameTest {
     private JoinGameService joinGameService;
     private ChessGame chessGame;
 
+    // Setting for the test by creating the db, and needed components for testing
     @BeforeEach
     public void setUp() {
         authTokenDAO = new AuthTokenDAO();
@@ -27,13 +28,16 @@ public class JoinGameTest {
         chessGame = new ChessGameImpl();
     }
 
+    // Making sure we reset everything after every tests
     @AfterEach
     public void tearDown() throws DataAccessException {
         authTokenDAO.clear();
         gameDAO.clear();
     }
 
-
+    // Tests if joining a game is successful
+    // We do so but creating a valid authToken and a valid game, then add that into our db
+    // Create a valid request and check with assertions if the service class works accordingly
     @Test
     public void joinGameTest_Success() throws DataAccessException {
         AuthToken token = new AuthToken("validToken", "italeo");
@@ -46,9 +50,9 @@ public class JoinGameTest {
         JoinGameResult result = joinGameService.joinGame(request);
 
         assertTrue(result.isSuccess());
-
     }
 
+    // Check if a bad request is sent the service class handles it accordingly
     @Test
     public void joinGameTest_BadRequest() {
         JoinGameRequest request = new JoinGameRequest(null, "WHITE", 1235);
@@ -59,6 +63,7 @@ public class JoinGameTest {
         assertEquals("Error: bad request", result.getMessage());
     }
 
+    // Check if a unauthorized authToken is trying to join a game
     @Test
     public void joinGameTest_Unauthorized() {
         JoinGameRequest request = new JoinGameRequest("invalid-token", "WHITE", 1235);
@@ -69,6 +74,7 @@ public class JoinGameTest {
         assertEquals("Error: unauthorized", result.getMessage());
     }
 
+    // This is also a negative test that checks if a user has already taken a team color, then no one else should be able to
     @Test
     public void joinGameTest_Taken() throws DataAccessException{
         AuthToken token = new AuthToken("validToken", "italeo");

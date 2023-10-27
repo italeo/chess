@@ -16,6 +16,8 @@ public class ClearTest {
     private UserDAO userDAO;
     private GameDAO gameDAO;
 
+
+    // Starts by initiating the authTokenDAO, gameDAO and userDAO
     @BeforeEach
     public void setUp() throws DataAccessException {
         authTokenDAO = new AuthTokenDAO();
@@ -23,6 +25,8 @@ public class ClearTest {
         gameDAO = new GameDAO();
 
         ChessGame chessGame = new ChessGameImpl();
+
+        // Creating dummy data to insert into the database to test if clearService works
 
         //Create user
         User user = new User();
@@ -48,6 +52,7 @@ public class ClearTest {
 
     }
 
+    // Just making sure that after every test we clear everything, a bit redundant for sure, especially with clear.
     @AfterEach
     public void tearDown() throws DataAccessException {
         authTokenDAO.clear();
@@ -55,6 +60,7 @@ public class ClearTest {
         gameDAO.clear();
     }
 
+    // Testing with clear works.
     @Test
     public void clearTestSuccess() {
         ClearService clearService = new ClearService(gameDAO, userDAO, authTokenDAO);
