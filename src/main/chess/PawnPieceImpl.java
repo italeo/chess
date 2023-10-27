@@ -77,10 +77,6 @@ public class PawnPieceImpl extends ChessPieceImpl {
 
     }
 
-    private boolean isValidPosition(int row, int col) {
-        return row >= 1 && row <= 8 && col >= 1 && col <= 8;
-    }
-
     private boolean ReachesPromotionRow(ChessPosition myPosition) {
         return (getTeamColor() == ChessGame.TeamColor.WHITE && myPosition.getRow() == 7) ||
                 (getTeamColor() == ChessGame.TeamColor.BLACK && myPosition.getRow() == 2);
