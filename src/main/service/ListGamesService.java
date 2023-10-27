@@ -32,9 +32,11 @@ public class ListGamesService {
         result.setSuccess(true);
 
         try {
+            // Validates the request, authToken must not be null and must be in the database
             if (authDAO.find(request.getAuthToken()) != null) {
                 List<Game> gamesAvailable = gameDAO.getAllGames();
 
+                // If it is valid it loops through and sets the information that needs to be presented and displays that
                 for (Game game : gamesAvailable) {
                     ListGameSuccessResult gamesResult = new ListGameSuccessResult();
 

@@ -27,29 +27,32 @@ public class JoinGameService {
         this.gameDAO = gameDAO;
     }
 
-
     public JoinGameResult joinGame(JoinGameRequest request) {
         JoinGameResult result = new JoinGameResult();
         result.setSuccess(false);
 
+        // checks if request is valid
         if (!validRequest(request)) {
             result.setMessage("Error: bad request");
             return result;
         }
 
         try {
-
+            // Retrieves the authToken and the specified game with the gameID
             AuthToken authToken = authDAO.find(request.getAuthToken());
             Game game = gameDAO.findGameByID(request.getGameID());
 
            if (authToken != null && game != null) {
                String teamColor = request.getPlayerColor();
 
+               // Checks if a team color is specified when the user tries to join the game, if not specified then the user joins as
+               // an observer
                if (teamColor == null) {
                    result.setSuccess(true);
                    return result;
                }
 
+               // Handles if a team color is already taken (BLACK/WHITE)
                if (teamColor.equals("WHITE") && game.getWhiteUsername() == null) {
                    game.setWhiteUsername(authToken.getUsername());
                } else if (teamColor.equals("BLACK") && game.getBlackUsername() == null) {

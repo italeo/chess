@@ -30,6 +30,7 @@ public class CreateGameService {
         Game newGame = new Game();
         int gameID;
 
+        // Checks if the request is valid, if not return the right error message
         if (!validRequest(request)) {
             result.setMessage("Error: bad request");
             result.setSuccess(false);
@@ -61,10 +62,10 @@ public class CreateGameService {
             return result;
         }
 
-
         return result;
     }
 
+    // Method used to check if the request is valid, and that is checking if the game name and authToken is not null
     private boolean validRequest(CreateGameRequest request) {
         return request.getGameName() != null &&
                 request.getAuthToken() != null;

@@ -39,9 +39,11 @@ public class LoginService {
             if (user != null && user.getUsername().equals(request.getUsername()) &&
                     user.getPassword().equals(request.getPassword())) {
 
+                // Generates an authToken for a valid user and adds that to the database
                 AuthToken authToken = generateAuthToken(user.getUsername());
                 authDAO.insert(authToken);
 
+                // Sets the necessary information
                 result.setUsername(user.getUsername());
                 result.setAuthToken(authToken.getAuthToken());
                 result.setSuccess(true);

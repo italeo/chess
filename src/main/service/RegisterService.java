@@ -47,9 +47,9 @@ public class RegisterService {
 
             User existingUser = userDAO.find(newUser.getUsername());
 
-            // LOGICAL ERROR HERE?
             if (existingUser == null) {
 
+                // Sets the valid information that the user has provided and added to the database
                 userDAO.insert(newUser);
                 authDAO.insert(authToken);
 
@@ -70,6 +70,7 @@ public class RegisterService {
         return result;
     }
 
+    // Checks to see that the user that is registering is doing so with valid information
     private boolean validRequest(RegisterRequest request) {
         return request.getEmail() != null &&
                 request.getUsername() != null &&
