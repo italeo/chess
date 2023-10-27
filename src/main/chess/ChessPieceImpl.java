@@ -25,6 +25,9 @@ public abstract class ChessPieceImpl implements ChessPiece {
         return type;
     }
 
+
+    // Only use this function for Rook, Queen, and Bishop
+    //King and Knight do not need to update/increment the row and column directions
     protected Collection<ChessMove> generateDirectionalMoves(ChessBoard board, ChessPosition myPosition, int[] rowDirections, int[] colDirections) {
         List<ChessMove> validMoves = new ArrayList<>();
 
