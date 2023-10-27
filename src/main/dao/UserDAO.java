@@ -38,9 +38,4 @@ public class UserDAO {
     public User find(String username) throws DataAccessException {
         return userMap.get(username);
     }
-
-    public void delete(User user) throws DataAccessException {
-        userMap.remove(user);
-
-    }
 }

@@ -7,15 +7,13 @@ import java.util.*;
 public class GameDAO {
 
     /** Establishes the connection between the Server and the database .*/
-    //private final Connection conn;
-    private static Map<Integer, Game> gameMap = new HashMap<>();
+    private static final Map<Integer, Game> gameMap = new HashMap<>();
 
     /** Constructs the connection between the Server and the database to access the information needed for the games available
      * in the database
      * /@param conn - associated connection for data access.
      * */
     public GameDAO() {
-        //this.gameMap = new HashMap<>();
     }
 
     /** This function is responsible for inserting games that we have created into the database.
@@ -35,28 +33,17 @@ public class GameDAO {
     }
 
     /** Retrieves a specific game from the database specified by the gameID.
-     * @param gameID - The specific ID used to represent a game in the database
-     * @throws DataAccessException - thrown when there is an error retrieving the specific game.
-     * */
-    public Game findGameByID(int gameID) throws DataAccessException {
+     * @param gameID - The specific ID used to represent a game in the database */
+    public Game findGameByID(int gameID) {
         return gameMap.get(gameID);
     }
 
-    /** Allows the user to claim a spot in a game specified by the gameID and the users username
-     * @param username  - Represents the user in the game.
-     * @param gameID - The specific game the user is trying to claim a spot in.
-     * @throws DataAccessException - Thrown when there is an error claiming a spot in the game from the database.
-     * */
-    public void claimSpot(int gameID, String username) throws DataAccessException {
-    }
-    public void updateGame(Game game) throws DataAccessException {
+    // Updates the game, this is specifically used when a user joins the game, so we need it to update the white/black usernames
+    public void updateGame(Game game) {
         gameMap.put(game.getGameID(), game);
     }
 
-    public void removeGame(Game game) throws DataAccessException {
-        gameMap.remove(game.getGameID(), game);
-    }
-
+    // Return a list of all the games created so far
     public List<Game> getAllGames() {
         List<Game> allGames = new ArrayList<>(gameMap.values());
         return allGames;

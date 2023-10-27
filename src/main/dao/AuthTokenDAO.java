@@ -38,6 +38,7 @@ public class AuthTokenDAO {
         return authTokenMap.get(authToken);
     }
 
+    // Modified this function from phase-2 to properly clear the hashMap
     public void delete(String token) throws DataAccessException {
         authTokenMap.remove(token);
     }
