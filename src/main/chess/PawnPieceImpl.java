@@ -22,8 +22,8 @@ public class PawnPieceImpl extends ChessPieceImpl {
         // Pawn moves forward but kills diagonal
         // Define the direction based on the team color
         int direction = (getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : -1;
-        int newRow = myPosition.getRow() + direction;
-        int newCol = myPosition.getColumn();
+        int newRow = myPosition.row() + direction;
+        int newCol = myPosition.column();
 
         if (isValidPosition(newRow, newCol) && board.getPiece(new ChessPositionImpl(newRow, newCol)) == null) {
             ChessPosition newPosition = new ChessPositionImpl(newRow, newCol);
@@ -31,10 +31,10 @@ public class PawnPieceImpl extends ChessPieceImpl {
             validMoves.add(move);
 
             // Check for double move on the pawn's first move
-            if ((getTeamColor() == ChessGame.TeamColor.WHITE && myPosition.getRow() == 2) ||
-                    (getTeamColor() == ChessGame.TeamColor.BLACK && myPosition.getRow() == 7)) {
-                int doubleMoveRow = myPosition.getRow() + (2 * direction);
-                int doubleMoveCol = myPosition.getColumn();
+            if ((getTeamColor() == ChessGame.TeamColor.WHITE && myPosition.row() == 2) ||
+                    (getTeamColor() == ChessGame.TeamColor.BLACK && myPosition.row() == 7)) {
+                int doubleMoveRow = myPosition.row() + (2 * direction);
+                int doubleMoveCol = myPosition.column();
 
                 if (isValidPosition(doubleMoveRow, doubleMoveCol) && board.getPiece(new ChessPositionImpl(doubleMoveRow,
                         doubleMoveCol)) == null) {
@@ -50,8 +50,8 @@ public class PawnPieceImpl extends ChessPieceImpl {
         // Left and right
         int[] colOffsets = {-1, 1};
         for (int colOffset : colOffsets) {
-            newRow = myPosition.getRow() + direction;
-            newCol = myPosition.getColumn() + colOffset;
+            newRow = myPosition.row() + direction;
+            newCol = myPosition.column() + colOffset;
 
             if (isValidPosition(newRow, newCol)) {
                 ChessPosition newPosition = new ChessPositionImpl(newRow, newCol);
@@ -78,8 +78,8 @@ public class PawnPieceImpl extends ChessPieceImpl {
     }
 
     private boolean ReachesPromotionRow(ChessPosition myPosition) {
-        return (getTeamColor() == ChessGame.TeamColor.WHITE && myPosition.getRow() == 7) ||
-                (getTeamColor() == ChessGame.TeamColor.BLACK && myPosition.getRow() == 2);
+        return (getTeamColor() == ChessGame.TeamColor.WHITE && myPosition.row() == 7) ||
+                (getTeamColor() == ChessGame.TeamColor.BLACK && myPosition.row() == 2);
     }
 
     private void getPromotionPieces(ChessMove move, List<ChessMove> promotions) {

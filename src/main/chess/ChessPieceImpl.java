@@ -25,15 +25,14 @@ public abstract class ChessPieceImpl implements ChessPiece {
         return type;
     }
 
-
     // Only use this function for Rook, Queen, and Bishop
     //King and Knight do not need to update/increment the row and column directions
     protected Collection<ChessMove> generateDirectionalMoves(ChessBoard board, ChessPosition myPosition, int[] rowDirections, int[] colDirections) {
         List<ChessMove> validMoves = new ArrayList<>();
 
         for (int i = 0; i < rowDirections.length; i++) {
-            int newRow = myPosition.getRow() + rowDirections[i];
-            int newCol = myPosition.getColumn() + colDirections[i];
+            int newRow = myPosition.row() + rowDirections[i];
+            int newCol = myPosition.column() + colDirections[i];
 
             while(isValidPosition(newRow, newCol)) {
                 ChessPositionImpl newPosition = new ChessPositionImpl(newRow, newCol);
@@ -54,6 +53,7 @@ public abstract class ChessPieceImpl implements ChessPiece {
         return validMoves;
     }
 
+    // This function makes sure the position we are moving to is valid and still on the board (helper function).
     public boolean isValidPosition(int row, int col) {
         return row >= BOARD_MIN && row <= BOARD_MAX && col >= BOARD_MIN && col <= BOARD_MAX;
     }

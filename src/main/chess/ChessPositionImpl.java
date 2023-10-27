@@ -1,26 +1,7 @@
 package chess;
 
-import java.util.Objects;
-
-public class ChessPositionImpl implements ChessPosition {
-
-    private final int row;
-    private final int column;
-
-    public ChessPositionImpl(int row, int column) {
-        this.row = row;
-        this.column = column;
-    }
-
-    @Override
-    public int getRow() {
-        return row;
-    }
-
-    @Override
-    public int getColumn() {
-        return column;
-    }
+// Converted to record just because we aren't using it for now
+public record ChessPositionImpl(int row, int column) implements ChessPosition {
 
     @Override
     public boolean equals(Object o) {
@@ -30,8 +11,4 @@ public class ChessPositionImpl implements ChessPosition {
         return row == that.row && column == that.column;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(row, column);
-    }
 }

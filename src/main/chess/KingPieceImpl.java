@@ -27,8 +27,8 @@ public class KingPieceImpl extends ChessPieceImpl {
         // Checking if the new move is within the bounds of the board.
 
         for (int i = 0; i < 8; i++) {
-            int newRow = myPosition.getRow() + rowDirections[i];
-            int newCol = myPosition.getColumn() + colDirections[i];
+            int newRow = myPosition.row() + rowDirections[i];
+            int newCol = myPosition.column() + colDirections[i];
 
             if (isValidPosition(newRow, newCol)) {
                 ChessPositionImpl newPosition = new ChessPositionImpl(newRow, newCol);

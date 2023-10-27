@@ -3,24 +3,28 @@ package chess;
 
 public class ChessBoardImpl implements ChessBoard {
 
+    // 2-D array to represent the chess board
     private final ChessPiece[][] board;
 
+    // Initializes the chess board to a 8x8 grid
     public ChessBoardImpl() {
         board = new ChessPieceImpl[8][8];
     }
 
+    // Adds a piece to it's specific position on the board.
     @Override
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow() - 1][position.getColumn() - 1] = piece;
+        board[position.row() - 1][position.column() - 1] = piece;
     }
 
     @Override
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getRow() - 1][position.getColumn() - 1];
+        return board[position.row() - 1][position.column() - 1];
     }
 
+    // Removes a chess piece from a specific position on the board.
     public void removePiece(ChessPosition position) {
-        board[position.getRow() - 1][position.getColumn() - 1] = null;
+        board[position.row() - 1][position.column() - 1] = null;
     }
 
     @Override
@@ -35,6 +39,8 @@ public class ChessBoardImpl implements ChessBoard {
             board[6][i] = new PawnPieceImpl(ChessGame.TeamColor.BLACK);
             board[1][i] = new PawnPieceImpl(ChessGame.TeamColor.WHITE);
         }
+
+        //------------ Setting up pieces for the default board -------------------------
 
         board[7][0] = new RookPieceImpl(ChessGame.TeamColor.BLACK);
         board[0][0] = new RookPieceImpl(ChessGame.TeamColor.WHITE);

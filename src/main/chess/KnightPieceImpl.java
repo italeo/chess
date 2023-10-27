@@ -26,8 +26,8 @@ public class KnightPieceImpl extends ChessPieceImpl {
         int[] colOffsets = {-1, 1, -2, 2, -2, 2, 1, -1};
 
         for (int i = 0; i < 8; i++) {
-            int newRow = myPosition.getRow() + rowOffsets[i];
-            int newCol = myPosition.getColumn() + colOffsets[i];
+            int newRow = myPosition.row() + rowOffsets[i];
+            int newCol = myPosition.column() + colOffsets[i];
 
             if (isValidPosition(newRow, newCol)) {
                 ChessPositionImpl newPosition = new ChessPositionImpl(newRow, newCol);

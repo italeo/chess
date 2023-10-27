@@ -3,18 +3,16 @@ package chess;
 import java.util.Objects;
 
 public class ChessMoveImpl implements ChessMove {
-
     private final ChessPosition startPosition;
     private final ChessPosition endPosition;
     private final ChessPiece.PieceType promotePiece;
 
+    // Initializes the chess moves with specific start and end positions
     public ChessMoveImpl(ChessPosition startPos, ChessPosition endPos, ChessPiece.PieceType promotePiece) {
         this.startPosition = startPos;
         this.endPosition = endPos;
         this.promotePiece = promotePiece;
     }
-
-
 
     @Override
     public ChessPosition getStartPosition() {
@@ -40,6 +38,7 @@ public class ChessMoveImpl implements ChessMove {
                 chessMove.endPosition) && promotePiece == chessMove.promotePiece;
     }
 
+    // Calculates the hash code based on the start, end, and promoted piece positions
     @Override
     public int hashCode() {
         return Objects.hash(startPosition, endPosition, promotePiece);

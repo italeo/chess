@@ -22,7 +22,6 @@ public class ChessGameImpl implements ChessGame {
     @Override
     public void setTeamTurn(TeamColor team) {
         teamTurn = team;
-
     }
 
     @Override
@@ -66,7 +65,7 @@ public class ChessGameImpl implements ChessGame {
             // Checking for pawn promotion
             if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
                 int promotionRank = (piece.getTeamColor() == TeamColor.WHITE) ? 8 : 1;
-                if (move.getEndPosition().getRow() == promotionRank) {
+                if (move.getEndPosition().row() == promotionRank) {
                     // Performs the promotion
                     ChessPiece promotedPiece = createPromotedPiece(move.getPromotionPiece(), piece.getTeamColor());
                     board.addPiece(move.getEndPosition(), promotedPiece);
@@ -181,7 +180,6 @@ public class ChessGameImpl implements ChessGame {
     @Override
     public void setBoard(ChessBoard board) {
         this.board = board;
-
     }
 
     @Override
