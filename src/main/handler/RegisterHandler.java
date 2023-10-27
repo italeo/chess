@@ -10,6 +10,9 @@ import service.RegisterService;
 import spark.*;
 
 public class RegisterHandler implements Route {
+
+    // Handles the request we get from the client and returns the response from the server, the request is passed to the service
+    // where it then returns the results for the Register request.
     public Object handle(Request request, Response response) {
         RegisterRequest registerRequest = new Gson().fromJson(request.body(), RegisterRequest.class);
         RegisterService service = new RegisterService(new AuthTokenDAO(), new UserDAO());

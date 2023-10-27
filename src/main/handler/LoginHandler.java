@@ -11,6 +11,8 @@ import spark.*;
 
 public class LoginHandler implements Route {
 
+    // Handles the request we get from the client and returns the response from the server, the request is passed to the service
+    // where it then returns the results for the login request.
     public Object handle(Request request, Response response) {
         LoginRequest loginRequest = new Gson().fromJson(request.body(), LoginRequest.class);
         LoginService service = new LoginService(new AuthTokenDAO(), new UserDAO());

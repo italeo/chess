@@ -9,6 +9,9 @@ import spark.*;
 
 /** Handler for http request from user to logout. */
 public class LogoutHandler implements Route {
+
+    // Handles the request we get from the client and returns the response from the server, the request is passed to the service
+    // where it then returns the results for the logout request.
     public Object handle(Request request, Response response) {
         LogoutRequest logoutRequest = new LogoutRequest(request.headers("authorization"));
         LogoutService service = new LogoutService(new AuthTokenDAO());

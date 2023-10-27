@@ -1,6 +1,5 @@
 package handler;
 
-
 import com.google.gson.Gson;
 import dao.*;
 import request.ListGamesRequest;
@@ -11,6 +10,8 @@ import spark.*;
 /** Handles the http request for listing all the games available*/
 public class ListGameHandler implements Route {
 
+    // Handles the request we get from the client and returns the response from the server, the request is passed to the service
+    // where it then returns the results for the listGame request.
     public Object handle(Request request, Response response) {
         ListGamesRequest listGamesRequest = new ListGamesRequest(request.headers("authorization"));
         ListGamesService service = new ListGamesService(new AuthTokenDAO(), new GameDAO());

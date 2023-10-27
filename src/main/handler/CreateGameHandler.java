@@ -1,14 +1,14 @@
 package handler;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import dao.*;
 import request.*;
 import result.*;
 import service.*;
 import spark.*;
 
-
+// Handles the request we get from the client and returns the response from the server, the request is passed to the service
+// where it then returns the results for the creatGame request.
 public class CreateGameHandler implements Route {
 
     public Object handle(Request request, Response response) {

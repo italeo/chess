@@ -1,6 +1,6 @@
 package handler;
+
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import dao.*;
 import request.*;
 import result.*;
@@ -10,8 +10,9 @@ import spark.*;
 /** Responsible for handling the http request from a user to join a game. */
 public class JoinGameHandler implements Route {
 
+    // Handles the request we get from the client and returns the response from the server, the request is passed to the service
+    // where it then returns the results for the clear request.
     public Object handle(Request request, Response response) {
-
 
         JoinGameRequest joinGameRequest = new Gson().fromJson(request.body(), JoinGameRequest.class);
 
