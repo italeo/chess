@@ -1,15 +1,15 @@
 import handler.*;
 import spark.Spark;
-import java.util.ArrayList;
 
 public class Server {
-    private final ArrayList<String> names = new ArrayList<>();
 
     private void run() {
+        // Sets the fixed port to 8080
         Spark.port(8080);
         Spark.externalStaticFileLocation("web");
         Spark.init();
 
+        // Paths for each requests
         Spark.delete("/db", new ClearHandler());
         Spark.post("/game", new CreateGameHandler());
         Spark.put("/game", new JoinGameHandler());
