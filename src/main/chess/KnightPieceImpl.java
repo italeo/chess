@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class KnightPieceImpl extends ChessPieceImpl {
+    private static final int BOARD_MIN = 1;
+    private static final int BOARD_MAX = 8;
 
     public KnightPieceImpl(ChessGame.TeamColor teamColor) {
         super(teamColor, PieceType.KNIGHT);
@@ -43,6 +45,6 @@ public class KnightPieceImpl extends ChessPieceImpl {
     }
 
     private boolean isValidPosition(int row, int col) {
-        return row >= 1 && row <= 8 && col >= 1 && col <= 8;
+        return row >= BOARD_MIN && row <= BOARD_MAX && col >= BOARD_MIN && col <= BOARD_MAX;
     }
 }
