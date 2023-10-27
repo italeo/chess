@@ -12,7 +12,6 @@ import service.CreateGameService;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CreateGameTest {
-
     private AuthTokenDAO authTokenDAO;
     private GameDAO gameDAO;
     private CreateGameService createGameService;
@@ -24,12 +23,12 @@ public class CreateGameTest {
         createGameService = new CreateGameService(authTokenDAO, gameDAO);
 
     }
+
     @AfterEach
     public void tearDown() throws DataAccessException {
         authTokenDAO.clear();
         gameDAO.clear();
     }
-
 
     @Test
     public void createGameTest_Success() throws DataAccessException {

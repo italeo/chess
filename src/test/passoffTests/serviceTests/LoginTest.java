@@ -52,6 +52,5 @@ public class LoginTest {
 
         assertFalse(result.isSuccess());
         assertEquals("Error: unauthorized", result.getMessage());
-
     }
 }

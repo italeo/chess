@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import result.ClearResult;
 import service.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClearTest {

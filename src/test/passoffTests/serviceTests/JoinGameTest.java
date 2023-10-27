@@ -83,6 +83,5 @@ public class JoinGameTest {
 
         assertFalse(result.isSuccess());
         assertEquals("Error: already taken", result.getMessage());
-
     }
 }
