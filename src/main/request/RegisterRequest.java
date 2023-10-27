@@ -3,11 +3,11 @@ package request;
 /** Represents the request object for creating a new registration for a new user. */
 public class RegisterRequest {
     /** The user's identifier in the game. */
-    private String username;
+    private final String username;
     /** The user's password used to log into the game. */
-    private String password;
+    private final String password;
     /** The user's email address. */
-    private String email;
+    private final String email;
 
     /** Constructs the registration request from the new user.
      * @param username - The username the user wishes to use.

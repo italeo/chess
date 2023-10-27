@@ -2,10 +2,10 @@ package request;
 
 /** Represents the request to create a new game. */
 public class CreateGameRequest {
-
-    private String gameName;
+    private final String gameName;
     private String authToken;
 
+    // Makes sure that for the request we get the authToken and the game name
     public CreateGameRequest(String authToken, String gameName) {
         this.authToken = authToken;
         this.gameName = gameName;
