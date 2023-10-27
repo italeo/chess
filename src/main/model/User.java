@@ -18,7 +18,6 @@ public class User {
      * @param password - The users password to their account.
      * */
 
-
     public User(String username, String password, String email) {
         this.username = username;
         this.password = password;

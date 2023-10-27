@@ -1,7 +1,5 @@
 package model;
 
-import java.util.Objects;
-
 /** Sets the structure for the AuthToken table in the database*/
 public class AuthToken {
     /** The authorization token of a signed-in user. */

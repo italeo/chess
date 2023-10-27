@@ -52,7 +52,6 @@ public class Game {
         return blackUsername;
     }
 
-
     public String getGameName() {
         return gameName;
     }
