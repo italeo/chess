@@ -9,12 +9,14 @@ import java.sql.SQLException;
 
 /** Responsible for accessing the data for the AuthToken */
 public class AuthTokenDAO {
-    private final Database db;
+    private Database db;
+
+    public AuthTokenDAO() {
+    }
 
     /** Constructs the connection between the Server and the database to access the information needed for the authToken
      //* @param conn - associated connection for data access.
      * */
-
 
     public AuthTokenDAO(Database db) {
         this.db = db;
@@ -58,7 +60,7 @@ public class AuthTokenDAO {
      * @throws DataAccessException - thrown when there is a database error.*/
     public AuthToken find(String authToken) throws DataAccessException {
         try (Connection conn = db.getConnection()) {
-            String sql = "FROM AuthToken WHERE authToken = ?";
+            String sql = "SELECT * FROM AuthToken WHERE authToken = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, authToken);
                 try (ResultSet rs = stmt.executeQuery()) {
