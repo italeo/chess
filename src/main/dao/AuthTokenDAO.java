@@ -2,12 +2,10 @@ package dao;
 
 import dataAccess.Database;
 import model.AuthToken;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 /** Responsible for accessing the data for the AuthToken */
 public class AuthTokenDAO {
@@ -28,14 +26,14 @@ public class AuthTokenDAO {
      * */
     public void insert(AuthToken authToken) throws DataAccessException {
         try(Connection conn = db.getConnection()) {
-            String sql = "INSERT INTO AuthToken (token, username) VALUES (?, ?)";
+            String sql = "INSERT INTO AuthToken (authToken, username) VALUES (?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, authToken.getAuthToken());
                 stmt.setString(2, authToken.getUsername());
                 stmt.executeUpdate();
             }
         } catch (SQLException | dataAccess.DataAccessException e) {
-            throw new DataAccessException("Error while inserting authToken: " + e.getMessage());
+            throw new DataAccessException("Error while inserting into AuthToken table: " + e.getMessage());
         }
     }
 
@@ -59,11 +57,31 @@ public class AuthTokenDAO {
      * @param authToken - The specific authToken we are trying to find.
      * @throws DataAccessException - thrown when there is a database error.*/
     public AuthToken find(String authToken) throws DataAccessException {
+        try (Connection conn = db.getConnection()) {
+            String sql = "FROM AuthToken WHERE authToken = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, authToken);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return new AuthToken(rs.getString("authToken"), rs.getString("username"));
+                    }
+                }
+            }
+        } catch (SQLException | dataAccess.DataAccessException e) {
+            throw new DataAccessException("Error while querying the AuthToken table: " + e.getMessage());
+        }
         return null;
     }
 
-    // Modified this function from phase-2 to properly clear the hashMap
-    public void delete(String token) throws DataAccessException {
-
+    public void delete(String authToken) throws DataAccessException {
+        try (Connection conn = db.getConnection()) {
+            String sql = "DELETE FROM AuthToken WHERE authToken = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, authToken);
+              stmt.executeUpdate();
+            }
+        } catch (SQLException | dataAccess.DataAccessException e) {
+            throw new DataAccessException("Error with deleting an authToken from AuthToken table: " + e.getMessage());
+        }
     }
 }
