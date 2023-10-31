@@ -1,6 +1,5 @@
 package dao;
 
-import dataAccess.Database;
 import model.AuthToken;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

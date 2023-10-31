@@ -9,6 +9,7 @@ public class GameDAO {
     /** Establishes the connection between the Server and the database .*/
     private static final Map<Integer, Game> gameMap = new HashMap<>();
 
+
     /** Constructs the connection between the Server and the database to access the information needed for the games available
      * in the database
      * /@param conn - associated connection for data access.
