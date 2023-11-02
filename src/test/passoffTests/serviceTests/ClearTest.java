@@ -2,6 +2,7 @@ package passoffTests.serviceTests;
 
 import chess.*;
 import dao.*;
+import dataAccess.Database;
 import model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,20 +10,24 @@ import org.junit.jupiter.api.Test;
 import result.ClearResult;
 import service.*;
 
+import java.sql.Connection;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClearTest {
     private AuthTokenDAO authTokenDAO;
     private UserDAO userDAO;
     private GameDAO gameDAO;
-
+    private Connection conn;
+    private Database db = new Database();
 
     // Starts by initiating the authTokenDAO, gameDAO and userDAO
     @BeforeEach
-    public void setUp() throws DataAccessException {
-        authTokenDAO = new AuthTokenDAO();
-        userDAO = new UserDAO();
-        gameDAO = new GameDAO();
+    public void setUp() throws dataAccess.DataAccessException, DataAccessException {
+        conn = db.getConnection();
+        authTokenDAO = new AuthTokenDAO(conn);
+        userDAO = new UserDAO(conn);
+        gameDAO = new GameDAO(conn);
 
         ChessGame chessGame = new ChessGameImpl();
 
@@ -58,6 +63,7 @@ public class ClearTest {
         authTokenDAO.clear();
         userDAO.clear();
         gameDAO.clear();
+        db.returnConnection(conn);
     }
 
     // Testing with clear works.

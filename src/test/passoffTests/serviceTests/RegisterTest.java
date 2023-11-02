@@ -1,6 +1,7 @@
 package passoffTests.serviceTests;
 
 import dao.*;
+import dataAccess.Database;
 import model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,18 +10,23 @@ import request.RegisterRequest;
 import result.RegisterResult;
 import service.RegisterService;
 
+import java.sql.Connection;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RegisterTest {
     private AuthTokenDAO authTokenDAO;
     private UserDAO userDAO;
     private RegisterService registerService;
+    private Connection conn;
+    private Database db = new Database();
 
     // Setting for the test by creating the db, and needed components for testing
     @BeforeEach
-    public void setUp() {
-        authTokenDAO = new AuthTokenDAO();
-        userDAO = new UserDAO();
+    public void setUp() throws dataAccess.DataAccessException {
+        conn = db.getConnection();
+        authTokenDAO = new AuthTokenDAO(conn);
+        userDAO = new UserDAO(conn);
         registerService = new RegisterService(authTokenDAO, userDAO);
     }
 
@@ -29,6 +35,7 @@ public class RegisterTest {
     public void tearDown() throws DataAccessException {
         userDAO.clear();
         authTokenDAO.clear();
+        db.returnConnection(conn);
     }
 
     // This test we are creating a completely new user and add that to the db, then we just check to make sure if that is

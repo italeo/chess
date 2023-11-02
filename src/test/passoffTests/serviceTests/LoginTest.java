@@ -1,6 +1,7 @@
 package passoffTests.serviceTests;
 
 import dao.*;
+import dataAccess.Database;
 import model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,20 +10,25 @@ import request.LoginRequest;
 import result.LoginResult;
 import service.LoginService;
 
+import java.sql.Connection;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LoginTest {
     private AuthTokenDAO authTokenDAO;
     private UserDAO userDAO;
     private LoginService loginService;
+    private Connection conn;
+    private Database db = new Database();
 
     // Tests if joining a game is successful
     // We do so but creating a valid authToken and a valid game, then add that into our db
     // Create a valid request and check with assertions if the service class works accordingly
     @BeforeEach
-    public void setUp() {
-        authTokenDAO = new AuthTokenDAO();
-        userDAO = new UserDAO();
+    public void setUp() throws dataAccess.DataAccessException {
+        conn = db.getConnection();
+        authTokenDAO = new AuthTokenDAO(conn);
+        userDAO = new UserDAO(conn);
         loginService = new LoginService(authTokenDAO, userDAO);
     }
 
@@ -31,6 +37,7 @@ public class LoginTest {
     public void tearDown() throws DataAccessException {
         authTokenDAO.clear();
         userDAO.clear();
+        db.returnConnection(conn);
     }
 
     // Created a user that is already in the userDAO/db, which mimicking that the user has already registered and so we are trying to

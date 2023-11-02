@@ -2,6 +2,7 @@ package passoffTests.serviceTests;
 
 import dao.AuthTokenDAO;
 import dao.DataAccessException;
+import dataAccess.Database;
 import model.AuthToken;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,16 +11,21 @@ import request.LogoutRequest;
 import result.LogoutResult;
 import service.LogoutService;
 
+import java.sql.Connection;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LogoutTest {
     private AuthTokenDAO authTokenDAO;
     private LogoutService logoutService;
+    private Connection conn;
+    private Database db = new Database();
 
     // Setting for the test by creating the db, and needed components for testing
     @BeforeEach
-    public void setUp() {
-        authTokenDAO = new AuthTokenDAO();
+    public void setUp() throws dataAccess.DataAccessException {
+        conn = db.getConnection();
+        authTokenDAO = new AuthTokenDAO(conn);
         logoutService = new LogoutService(authTokenDAO);
     }
 
@@ -27,6 +33,7 @@ public class LogoutTest {
     @AfterEach
     public void tearDown() throws DataAccessException {
         authTokenDAO.clear();
+        db.returnConnection(conn);
     }
 
     // To logout, we need a valid token so that is created and inserted into the db so that we are able to validate the user

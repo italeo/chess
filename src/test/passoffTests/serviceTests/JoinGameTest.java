@@ -3,6 +3,7 @@ package passoffTests.serviceTests;
 import chess.ChessGame;
 import chess.ChessGameImpl;
 import dao.*;
+import dataAccess.Database;
 import model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,8 @@ import request.JoinGameRequest;
 import result.JoinGameResult;
 import service.JoinGameService;
 
+import java.sql.Connection;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class JoinGameTest {
@@ -18,12 +21,15 @@ public class JoinGameTest {
     private GameDAO gameDAO;
     private JoinGameService joinGameService;
     private ChessGame chessGame;
+    private Connection conn;
+    private Database db = new Database();
 
     // Setting for the test by creating the db, and needed components for testing
     @BeforeEach
-    public void setUp() {
-        authTokenDAO = new AuthTokenDAO();
-        gameDAO = new GameDAO();
+    public void setUp() throws dataAccess.DataAccessException {
+        conn = db.getConnection();
+        authTokenDAO = new AuthTokenDAO(conn);
+        gameDAO = new GameDAO(conn);
         joinGameService = new JoinGameService(authTokenDAO, gameDAO);
         chessGame = new ChessGameImpl();
     }
@@ -33,6 +39,7 @@ public class JoinGameTest {
     public void tearDown() throws DataAccessException {
         authTokenDAO.clear();
         gameDAO.clear();
+        db.returnConnection(conn);
     }
 
     // Tests if joining a game is successful
@@ -43,7 +50,7 @@ public class JoinGameTest {
         AuthToken token = new AuthToken("validToken", "italeo");
         authTokenDAO.insert(token);
 
-        Game game = new Game(1223, null, null, "chessGame", chessGame);
+        Game game = new Game(1223,  "white", null, "chessGame", chessGame);
         gameDAO.insert(game);
 
         JoinGameRequest request = new JoinGameRequest("validToken", "BLACK", 1223);

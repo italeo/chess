@@ -3,6 +3,7 @@ package passoffTests.serviceTests;
 import chess.ChessGame;
 import chess.ChessGameImpl;
 import dao.*;
+import dataAccess.Database;
 import model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,8 @@ import request.ListGamesRequest;
 import result.ListGameResult;
 import service.ListGamesService;
 
+import java.sql.Connection;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ListGameTest {
@@ -18,12 +21,15 @@ public class ListGameTest {
     private GameDAO gameDAO;
     private ListGamesService listGamesService;
     private ChessGame chessGame;
+    private Connection conn;
+    private Database db = new Database();
 
     // Setting for the test by creating the db, and needed components for testing
     @BeforeEach
-    public void setUp() {
-        authTokenDAO = new AuthTokenDAO();
-        gameDAO = new GameDAO();
+    public void setUp() throws dataAccess.DataAccessException {
+        conn = db.getConnection();
+        authTokenDAO = new AuthTokenDAO(conn);
+        gameDAO = new GameDAO(conn);
         chessGame = new ChessGameImpl();
         listGamesService = new ListGamesService(authTokenDAO, gameDAO);
     }
@@ -33,6 +39,7 @@ public class ListGameTest {
     public void tearDown() throws DataAccessException {
         authTokenDAO.clear();
         gameDAO.clear();
+        db.returnConnection(conn);
     }
 
     // Success test, created a few games added it to the list and see if we are able to display the list using a valid request

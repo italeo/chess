@@ -1,6 +1,7 @@
 package passoffTests.serviceTests;
 
 import dao.*;
+import dataAccess.Database;
 import model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,18 +10,23 @@ import request.CreateGameRequest;
 import result.CreateGameResult;
 import service.CreateGameService;
 
+import java.sql.Connection;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CreateGameTest {
     private AuthTokenDAO authTokenDAO;
     private GameDAO gameDAO;
     private CreateGameService createGameService;
+    private Connection conn;
+    private Database db = new Database();
 
     // Setting up for test by initiating the necessary DAOs and the creatGameService
     @BeforeEach
-    public void setUp() {
-        authTokenDAO = new AuthTokenDAO();
-        gameDAO = new GameDAO();
+    public void setUp() throws dataAccess.DataAccessException {
+        conn = db.getConnection();
+        authTokenDAO = new AuthTokenDAO(conn);
+        gameDAO = new GameDAO(conn);
         createGameService = new CreateGameService(authTokenDAO, gameDAO);
     }
 
@@ -29,6 +35,7 @@ public class CreateGameTest {
     public void tearDown() throws DataAccessException {
         authTokenDAO.clear();
         gameDAO.clear();
+        db.returnConnection(conn);
     }
 
     // Successful test of creat game

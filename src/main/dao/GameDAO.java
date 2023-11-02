@@ -98,20 +98,6 @@ public class GameDAO {
         return null; // Returns null if game is not found.
     }
 
-    public void claimSpot(int gameID, String username) throws DataAccessException {
-    }
-
-    public void removeGame(int gameID) throws DataAccessException {
-        String sql = "DELETE FROM Game WHERE gameID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, gameID);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new DataAccessException("Error deleting the game from the table");
-        }
-    }
-
     // Updates the game, this is specifically used when a user joins the game, so we need it to update the white/black usernames
     public void updateGame(Game game) throws DataAccessException {
         String sql = "UPDATE Game SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ? WHERE gameID = ?";
@@ -158,7 +144,6 @@ public class GameDAO {
                 builder.create();
 
                 ChessGame game = new Gson().fromJson(json, ChessGame.class);
-
                 games.add(new Game(gameID, whiteUsername, blackUsername, gameName, game));
             }
         } catch (SQLException e) {
