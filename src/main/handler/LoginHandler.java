@@ -18,7 +18,8 @@ public class LoginHandler implements Route {
     // Handles the request we get from the client and returns the response from the server, the request is passed to the service
     // where it then returns the results for the login request.
     public Object handle(Request request, Response response) throws DataAccessException {
-        Connection conn = new Database().getConnection();
+        Database db = new Database();
+        Connection conn = db.getConnection();
         LoginRequest loginRequest = new Gson().fromJson(request.body(), LoginRequest.class);
         LoginService service = new LoginService(new AuthTokenDAO(conn), new UserDAO(conn));
         LoginResult result = service.login(loginRequest);
@@ -32,7 +33,7 @@ public class LoginHandler implements Route {
         } else {
             response.status(500);
         }
-
+        db.returnConnection(conn);
         return new Gson().toJson(result);
     }
 }

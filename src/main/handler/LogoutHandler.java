@@ -17,7 +17,8 @@ public class LogoutHandler implements Route {
     // Handles the request we get from the client and returns the response from the server, the request is passed to the service
     // where it then returns the results for the logout request.
     public Object handle(Request request, Response response) throws DataAccessException {
-        Connection conn = new Database().getConnection();
+        Database db = new Database();
+        Connection conn = db.getConnection();
         LogoutRequest logoutRequest = new LogoutRequest(request.headers("authorization"));
         LogoutService service = new LogoutService(new AuthTokenDAO(conn));
         LogoutResult result = service.logout(logoutRequest);
@@ -31,7 +32,7 @@ public class LogoutHandler implements Route {
         } else {
             response.status(500);
         }
-
+        db.returnConnection(conn);
         return new Gson().toJson(result);
     }
 }

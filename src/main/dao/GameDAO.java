@@ -88,15 +88,14 @@ public class GameDAO {
                     builder.registerTypeAdapter(ChessPiece.class, new pieceAdapter());
 
                     var game = builder.create().fromJson(json, ChessGame.class);
-                    Game myGame = new Game(myGameID, whiteUsername, blackUsername, gameName, game);
-
-                    return myGame;
+                    return new Game(myGameID, whiteUsername, blackUsername, gameName, game);
                 }
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DataAccessException("Error finding a game by gameID: " + e.getMessage());
         }
-        return null;
+        return null; // Returns null if game is not found.
     }
 
     public void claimSpot(int gameID, String username) throws DataAccessException {
@@ -114,12 +113,58 @@ public class GameDAO {
     }
 
     // Updates the game, this is specifically used when a user joins the game, so we need it to update the white/black usernames
-    public void updateGame(Game game) {
+    public void updateGame(Game game) throws DataAccessException {
+        String sql = "UPDATE Game SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ? WHERE gameID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, game.getWhiteUsername());
+            stmt.setString(2, game.getBlackUsername());
+            stmt.setString(3, game.getGameName());
+
+            GsonBuilder builder = new GsonBuilder();
+            builder.registerTypeAdapter(ChessGame.class, new gameAdapter());
+            builder.registerTypeAdapter(ChessBoard.class, new bordAdapter());
+            builder.registerTypeAdapter(ChessPiece.class, new pieceAdapter());
+            builder.create();
+            String json = new Gson().toJson(game.getGame());
+            stmt.setString(4, json);
+            stmt.setInt(5, game.getGameID());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Error with updating the game: " +e.getMessage());
+        }
     }
 
     // Return a list of all the games created so far
-    public List<Game> getAllGames() {
-        return null;
+    public List<Game> getAllGames() throws DataAccessException {
+        List<Game> games = new ArrayList<>();
+        String sql = "SELECT * FROM Game";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int gameID = rs.getInt("gameID");
+                String whiteUsername = rs.getString("whiteUsername");
+                String blackUsername = rs.getString("blackUsername");
+                String gameName = rs.getString("gameName");
+
+                // Retrieve the json data
+                var json = rs.getString("game");
+
+                // Deserialize the json
+                GsonBuilder builder = new GsonBuilder();
+                builder.registerTypeAdapter(ChessGame.class, new gameAdapter());
+                builder.registerTypeAdapter(ChessBoard.class, new bordAdapter());
+                builder.registerTypeAdapter(ChessPiece.class, new pieceAdapter());
+                builder.create();
+
+                ChessGame game = new Gson().fromJson(json, ChessGame.class);
+
+                games.add(new Game(gameID, whiteUsername, blackUsername, gameName, game));
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error listing the games" + e.getMessage());
+        }
+        return games;
     }
 
     // ------------------------------- TYPE ADAPTER CLASSES -------------------------------------------------------

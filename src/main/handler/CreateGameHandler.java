@@ -16,8 +16,8 @@ import java.sql.Connection;
 public class CreateGameHandler implements Route {
 
     public Object handle(Request request, Response response) throws DataAccessException {
-
-        Connection conn = new Database().getConnection();
+        Database db = new Database();
+        Connection conn = db.getConnection();
         CreateGameRequest createGameRequest = new Gson().fromJson(request.body(), CreateGameRequest.class);
 
         createGameRequest.setAuthToken(request.headers("authorization"));
@@ -36,7 +36,7 @@ public class CreateGameHandler implements Route {
         } else {
             response.status(500);
         }
-
+        db.returnConnection(conn);
         return new Gson().toJson(result);
     }
 }

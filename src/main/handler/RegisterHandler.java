@@ -18,7 +18,8 @@ public class RegisterHandler implements Route {
     // Handles the request we get from the client and returns the response from the server, the request is passed to the service
     // where it then returns the results for the Register request.
     public Object handle(Request request, Response response) throws DataAccessException {
-        Connection conn = new Database().getConnection();
+        Database db = new Database();
+        Connection conn = db.getConnection();
         RegisterRequest registerRequest = new Gson().fromJson(request.body(), RegisterRequest.class);
         RegisterService service = new RegisterService(new AuthTokenDAO(conn), new UserDAO(conn));
         RegisterResult result = service.register(registerRequest);
@@ -34,7 +35,7 @@ public class RegisterHandler implements Route {
         } else {
             response.status(500);
         }
-
+        db.returnConnection(conn);
         return new Gson().toJson(result);
     }
 }

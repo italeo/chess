@@ -19,6 +19,7 @@ public class JoinGameHandler implements Route {
     public Object handle(Request request, Response response) throws DataAccessException {
 
         JoinGameRequest joinGameRequest = new Gson().fromJson(request.body(), JoinGameRequest.class);
+        Database db = new Database();
         Connection conn = new Database().getConnection();
         joinGameRequest.setAuthToken(request.headers("authorization"));
         JoinGameService service = new JoinGameService(new AuthTokenDAO(conn), new GameDAO(conn));
@@ -39,6 +40,7 @@ public class JoinGameHandler implements Route {
         }else {
             response.status(500);
         }
+        db.returnConnection(conn);
         return new Gson().toJson(result);
     }
 }
