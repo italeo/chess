@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class PawnPieceImpl extends ChessPieceImpl {
+    private static final int BOARD_MIN = 1;
+    private static final int BOARD_MAX = 8;
 
     public PawnPieceImpl(ChessGame.TeamColor teamColor) {
         super(teamColor, PieceType.PAWN);
@@ -75,6 +77,10 @@ public class PawnPieceImpl extends ChessPieceImpl {
         }
         return validMoves;
 
+    }
+
+    public boolean isValidPosition(int row, int col) {
+        return row >= BOARD_MIN && row <= BOARD_MAX && col >= BOARD_MIN && col <= BOARD_MAX;
     }
 
     private boolean ReachesPromotionRow(ChessPosition myPosition) {
