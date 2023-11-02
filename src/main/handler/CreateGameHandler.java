@@ -3,10 +3,13 @@ package handler;
 import com.google.gson.Gson;
 import dao.*;
 import dataAccess.DataAccessException;
+import dataAccess.Database;
 import request.*;
 import result.*;
 import service.*;
 import spark.*;
+
+import java.sql.Connection;
 
 // Handles the request we get from the client and returns the response from the server, the request is passed to the service
 // where it then returns the results for the creatGame request.
@@ -14,10 +17,11 @@ public class CreateGameHandler implements Route {
 
     public Object handle(Request request, Response response) throws DataAccessException {
 
+        Connection conn = new Database().getConnection();
         CreateGameRequest createGameRequest = new Gson().fromJson(request.body(), CreateGameRequest.class);
 
         createGameRequest.setAuthToken(request.headers("authorization"));
-        CreateGameService service = new CreateGameService(new AuthTokenDAO(), new GameDAO());
+        CreateGameService service = new CreateGameService(new AuthTokenDAO(conn), new GameDAO(conn));
         CreateGameResult result = service.createGame(createGameRequest);
         response.type("application/json");
 

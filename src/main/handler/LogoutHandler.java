@@ -3,10 +3,13 @@ package handler;
 import com.google.gson.Gson;
 import dao.*;
 import dataAccess.DataAccessException;
+import dataAccess.Database;
 import request.*;
 import result.*;
 import service.LogoutService;
 import spark.*;
+
+import java.sql.Connection;
 
 /** Handler for http request from user to logout. */
 public class LogoutHandler implements Route {
@@ -14,8 +17,9 @@ public class LogoutHandler implements Route {
     // Handles the request we get from the client and returns the response from the server, the request is passed to the service
     // where it then returns the results for the logout request.
     public Object handle(Request request, Response response) throws DataAccessException {
+        Connection conn = new Database().getConnection();
         LogoutRequest logoutRequest = new LogoutRequest(request.headers("authorization"));
-        LogoutService service = new LogoutService(new AuthTokenDAO());
+        LogoutService service = new LogoutService(new AuthTokenDAO(conn));
         LogoutResult result = service.logout(logoutRequest);
         response.type("application/json");
 

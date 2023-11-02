@@ -1,7 +1,6 @@
 package service;
 
 import dao.*;
-import dataAccess.Database;
 import model.*;
 import request.*;
 import result.*;
@@ -28,10 +27,6 @@ public class LoginService {
      * */
     public LoginResult login(LoginRequest request) throws dataAccess.DataAccessException {
         LoginResult result = new LoginResult();
-        Database db = new Database();
-
-        authDAO = new AuthTokenDAO(db.getConnection());
-        userDAO = new UserDAO(db.getConnection());
 
         if (!validRequest(request)) {
             result.setMessage("Error: unauthorized");

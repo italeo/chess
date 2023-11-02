@@ -22,9 +22,6 @@ public class LogoutService {
      * */
     public LogoutResult logout(LogoutRequest request) throws dataAccess.DataAccessException {
         LogoutResult result = new LogoutResult();
-        Database db = new Database();
-
-        authDAO = new AuthTokenDAO(db.getConnection());
 
         if (!validRequest(request)) {
             result.setMessage("Error: unauthorized");

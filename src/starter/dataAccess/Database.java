@@ -28,7 +28,7 @@ public class Database {
     // FIXME: Change these fields, if necessary, to match your database configuration
     public static final String DB_NAME = "chessdb";
     private static final String DB_USERNAME = "root";
-    private static final String DB_PASSWORD = "chess_23";
+    private static final String DB_PASSWORD = "chess";
 
     private static final String CONNECTION_URL = "jdbc:mysql://localhost:3306";
 

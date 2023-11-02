@@ -3,10 +3,13 @@ package handler;
 import com.google.gson.Gson;
 import dao.*;
 import dataAccess.DataAccessException;
+import dataAccess.Database;
 import request.*;
 import result.*;
 import service.*;
 import spark.*;
+
+import java.sql.Connection;
 
 /** Responsible for handling the http request from a user to join a game. */
 public class JoinGameHandler implements Route {
@@ -16,9 +19,9 @@ public class JoinGameHandler implements Route {
     public Object handle(Request request, Response response) throws DataAccessException {
 
         JoinGameRequest joinGameRequest = new Gson().fromJson(request.body(), JoinGameRequest.class);
-
+        Connection conn = new Database().getConnection();
         joinGameRequest.setAuthToken(request.headers("authorization"));
-        JoinGameService service = new JoinGameService(new AuthTokenDAO(), new GameDAO());
+        JoinGameService service = new JoinGameService(new AuthTokenDAO(conn), new GameDAO(conn));
         JoinGameResult result = service.joinGame(joinGameRequest);
         response.type("application/json");
 

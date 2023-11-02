@@ -2,7 +2,6 @@ package service;
 
 import dao.*;
 import dataAccess.DataAccessException;
-import dataAccess.Database;
 import request.*;
 import result.*;
 import model.*;
@@ -30,12 +29,9 @@ public class ListGamesService {
      * */
     public ListGameResult listAvailableGames(ListGamesRequest request) throws DataAccessException {
         ListGameResult result = new ListGameResult();
-        Database db = new Database();
         List<ListGameSuccessResult> results = new ArrayList<>();
         result.setSuccess(true);
 
-        gameDAO = new GameDAO(db.getConnection());
-        authDAO = new AuthTokenDAO(db.getConnection());
 
         try {
             // Validates the request, authToken must not be null and must be in the database

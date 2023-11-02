@@ -1,7 +1,6 @@
 package service;
 
 import dao.*;
-import dataAccess.Database;
 import model.*;
 import request.*;
 import result.*;
@@ -33,10 +32,6 @@ public class RegisterService {
     public RegisterResult register(RegisterRequest request) throws dataAccess.DataAccessException {
         RegisterResult result = new RegisterResult();
         User newUser = new User();
-        Database db = new Database();
-
-        authDAO = new AuthTokenDAO(db.getConnection());
-        userDAO = new UserDAO(db.getConnection());
 
         if (!validRequest(request)) {
             result.setMessage("Error: bad request");

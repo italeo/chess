@@ -24,15 +24,13 @@ public class ClearService {
         this.authTokenDAO = authTokenDAO;
     }
 
+
+
     /**
      * Function that performs the clearing of the results.
      */
  public ClearResult clear() throws dataAccess.DataAccessException {
      ClearResult result = new ClearResult();
-     Database db = new Database();
-     authTokenDAO = new AuthTokenDAO(db.getConnection());
-     gameDAO = new GameDAO(db.getConnection());
-     userDAO = new UserDAO(db.getConnection());
 
      try {
          gameDAO.clear();

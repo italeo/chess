@@ -2,7 +2,6 @@ package service;
 
 import dao.*;
 import dataAccess.DataAccessException;
-import dataAccess.Database;
 import model.*;
 import request.*;
 import result.*;
@@ -29,12 +28,8 @@ public class CreateGameService {
      * */
     public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException {
         CreateGameResult result = new CreateGameResult();
-        Database db = new Database();
         Game newGame = new Game();
         int gameID;
-
-        authDAO = new AuthTokenDAO(db.getConnection());
-        gameDAO = new GameDAO(db.getConnection());
 
         // Checks if the request is valid, if not return the right error message
         if (!validRequest(request)) {
