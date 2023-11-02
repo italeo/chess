@@ -1,6 +1,8 @@
 package service;
 
 import dao.*;
+import dataAccess.DataAccessException;
+import dataAccess.Database;
 import model.*;
 import request.*;
 import result.*;
@@ -11,8 +13,8 @@ import java.util.Random;
 public class CreateGameService {
 
     /** This variable is the logged-in user's authToken.*/
-    private final AuthTokenDAO authDAO;
-    private final GameDAO gameDAO;
+    private AuthTokenDAO authDAO;
+    private GameDAO gameDAO;
 
     /** Contracts a new game service that handles the request and results.
      * @param authDAO - The auth token of the user from the database.
@@ -25,10 +27,14 @@ public class CreateGameService {
     /** Creates a new Chess game with the default settings stated from the rules, and from the game request.
      * @param request - The request from the user to creat a new game.
      * */
-    public CreateGameResult createGame(CreateGameRequest request) {
+    public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException {
         CreateGameResult result = new CreateGameResult();
+        Database db = new Database();
         Game newGame = new Game();
         int gameID;
+
+        authDAO = new AuthTokenDAO(db.getConnection());
+        gameDAO = new GameDAO(db.getConnection());
 
         // Checks if the request is valid, if not return the right error message
         if (!validRequest(request)) {

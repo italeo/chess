@@ -62,7 +62,7 @@ public class ClearTest {
 
     // Testing with clear works.
     @Test
-    public void clearTestSuccess() {
+    public void clearTestSuccess() throws dataAccess.DataAccessException {
         ClearService clearService = new ClearService(gameDAO, userDAO, authTokenDAO);
         ClearResult result = clearService.clear();
 

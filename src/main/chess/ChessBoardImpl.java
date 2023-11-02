@@ -11,7 +11,7 @@ public class ChessBoardImpl implements ChessBoard {
         board = new ChessPieceImpl[8][8];
     }
 
-    // Adds a piece to it's specific position on the board.
+    // Adds a piece to its specific position on the board.
     @Override
     public void addPiece(ChessPosition position, ChessPiece piece) {
         board[position.row() - 1][position.column() - 1] = piece;

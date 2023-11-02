@@ -2,6 +2,7 @@ package handler;
 
 import com.google.gson.Gson;
 import dao.*;
+import dataAccess.DataAccessException;
 import request.*;
 import result.*;
 import service.*;
@@ -11,7 +12,7 @@ import spark.*;
 // where it then returns the results for the creatGame request.
 public class CreateGameHandler implements Route {
 
-    public Object handle(Request request, Response response) {
+    public Object handle(Request request, Response response) throws DataAccessException {
 
         CreateGameRequest createGameRequest = new Gson().fromJson(request.body(), CreateGameRequest.class);
 

@@ -34,7 +34,7 @@ public class RegisterTest {
     // This test we are creating a completely new user and add that to the db, then we just check to make sure if that is
     // done correctly
     @Test
-    public void registerTest_Success() {
+    public void registerTest_Success() throws dataAccess.DataAccessException {
         RegisterRequest request = new RegisterRequest("Ishmael", "password", "email");
         RegisterResult result = registerService.register(request);
 
@@ -45,7 +45,7 @@ public class RegisterTest {
 
     // Testing if a user is registering with a username that is invalid
     @Test
-    public void registerTest_BadRequest() {
+    public void registerTest_BadRequest() throws dataAccess.DataAccessException {
 
         RegisterRequest request = new RegisterRequest(null, "password", "email");
         RegisterResult result = registerService.register(request);
@@ -56,7 +56,7 @@ public class RegisterTest {
 
     // Here a user is trying to register with a username that has already been taken
     @Test
-    public void registerTest_Taken() throws DataAccessException {
+    public void registerTest_Taken() throws DataAccessException, dataAccess.DataAccessException {
         User user = new User("Ishmael", "password", "italeo@gmail.com");
         userDAO.insert(user);
         RegisterRequest request = new RegisterRequest("Ishmael", "password", "italeo@gmail.com");

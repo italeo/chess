@@ -32,7 +32,7 @@ public class LogoutTest {
     // To logout, we need a valid token so that is created and inserted into the db so that we are able to validate the user
     // and log them out
     @Test
-    public void logoutTest_Success() throws DataAccessException{
+    public void logoutTest_Success() throws DataAccessException, dataAccess.DataAccessException {
         AuthToken authToken = new AuthToken("validToken", "Ishmael");
         authTokenDAO.insert(authToken);
 
@@ -44,7 +44,7 @@ public class LogoutTest {
 
     // This check if a not valid authToken is trying to log out
     @Test
-    public void logoutTest_Unauthorized() throws DataAccessException{
+    public void logoutTest_Unauthorized() throws DataAccessException, dataAccess.DataAccessException {
         AuthToken authToken = new AuthToken("validToken", "Ishmael");
         authTokenDAO.insert(authToken);
 

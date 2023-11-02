@@ -1,6 +1,8 @@
 package service;
 
 import dao.*;
+import dataAccess.DataAccessException;
+import dataAccess.Database;
 import model.*;
 import request.*;
 import result.*;
@@ -27,9 +29,13 @@ public class JoinGameService {
         this.gameDAO = gameDAO;
     }
 
-    public JoinGameResult joinGame(JoinGameRequest request) {
+    public JoinGameResult joinGame(JoinGameRequest request) throws DataAccessException {
         JoinGameResult result = new JoinGameResult();
+        Database db = new Database();
         result.setSuccess(false);
+
+        authDAO = new AuthTokenDAO(db.getConnection());
+        gameDAO = new GameDAO(db.getConnection());
 
         // checks if request is valid
         if (!validRequest(request)) {

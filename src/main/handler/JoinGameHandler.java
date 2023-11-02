@@ -2,6 +2,7 @@ package handler;
 
 import com.google.gson.Gson;
 import dao.*;
+import dataAccess.DataAccessException;
 import request.*;
 import result.*;
 import service.*;
@@ -12,7 +13,7 @@ public class JoinGameHandler implements Route {
 
     // Handles the request we get from the client and returns the response from the server, the request is passed to the service
     // where it then returns the results for the clear request.
-    public Object handle(Request request, Response response) {
+    public Object handle(Request request, Response response) throws DataAccessException {
 
         JoinGameRequest joinGameRequest = new Gson().fromJson(request.body(), JoinGameRequest.class);
 

@@ -33,7 +33,7 @@ public class CreateGameTest {
 
     // Successful test of creat game
     @Test
-    public void createGameTest_Success() throws DataAccessException {
+    public void createGameTest_Success() throws DataAccessException, dataAccess.DataAccessException {
 
         //Creates an authToken and adds it to the database(db)
         AuthToken authToken = new AuthToken("valid_token-234-5676-dfg-6g", "italeo");
@@ -53,7 +53,7 @@ public class CreateGameTest {
     // Negative test for the createGame service
     // This test in particular is testing for a bad request, so when the authToken does not exist
     @Test
-    public void createGameTest_BadRequest() {
+    public void createGameTest_BadRequest() throws dataAccess.DataAccessException {
 
         // Sending a bad request
         CreateGameRequest request = new CreateGameRequest(null, null);
@@ -67,7 +67,7 @@ public class CreateGameTest {
 
     // This negative test, tests for a invalid authToken that is trying to create a game.
     @Test
-    public void creatGameTest_Unauthorized() {
+    public void creatGameTest_Unauthorized() throws dataAccess.DataAccessException {
         // Creating the request with an invalid token that might not be in the db
         CreateGameRequest request = new CreateGameRequest("invalidToken", "chessGame1");
 

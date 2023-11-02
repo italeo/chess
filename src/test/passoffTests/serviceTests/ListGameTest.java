@@ -37,7 +37,7 @@ public class ListGameTest {
 
     // Success test, created a few games added it to the list and see if we are able to display the list using a valid request
     @Test
-    public void listGameTest_Success() throws DataAccessException {
+    public void listGameTest_Success() throws DataAccessException, dataAccess.DataAccessException {
         AuthToken token = new AuthToken("validToken", "italeo");
         authTokenDAO.insert(token);
 
@@ -60,7 +60,7 @@ public class ListGameTest {
 
     // Testing to make sure that an unauthorized authToken cannot view the games that are available
     @Test
-    public void listGameTest_Unauthorized() throws DataAccessException {
+    public void listGameTest_Unauthorized() throws DataAccessException, dataAccess.DataAccessException {
         AuthToken token = new AuthToken("validToken", "italeo");
         authTokenDAO.insert(token);
 

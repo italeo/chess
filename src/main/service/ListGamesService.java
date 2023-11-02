@@ -1,6 +1,8 @@
 package service;
 
 import dao.*;
+import dataAccess.DataAccessException;
+import dataAccess.Database;
 import request.*;
 import result.*;
 import model.*;
@@ -10,9 +12,9 @@ import java.util.*;
 public class ListGamesService {
 
     /** This variable is the logged-in user's authToken.*/
-    private final AuthTokenDAO authDAO;
+    private AuthTokenDAO authDAO;
     /** This variable is in charge of setting the game object.*/
-    private final GameDAO gameDAO;
+    private GameDAO gameDAO;
 
     /**Constructs the object responsible to list out the games.
      * @param gameDAO - The object containing the necessary information about the game from the database.
@@ -26,10 +28,14 @@ public class ListGamesService {
     /** This function lists the games that are available from the database.
      * @param request - Request from the user to get the list of games.
      * */
-    public ListGameResult listAvailableGames(ListGamesRequest request) {
+    public ListGameResult listAvailableGames(ListGamesRequest request) throws DataAccessException {
         ListGameResult result = new ListGameResult();
+        Database db = new Database();
         List<ListGameSuccessResult> results = new ArrayList<>();
         result.setSuccess(true);
+
+        gameDAO = new GameDAO(db.getConnection());
+        authDAO = new AuthTokenDAO(db.getConnection());
 
         try {
             // Validates the request, authToken must not be null and must be in the database

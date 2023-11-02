@@ -1,6 +1,7 @@
 package service;
 
 import dao.*;
+import dataAccess.Database;
 import model.*;
 import request.*;
 import result.*;
@@ -10,9 +11,9 @@ import java.util.UUID;
 public class LoginService {
 
     /** This variable is the logged-in user's authToken.*/
-    private final AuthTokenDAO authDAO;
+    private AuthTokenDAO authDAO;
     /** This variable is represents the user object in the game.*/
-    private final UserDAO userDAO;
+    private UserDAO userDAO;
 
     /** Constructs the log in service object for the user in the game.
      @param authDAO - The users authorization token in the game after logging in.
@@ -25,8 +26,12 @@ public class LoginService {
     /** This function is in charge of handling the request from the user that is trying to log in.
      * @param request - The log in request from the user.
      * */
-    public LoginResult login(LoginRequest request) {
+    public LoginResult login(LoginRequest request) throws dataAccess.DataAccessException {
         LoginResult result = new LoginResult();
+        Database db = new Database();
+
+        authDAO = new AuthTokenDAO(db.getConnection());
+        userDAO = new UserDAO(db.getConnection());
 
         if (!validRequest(request)) {
             result.setMessage("Error: unauthorized");

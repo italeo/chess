@@ -39,7 +39,7 @@ public class JoinGameTest {
     // We do so but creating a valid authToken and a valid game, then add that into our db
     // Create a valid request and check with assertions if the service class works accordingly
     @Test
-    public void joinGameTest_Success() throws DataAccessException {
+    public void joinGameTest_Success() throws DataAccessException, dataAccess.DataAccessException {
         AuthToken token = new AuthToken("validToken", "italeo");
         authTokenDAO.insert(token);
 
@@ -54,7 +54,7 @@ public class JoinGameTest {
 
     // Check if a bad request is sent the service class handles it accordingly
     @Test
-    public void joinGameTest_BadRequest() {
+    public void joinGameTest_BadRequest() throws dataAccess.DataAccessException {
         JoinGameRequest request = new JoinGameRequest(null, "WHITE", 1235);
 
         JoinGameResult result = joinGameService.joinGame(request);
@@ -65,7 +65,7 @@ public class JoinGameTest {
 
     // Check if a unauthorized authToken is trying to join a game
     @Test
-    public void joinGameTest_Unauthorized() {
+    public void joinGameTest_Unauthorized() throws dataAccess.DataAccessException {
         JoinGameRequest request = new JoinGameRequest("invalid-token", "WHITE", 1235);
 
         JoinGameResult result = joinGameService.joinGame(request);
@@ -76,7 +76,7 @@ public class JoinGameTest {
 
     // This is also a negative test that checks if a user has already taken a team color, then no one else should be able to
     @Test
-    public void joinGameTest_Taken() throws DataAccessException{
+    public void joinGameTest_Taken() throws DataAccessException, dataAccess.DataAccessException {
         AuthToken token = new AuthToken("validToken", "italeo");
         authTokenDAO.insert(token);
 

@@ -2,6 +2,7 @@ package handler;
 
 import com.google.gson.Gson;
 import dao.*;
+import dataAccess.DataAccessException;
 import request.ListGamesRequest;
 import result.ListGameResult;
 import service.ListGamesService;
@@ -12,7 +13,7 @@ public class ListGameHandler implements Route {
 
     // Handles the request we get from the client and returns the response from the server, the request is passed to the service
     // where it then returns the results for the listGame request.
-    public Object handle(Request request, Response response) {
+    public Object handle(Request request, Response response) throws DataAccessException {
         ListGamesRequest listGamesRequest = new ListGamesRequest(request.headers("authorization"));
         ListGamesService service = new ListGamesService(new AuthTokenDAO(), new GameDAO());
         ListGameResult result = service.listAvailableGames(listGamesRequest);

@@ -23,7 +23,7 @@ public interface ChessGame {
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
-    enum TeamColor{
+    enum TeamColor {
         WHITE,
         BLACK
     }

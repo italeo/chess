@@ -1,6 +1,7 @@
 package service;
 
 import dao.*;
+import dataAccess.Database;
 import result.*;
 
 /** This class is responsible to handle the clearing of the game/board
@@ -8,10 +9,10 @@ import result.*;
 public class ClearService {
 
     /** This variable is in charge of setting the game object.*/
-    private final GameDAO gameDAO;
+    private GameDAO gameDAO;
     /** This variable is represents the user object in the game.*/
-    private final UserDAO userDAO;
-    private final AuthTokenDAO authTokenDAO;
+    private UserDAO userDAO;
+    private AuthTokenDAO authTokenDAO;
 
     /** Constructs the service necessary to clear the game according to the users request.
      * @param userDAO - The user object containing the necessary information.
@@ -26,8 +27,12 @@ public class ClearService {
     /**
      * Function that performs the clearing of the results.
      */
- public ClearResult clear() {
+ public ClearResult clear() throws dataAccess.DataAccessException {
      ClearResult result = new ClearResult();
+     Database db = new Database();
+     authTokenDAO = new AuthTokenDAO(db.getConnection());
+     gameDAO = new GameDAO(db.getConnection());
+     userDAO = new UserDAO(db.getConnection());
 
      try {
          gameDAO.clear();
