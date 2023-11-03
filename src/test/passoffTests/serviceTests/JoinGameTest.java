@@ -56,29 +56,48 @@ public class JoinGameTest {
         JoinGameRequest request = new JoinGameRequest("validToken", "BLACK", 1223);
         JoinGameResult result = joinGameService.joinGame(request);
 
+        // To check asserts
+        Game updateGame = gameDAO.findGameByID(1223);
+
         assertTrue(result.isSuccess());
+        assertEquals("italeo", updateGame.getBlackUsername());
     }
 
     // Check if a bad request is sent the service class handles it accordingly
     @Test
-    public void joinGameTest_BadRequest() throws dataAccess.DataAccessException {
-        JoinGameRequest request = new JoinGameRequest(null, "WHITE", 1235);
+    public void joinGameTest_BadRequest() throws dataAccess.DataAccessException, DataAccessException {
+        Game game = new Game(1235,  "white", "black", "chessGame", chessGame);
+        gameDAO.insert(game);
 
+        JoinGameRequest request = new JoinGameRequest(null, "WHITE", 1235);
         JoinGameResult result = joinGameService.joinGame(request);
 
         assertFalse(result.isSuccess());
         assertEquals("Error: bad request", result.getMessage());
+
+        // Ensuring that the game state does not change
+        Game myGame = gameDAO.findGameByID(1235);
+        assertEquals("black", myGame.getBlackUsername());
+        assertEquals("white", myGame.getWhiteUsername());
     }
 
     // Check if a unauthorized authToken is trying to join a game
     @Test
-    public void joinGameTest_Unauthorized() throws dataAccess.DataAccessException {
+    public void joinGameTest_Unauthorized() throws dataAccess.DataAccessException, DataAccessException {
+        Game game = new Game(1235,  "white", "black", "chessGame", chessGame);
+        gameDAO.insert(game);
+
         JoinGameRequest request = new JoinGameRequest("invalid-token", "WHITE", 1235);
 
         JoinGameResult result = joinGameService.joinGame(request);
 
         assertFalse(result.isSuccess());
         assertEquals("Error: unauthorized", result.getMessage());
+
+        // Ensuring the game state remains the same
+        Game updateGame = gameDAO.findGameByID(1235);
+        assertEquals("white", updateGame.getWhiteUsername());
+        assertEquals("black", updateGame.getBlackUsername());
     }
 
     // This is also a negative test that checks if a user has already taken a team color, then no one else should be able to

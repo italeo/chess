@@ -19,7 +19,7 @@ public class LoginTest {
     private UserDAO userDAO;
     private LoginService loginService;
     private Connection conn;
-    private Database db = new Database();
+    private final Database db = new Database();
 
     // Tests if joining a game is successful
     // We do so but creating a valid authToken and a valid game, then add that into our db
@@ -53,6 +53,7 @@ public class LoginTest {
         assertTrue(result.isSuccess());
         assertEquals(request.getUsername(), result.getUsername());
         assertNotNull(result.getAuthToken());
+        assertFalse(result.getAuthToken().isEmpty());
     }
 
     // Testing that a user that has not registered to try log in, and making sure that the service is handling that correctly
@@ -66,5 +67,6 @@ public class LoginTest {
 
         assertFalse(result.isSuccess());
         assertEquals("Error: unauthorized", result.getMessage());
+        assertNull(result.getAuthToken());
     }
 }

@@ -12,6 +12,7 @@ import service.*;
 
 import java.sql.Connection;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClearTest {
@@ -68,11 +69,13 @@ public class ClearTest {
 
     // Testing with clear works.
     @Test
-    public void clearTestSuccess() throws dataAccess.DataAccessException {
+    public void clearTestSuccess() throws DataAccessException, dataAccess.DataAccessException {
         ClearService clearService = new ClearService(gameDAO, userDAO, authTokenDAO);
         ClearResult result = clearService.clear();
 
         assertTrue(result.isSuccess());
-
+        assertNull(userDAO.find("italeo"));
+        assertNull(gameDAO.findGameByID(1234));
+        assertNull(authTokenDAO.find("validToken"));
     }
 }

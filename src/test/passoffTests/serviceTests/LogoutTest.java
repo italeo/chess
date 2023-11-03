@@ -2,6 +2,7 @@ package passoffTests.serviceTests;
 
 import dao.AuthTokenDAO;
 import dao.DataAccessException;
+import dao.UserDAO;
 import dataAccess.Database;
 import model.AuthToken;
 import org.junit.jupiter.api.AfterEach;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LogoutTest {
     private AuthTokenDAO authTokenDAO;
+    private UserDAO userDAO;
     private LogoutService logoutService;
     private Connection conn;
     private Database db = new Database();
@@ -26,6 +28,7 @@ public class LogoutTest {
     public void setUp() throws dataAccess.DataAccessException {
         conn = db.getConnection();
         authTokenDAO = new AuthTokenDAO(conn);
+        userDAO = new UserDAO(conn);
         logoutService = new LogoutService(authTokenDAO);
     }
 
@@ -47,6 +50,7 @@ public class LogoutTest {
         LogoutResult result = logoutService.logout(request);
 
         assertTrue(result.isSuccess());
+        assertNull(authTokenDAO.find("validToken"));
     }
 
     // This check if a not valid authToken is trying to log out
@@ -60,5 +64,6 @@ public class LogoutTest {
 
         assertFalse(result.isSuccess());
         assertEquals("Error: unauthorized", result.getMessage());
+        assertNotNull(authTokenDAO.find("validToken"));
     }
 }
