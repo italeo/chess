@@ -1,6 +1,7 @@
 package dao;
 
 import chess.*;
+import dataAccess.DataAccessException;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;

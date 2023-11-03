@@ -1,7 +1,7 @@
 package service;
 
 import dao.*;
-import dataAccess.Database;
+import dataAccess.*;
 import request.*;
 import result.*;
 

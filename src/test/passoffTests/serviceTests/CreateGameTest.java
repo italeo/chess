@@ -1,6 +1,7 @@
 package passoffTests.serviceTests;
 
 import dao.*;
+import dataAccess.DataAccessException;
 import dataAccess.Database;
 import model.*;
 import org.junit.jupiter.api.AfterEach;
@@ -40,7 +41,7 @@ public class CreateGameTest {
 
     // Successful test of creat game
     @Test
-    public void createGameTest_Success() throws DataAccessException, dataAccess.DataAccessException {
+    public void createGameTest_Success() throws DataAccessException {
 
         //Creates an authToken and adds it to the database(db)
         AuthToken authToken = new AuthToken("valid_token-234-5676-dfg-6g", "italeo");
@@ -60,7 +61,7 @@ public class CreateGameTest {
     // Negative test for the createGame service
     // This test in particular is testing for a bad request, so when the authToken does not exist
     @Test
-    public void createGameTest_BadRequest() throws dataAccess.DataAccessException {
+    public void createGameTest_BadRequest() throws DataAccessException {
 
         // Sending a bad request
         CreateGameRequest request = new CreateGameRequest(null, null);

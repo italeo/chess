@@ -4,6 +4,7 @@ import dao.*;
 import model.*;
 import request.*;
 import result.*;
+import dataAccess.DataAccessException;
 
 import java.util.UUID;
 

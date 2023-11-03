@@ -1,6 +1,7 @@
 package passoffTests.serviceTests;
 
 import dao.*;
+import dataAccess.DataAccessException;
 import dataAccess.Database;
 import model.*;
 import org.junit.jupiter.api.AfterEach;
@@ -43,7 +44,7 @@ public class LoginTest {
     // Created a user that is already in the userDAO/db, which mimicking that the user has already registered and so we are trying to
     // log in that same user with a valid request
     @Test
-    public void loginTest_Success() throws DataAccessException, dataAccess.DataAccessException {
+    public void loginTest_Success() throws DataAccessException {
         User user = new User("Ishmael", "password", "it@gmail.com");
         userDAO.insert(user);
 
@@ -58,7 +59,7 @@ public class LoginTest {
 
     // Testing that a user that has not registered to try log in, and making sure that the service is handling that correctly
     @Test
-    public void loginTest_Unauthorized() throws DataAccessException, dataAccess.DataAccessException {
+    public void loginTest_Unauthorized() throws DataAccessException {
         User user = new User("Ishmael", "password", "it@gmail.com");
         userDAO.insert(user);
 

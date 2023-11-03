@@ -1,6 +1,7 @@
 package passoffTests.serviceTests;
 
 import dao.*;
+import dataAccess.DataAccessException;
 import dataAccess.Database;
 import model.User;
 import org.junit.jupiter.api.AfterEach;

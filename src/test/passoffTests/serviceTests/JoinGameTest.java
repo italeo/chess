@@ -3,6 +3,7 @@ package passoffTests.serviceTests;
 import chess.ChessGame;
 import chess.ChessGameImpl;
 import dao.*;
+import dataAccess.DataAccessException;
 import dataAccess.Database;
 import model.*;
 import org.junit.jupiter.api.AfterEach;
@@ -46,7 +47,7 @@ public class JoinGameTest {
     // We do so but creating a valid authToken and a valid game, then add that into our db
     // Create a valid request and check with assertions if the service class works accordingly
     @Test
-    public void joinGameTest_Success() throws DataAccessException, dataAccess.DataAccessException {
+    public void joinGameTest_Success() throws DataAccessException {
         AuthToken token = new AuthToken("validToken", "italeo");
         authTokenDAO.insert(token);
 
@@ -65,7 +66,7 @@ public class JoinGameTest {
 
     // Check if a bad request is sent the service class handles it accordingly
     @Test
-    public void joinGameTest_BadRequest() throws dataAccess.DataAccessException, DataAccessException {
+    public void joinGameTest_BadRequest() throws DataAccessException {
         Game game = new Game(1235,  "white", "black", "chessGame", chessGame);
         gameDAO.insert(game);
 

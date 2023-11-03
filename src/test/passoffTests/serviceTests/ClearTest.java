@@ -2,6 +2,7 @@ package passoffTests.serviceTests;
 
 import chess.*;
 import dao.*;
+import dataAccess.DataAccessException;
 import dataAccess.Database;
 import model.*;
 import org.junit.jupiter.api.AfterEach;
@@ -24,7 +25,7 @@ public class ClearTest {
 
     // Starts by initiating the authTokenDAO, gameDAO and userDAO
     @BeforeEach
-    public void setUp() throws dataAccess.DataAccessException, DataAccessException {
+    public void setUp() throws DataAccessException {
         conn = db.getConnection();
         authTokenDAO = new AuthTokenDAO(conn);
         userDAO = new UserDAO(conn);
@@ -69,7 +70,7 @@ public class ClearTest {
 
     // Testing with clear works.
     @Test
-    public void clearTestSuccess() throws DataAccessException, dataAccess.DataAccessException {
+    public void clearTestSuccess() throws DataAccessException {
         ClearService clearService = new ClearService(gameDAO, userDAO, authTokenDAO);
         ClearResult result = clearService.clear();
 

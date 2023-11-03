@@ -1,7 +1,7 @@
 package service;
 
 import dao.*;
-import dataAccess.Database;
+import dataAccess.DataAccessException;
 import result.*;
 
 /** This class is responsible to handle the clearing of the game/board

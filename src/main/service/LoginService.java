@@ -5,6 +5,7 @@ import model.*;
 import request.*;
 import result.*;
 import java.util.UUID;
+import dataAccess.DataAccessException;
 
 /** Service responsible to handle user logins. */
 public class LoginService {
