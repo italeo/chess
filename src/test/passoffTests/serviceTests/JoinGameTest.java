@@ -50,7 +50,7 @@ public class JoinGameTest {
         AuthToken token = new AuthToken("validToken", "italeo");
         authTokenDAO.insert(token);
 
-        Game game = new Game(1223,  "white", null, "chessGame", chessGame);
+        Game game = new Game(1223,  null, null, "chessGame", chessGame);
         gameDAO.insert(game);
 
         JoinGameRequest request = new JoinGameRequest("validToken", "BLACK", 1223);
