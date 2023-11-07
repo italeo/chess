@@ -18,7 +18,7 @@ public class userDAOTests {
     // The connection to connect to the db
     private Connection conn;
     //Dummy user for testing
-    User testUser;
+    private User testUser;
 
     // Setup before every test we want to initiate the db get the connection and also initiate the UserDAO
     @BeforeEach
