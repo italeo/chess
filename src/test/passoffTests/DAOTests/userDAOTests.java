@@ -78,7 +78,7 @@ public class userDAOTests {
     }
 
     @Test
-    public void insertTest_InvalidFail() throws DataAccessException {
+    public void insertTest_InvalidFail() {
 
         // Create an invalid user
         User testUser3 = new User(null, "password3", "gmail");
