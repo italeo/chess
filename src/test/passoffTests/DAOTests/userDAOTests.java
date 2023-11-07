@@ -85,6 +85,9 @@ public class userDAOTests {
 
         // Test when we try to insert the user
         assertThrows(DataAccessException.class, () -> userDAO.insert(testUser3));
+
+        // Check that the user actually did not get added by trying to retrieve the email
+        assertThrows(NullPointerException.class, () -> userDAO.find(null).getEmail());
     }
 
     @Test
