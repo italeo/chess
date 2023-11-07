@@ -26,6 +26,7 @@ public class GameDAO {
     public GameDAO() {
     }
 
+    // Constructs the connection between the db and the game DAO
     public GameDAO(Connection conn) {
         this.conn = conn;
     }
@@ -114,6 +115,7 @@ public class GameDAO {
             stmt.setString(2, game.getBlackUsername());
             stmt.setString(3, game.getGameName());
 
+            // Register the type adapters
             GsonBuilder builder = new GsonBuilder();
             builder.registerTypeAdapter(ChessGame.class, new GameAdapter());
             builder.registerTypeAdapter(ChessBoard.class, new BoardAdapter());
@@ -163,6 +165,8 @@ public class GameDAO {
     }
 
     // ------------------------------- TYPE ADAPTER CLASSES -------------------------------------------------------
+
+    // Type adapter for ChessGame
     public static class GameAdapter extends TypeAdapter<ChessGame> {
 
         @Override
@@ -180,6 +184,7 @@ public class GameDAO {
         }
     }
 
+    // Type adapter for ChessBoard
     public static class BoardAdapter extends TypeAdapter<ChessBoard> {
 
         @Override
@@ -196,8 +201,10 @@ public class GameDAO {
         }
     }
 
+    // Type adapter for ChessPieces
     public static class PieceAdapter extends TypeAdapter<ChessPiece> {
 
+        // Had issues with serializing the pieces into the db, and add these seem to help
         @Override
         public void write(JsonWriter jsonWriter, ChessPiece piece) throws IOException {
             Gson gson = new Gson();
@@ -218,6 +225,7 @@ public class GameDAO {
             jsonWriter.endObject();
         }
 
+        // Correctly deserializes the data and map the interfaces to the correct concrete classes.
         @Override
         public ChessPiece read(JsonReader jsonReader) throws IOException {
             Gson gson = new Gson();

@@ -9,6 +9,7 @@ import java.sql.SQLException;
 
 /** Responsible for accessing the data for the AuthToken */
 public class AuthTokenDAO {
+    // Used to establish the connection
     private Connection conn;
 
     public AuthTokenDAO() {
@@ -18,6 +19,7 @@ public class AuthTokenDAO {
      //* @param conn - associated connection for data access.
      * */
 
+    // Constructs the connection to the authToken DAO
     public AuthTokenDAO(Connection conn) {
         this.conn = conn;
     }
@@ -71,6 +73,7 @@ public class AuthTokenDAO {
         return null;
     }
 
+    // Deletes an individual authToken from the db, this is mainly used for logging a user out
     public void delete(String authToken) throws DataAccessException {
 
         String sql = "DELETE FROM AuthToken WHERE authToken = ?";
