@@ -72,10 +72,17 @@ public class AuthTokenDAO {
     }
 
     public void delete(String authToken) throws DataAccessException {
+
         String sql = "DELETE FROM AuthToken WHERE authToken = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, authToken);
-            stmt.executeUpdate();
+        try {
+            if (authToken != null) {
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setString(1, authToken);
+                    stmt.executeUpdate();
+                }
+            } else {
+                throw new DataAccessException("AuthToken does not exist");
+            }
         } catch (SQLException e) {
             throw new DataAccessException("Error with deleting an authToken from AuthToken table: " + e.getMessage());
         }
