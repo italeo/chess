@@ -50,11 +50,26 @@ public class userDAOTests {
         assertEquals(testUser.getUsername(), compareResult.getUsername());
         assertEquals(testUser.getPassword(), compareResult.getPassword());
         assertEquals(testUser.getEmail(), compareResult.getEmail());
+
+        // Create other users to double-check that the function works correctly
+        User user1 = new User("fish", "swim", "coral@ocean.com");
+        User user2 = new User("cat", "paw", "feline@ocean.com");
+        User user3 = new User("dog", "walk", "k9@ocean.com");
+
+        // Insert the new users
+        userDAO.insert(user1);
+        userDAO.insert(user2);
+        userDAO.insert(user3);
+
+        // Checking that those user are actually in the db
+        assertEquals("fish", userDAO.find("fish").getUsername());
+        assertEquals("cat", userDAO.find("cat").getUsername());
+        assertEquals("dog", userDAO.find("dog").getUsername());
     }
 
     @Test
     public void insertTest_Fail() throws DataAccessException {
-        // For this test we are checking that situation of inserting the same user twice, and an invalid user.
+        // For this test we are checking that situation of inserting the same user twice.
         User testUser2 = testUser;
         userDAO.insert(testUser);
 
@@ -63,19 +78,43 @@ public class userDAOTests {
     }
 
     @Test
+    public void insertTest_InvalidFail() throws DataAccessException {
+
+        // Create an invalid user
+        User testUser3 = new User(null, "password3", "gmail");
+
+        // Test when we try to insert the user
+        assertThrows(DataAccessException.class, () -> userDAO.insert(testUser3));
+    }
+
+    @Test
     public void clearTest_Success() throws DataAccessException {
 
-        // Add our test user into the db
+        // Create a few more users to added to the db for testing
+        User user1 = new User("fish", "swim", "coral@ocean.com");
+        User user2 = new User("cat", "paw", "feline@ocean.com");
+        User user3 = new User("dog", "walk", "k9@ocean.com");
+
+        // Add our test users into the db
         userDAO.insert(testUser);
+        userDAO.insert(user1);
+        userDAO.insert(user2);
+        userDAO.insert(user3);
 
         // Verify that the table is not empty and contains our test user
-        assertNotNull(userDAO.find("italeo"));
+        assertEquals("italeo", userDAO.find("italeo").getUsername());
+        assertEquals("fish", userDAO.find("fish").getUsername());
+        assertEquals("dog", userDAO.find("dog").getUsername());
+        assertEquals("cat", userDAO.find("cat").getUsername());
 
         // Call the clear method
         assertDoesNotThrow(() -> userDAO.clear());
 
         // Check that the db is actually clear
         assertNull(userDAO.find("italeo"));
+        assertNull(userDAO.find("dog"));
+        assertNull(userDAO.find("cat"));
+        assertNull(userDAO.find("fish"));
     }
 
     @Test
@@ -88,6 +127,30 @@ public class userDAOTests {
 
         // Check if the db is not null
         assertNotNull(test);
+
+        // Creating other test users insert and see if we can find them
+        User user1 = new User("John", "swim", "coral@ocean.com");
+        User user2 = new User("Ben", "paw", "feline@gmail.com");
+        User user3 = new User("Luke", "walk", "k9@yahoo.com");
+
+        // Add our test users into the db
+        userDAO.insert(user1);
+        userDAO.insert(user2);
+        userDAO.insert(user3);
+
+        // Testing the find method
+        assertEquals("John", userDAO.find("John").getUsername());
+        assertEquals("swim", userDAO.find("John").getPassword());
+        assertEquals("coral@ocean.com", userDAO.find("John").getEmail());
+
+        assertEquals("Ben", userDAO.find("Ben").getUsername());
+        assertEquals("paw", userDAO.find("Ben").getPassword());
+        assertEquals("feline@gmail.com", userDAO.find("Ben").getEmail());
+
+        assertEquals("Luke", userDAO.find("Luke").getUsername());
+        assertEquals("walk", userDAO.find("Luke").getPassword());
+        assertEquals("k9@yahoo.com", userDAO.find("Luke").getEmail());
+
     }
 
     @Test
@@ -109,4 +172,5 @@ public class userDAOTests {
         // Check that the retrieved user is null
         assertNull(nonExistingUser);
     }
+
 }
