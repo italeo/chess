@@ -11,7 +11,6 @@ import service.ClearService;
 import spark.*;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
 /** The Http handler for clearing request. */
 public class ClearHandler implements Route {
