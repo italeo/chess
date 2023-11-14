@@ -3,6 +3,7 @@ package ui;
 import exception.ResponseException;
 import model.User;
 import request.LoginRequest;
+import request.LogoutRequest;
 import server.ServerFacade;
 import java.util.Arrays;
 
@@ -22,33 +23,12 @@ public class ChessClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "register" -> {
-                    String result = register(params);
-                    yield result;
-                }
-                case "login" -> {
-                    String result = login(params);
-                    yield result;
-                }
-                case "quit" -> "quit";
+                case "register" -> register(params);
+                case "login" -> login(params);
                 case "logout" -> logout(params);
+                case "quit" -> "quit";
                 default -> help();
             };
-        } catch (ResponseException e) {
-            return e.getMessage();
-        }
-    }
-
-    private String logout(String[] params) throws ResponseException {
-        try {
-            // Call logout method from Facade
-            facade.logout();
-
-            // Update the state
-            state = State.LOGGED_OUT;
-
-            // Return the success message
-            return " Logged out successfully";
         } catch (ResponseException e) {
             return e.getMessage();
         }
@@ -90,6 +70,24 @@ public class ChessClient {
             }
         }
         return "Sorry you entered the wrong information, try again";
+    }
+
+    private String logout(String[] params) throws ResponseException {
+
+        try {
+            LogoutRequest logoutRequest = null;
+
+            // Call logout method from Facade
+            facade.logout();
+
+            // Update the state
+            state = State.LOGGED_OUT;
+
+            // Return the success message
+            return "You have successfully logged out!";
+        } catch (ResponseException e) {
+            return e.getMessage();
+        }
     }
 
     public String help() {

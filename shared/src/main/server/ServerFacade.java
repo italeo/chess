@@ -5,6 +5,7 @@ import exception.ResponseException;
 import model.*;
 import request.LoginRequest;
 
+
 import java.io.*;
 import java.net.*;
 
@@ -33,10 +34,11 @@ public class ServerFacade {
 
     // ------------------------- GAME FUNCTIONALITY ------------------------------
 
-
-
-
-
+    public Game createGame(String gameName) throws ResponseException {
+        var path = "/game";
+        //var request = new CreateGameRequest(gameName);
+        return null;
+    }
 
 
 
