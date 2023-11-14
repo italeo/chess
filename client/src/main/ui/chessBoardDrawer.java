@@ -9,6 +9,8 @@ public class chessBoardDrawer {
             drawChessBoard(chessboard);
         } else {
             // Flip the board and draw with BLACK pieces at the bottom
+            char[][] flipBoard = flipChessBoard(chessboard);
+            drawChessBoard(flipBoard);
         }
     }
 
@@ -23,7 +25,7 @@ public class chessBoardDrawer {
     }
 
     private static char[][] createInitialChessBoard() {
-        char chessBoard[][] = new char[8][8];
+        char[][] chessBoard = new char[8][8];
 
         // Initialize the chess board with the start positions
         char[] pieces = {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'};
@@ -46,9 +48,7 @@ public class chessBoardDrawer {
         char[][] flippedBoard = new char[8][8];
 
         for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                flippedBoard[i][j] = chessBoard[7 - i][j];
-            }
+            System.arraycopy(chessBoard[7 - i], 0, flippedBoard[i], 0, 8);
         }
 
         return flippedBoard;

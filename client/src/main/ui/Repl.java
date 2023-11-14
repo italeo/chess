@@ -11,7 +11,7 @@ public class Repl implements NotificationHandler {
     private final ChessClient client;
 
     public Repl(String serverUrl) {
-        this.client = new ChessClient(serverUrl, this);
+        this.client = new ChessClient(serverUrl);
     }
 
     public void run() {
@@ -42,6 +42,8 @@ public class Repl implements NotificationHandler {
     }
 
     private void printPrompt() {
-        System.out.print("\n" + SET_TEXT_BOLD + "[" + LOGGED_OUT + "]" + " >>> " + SET_TEXT_COLOR_GREEN);
+        State currentState = client.getState();
+        String stateString = (currentState == LOGGED_OUT) ? LOGGED_OUT.name() : LOGGED_IN.name();
+        System.out.print("\n" + SET_TEXT_BOLD + "[" + stateString + "]" + " >>> " + SET_TEXT_COLOR_GREEN);
     }
 }

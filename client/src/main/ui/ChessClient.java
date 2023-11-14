@@ -1,24 +1,19 @@
 package ui;
 
-import ui.chessBoardDrawer.*;
-import ui.websocket.NotificationHandler;
-import ui.websocket.WebSocketFacade;
-
-import javax.websocket.DeploymentException;
-import java.io.IOException;
-import java.net.URISyntaxException;
+import exception.ResponseException;
+import model.User;
+import request.LoginRequest;
+import server.ServerFacade;
 import java.util.Arrays;
 
 public class ChessClient {
     public final String serverUrl;
-    private String usersName = null;
-    private WebSocketFacade ws;
-    private final NotificationHandler notificationHandler;
+    private final ServerFacade facade;
     private State state = State.LOGGED_OUT;
 
-    public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
+    public ChessClient(String serverUrl) {
         this.serverUrl = serverUrl;
-        this.notificationHandler = notificationHandler;
+        this.facade = new ServerFacade(serverUrl);
     }
 
     public String eval(String input) {
@@ -29,33 +24,72 @@ public class ChessClient {
             return switch (cmd) {
                 case "register" -> {
                     String result = register(params);
-                    chessBoardDrawer.drawChessBoard(true);
                     yield result;
                 }
                 case "login" -> {
                     String result = login(params);
-                    chessBoardDrawer.drawChessBoard(true);
                     yield result;
                 }
                 case "quit" -> "quit";
+                case "logout" -> logout(params);
                 default -> help();
             };
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (ResponseException e) {
+            return e.getMessage();
         }
     }
 
-    private String register(String... params) throws DeploymentException, IOException {
+    private String logout(String[] params) throws ResponseException {
+        try {
+            // Call logout method from Facade
+            facade.logout();
+
+            // Update the state
+            state = State.LOGGED_OUT;
+
+            // Return the success message
+            return " Logged out successfully";
+        } catch (ResponseException e) {
+            return e.getMessage();
+        }
+    }
+
+    private String register(String... params) throws ResponseException {
         if (params.length == 3) {
-            state = State.LOGGED_IN;
-            usersName = String.join("-", params);
-
+            User newUser = new User(params[0], params[1], params[2]);
+            try {
+                User registeredUser = facade.registerUser(newUser);
+                state = State.LOGGED_IN;
+                return String.format("Logged in as %s", registeredUser.getUsername());
+            } catch (ResponseException e) {
+                throw new ResponseException(400, "Expected: <yourname>");
+            }
         }
-        return "Not yet implemented";
+        return "Invalid number of parameters";
     }
 
-    private String login(String[] params) {
-        return "Not yet implemented";
+    private String login(String[] params) throws ResponseException {
+        if (params.length == 2) {
+            String username = params[0];
+            String password = params[1];
+
+            // Create a loginRequest object with the username and password
+            LoginRequest loginRequest = new LoginRequest(username, password);
+            try {
+                // Call the login method from the SeverFacade
+                facade.login(loginRequest);
+
+                // Update state to logged in
+                state = State.LOGGED_IN;
+
+                // Return success message
+                return String.format("Logged in as %s", username);
+
+            } catch (ResponseException e) {
+                throw new ResponseException(400, e.getMessage());
+            }
+        }
+        return "Sorry you entered the wrong information, try again";
     }
 
     public String help() {
@@ -76,5 +110,9 @@ public class ChessClient {
                 quit - playing chess
                 help - with possible commands
                 """;
+    }
+
+    public State getState() {
+        return state;
     }
 }
