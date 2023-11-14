@@ -4,6 +4,8 @@ import ui.chessBoardDrawer.*;
 import ui.websocket.NotificationHandler;
 import ui.websocket.WebSocketFacade;
 
+import javax.websocket.DeploymentException;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 
@@ -43,11 +45,10 @@ public class ChessClient {
         }
     }
 
-    private String register(String... params) throws URISyntaxException {
+    private String register(String... params) throws DeploymentException, IOException {
         if (params.length == 3) {
             state = State.LOGGED_IN;
             usersName = String.join("-", params);
-            ws = new WebSocketFacade(serverUrl, notificationHandler);
 
         }
         return "Not yet implemented";
