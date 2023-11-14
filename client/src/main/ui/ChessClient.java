@@ -1,12 +1,16 @@
 package ui;
 
-import org.eclipse.jetty.client.HttpResponseException;
+import ui.chessBoardDrawer.*;
 import ui.websocket.NotificationHandler;
+import ui.websocket.WebSocketFacade;
 
+import java.net.URISyntaxException;
 import java.util.Arrays;
 
 public class ChessClient {
     public final String serverUrl;
+    private String usersName = null;
+    private WebSocketFacade ws;
     private final NotificationHandler notificationHandler;
     private State state = State.LOGGED_OUT;
 
@@ -21,8 +25,16 @@ public class ChessClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "register" -> register(params);
-                case "login" -> login(params);
+                case "register" -> {
+                    String result = register(params);
+                    chessBoardDrawer.drawChessBoard(true);
+                    yield result;
+                }
+                case "login" -> {
+                    String result = login(params);
+                    chessBoardDrawer.drawChessBoard(true);
+                    yield result;
+                }
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -31,12 +43,18 @@ public class ChessClient {
         }
     }
 
-    private String register(String[] params) {
-        return null;
+    private String register(String... params) throws URISyntaxException {
+        if (params.length == 3) {
+            state = State.LOGGED_IN;
+            usersName = String.join("-", params);
+            ws = new WebSocketFacade(serverUrl, notificationHandler);
+
+        }
+        return "Not yet implemented";
     }
 
     private String login(String[] params) {
-        return null;
+        return "Not yet implemented";
     }
 
     public String help() {
