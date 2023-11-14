@@ -1,6 +1,9 @@
 package ui;
 
+import org.eclipse.jetty.client.HttpResponseException;
 import ui.websocket.NotificationHandler;
+
+import java.util.Arrays;
 
 public class ChessClient {
     public final String serverUrl;
@@ -12,9 +15,28 @@ public class ChessClient {
         this.notificationHandler = notificationHandler;
     }
 
-    // Need to complete!!
     public String eval(String input) {
-        return "";
+        try {
+            var tokens = input.toLowerCase().split(" ");
+            var cmd = (tokens.length > 0) ? tokens[0] : "help";
+            var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            return switch (cmd) {
+                case "register" -> register(params);
+                case "login" -> login(params);
+                case "quit" -> "quit";
+                default -> help();
+            };
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String register(String[] params) {
+        return null;
+    }
+
+    private String login(String[] params) {
+        return null;
     }
 
     public String help() {
