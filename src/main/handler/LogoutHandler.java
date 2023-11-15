@@ -19,7 +19,7 @@ public class LogoutHandler implements Route {
     public Object handle(Request request, Response response) throws DataAccessException {
         Database db = new Database();
         Connection conn = db.getConnection();
-        LogoutRequest logoutRequest = new LogoutRequest(request.headers("authorization"));
+        LogoutRequest logoutRequest = new LogoutRequest(request.headers("Authorization"));
         LogoutService service = new LogoutService(new AuthTokenDAO(conn));
         LogoutResult result = service.logout(logoutRequest);
         response.type("application/json");

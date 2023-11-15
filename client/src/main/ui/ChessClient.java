@@ -3,8 +3,10 @@ package ui;
 import exception.ResponseException;
 import model.User;
 import request.LoginRequest;
-import request.LogoutRequest;
+import result.LogoutResult;
+import result.RegisterResult;
 import server.ServerFacade;
+
 import java.util.Arrays;
 
 public class ChessClient {
@@ -25,7 +27,7 @@ public class ChessClient {
             return switch (cmd) {
                 case "register" -> register(params);
                 case "login" -> login(params);
-                case "logout" -> logout(params);
+                case "logout" -> logout();
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -38,9 +40,11 @@ public class ChessClient {
         if (params.length == 3) {
             User newUser = new User(params[0], params[1], params[2]);
             try {
-                User registeredUser = facade.registerUser(newUser);
+                RegisterResult result = facade.registerUser(newUser);
+                // Switch the state to login if it works.
+                String username = result.getUsername();
                 state = State.LOGGED_IN;
-                return String.format("Logged in as %s", registeredUser.getUsername());
+                return String.format("Logged in as %s", username);
             } catch (ResponseException e) {
                 throw new ResponseException(400, "Expected: <yourname>");
             }
@@ -72,19 +76,19 @@ public class ChessClient {
         return "Sorry you entered the wrong information, try again";
     }
 
-    private String logout(String[] params) throws ResponseException {
+    private String logout() throws ResponseException {
 
         try {
-            LogoutRequest logoutRequest = null;
-
             // Call logout method from Facade
-            facade.logout();
-
-            // Update the state
-            state = State.LOGGED_OUT;
-
-            // Return the success message
-            return "You have successfully logged out!";
+            LogoutResult result = facade.logout();
+            if (result.isSuccess()) {
+                // Update the state
+                state = State.LOGGED_OUT;
+                // Return the success message
+                return "Logout successful";
+            } else {
+                return " Log out failed: ";
+            }
         } catch (ResponseException e) {
             return e.getMessage();
         }

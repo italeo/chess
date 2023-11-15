@@ -3,42 +3,47 @@ package server;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.*;
-import request.LoginRequest;
-
-
+import request.*;
+import result.*;
 import java.io.*;
 import java.net.*;
 
 
 public class ServerFacade {
     private final String serverUrl;
+    private static String authToken;
+    public static void setAuthToken(String authToken) {
+        ServerFacade.authToken = authToken;
+    }
 
     public ServerFacade(String serverUrl) {
         this.serverUrl = serverUrl;
     }
 
-    public User registerUser(User newUser) throws ResponseException {
+    public RegisterResult registerUser(User request) throws ResponseException {
         var path = "/user";
-        return this.makeRequest("POST", path, newUser, newUser.getClass());
+        return this.makeRequest("POST", path, request, RegisterResult.class);
     }
 
-    public User login(LoginRequest request) throws ResponseException {
+    public LoginResult login(LoginRequest request) throws ResponseException {
         var path = "/session";
-        return this.makeRequest("POST", path, request, User.class);
+        return this.makeRequest("POST", path, request, LoginResult.class);
     }
 
-    public void logout() throws ResponseException {
+    public LogoutResult logout() throws ResponseException {
         var path = "/session";
-        this.makeRequest("DELETE", path, null, Void.class);
+        LogoutRequest request = new LogoutRequest(authToken);
+        return this.makeRequest("DELETE", path, request, LogoutResult.class);
     }
 
     // ------------------------- GAME FUNCTIONALITY ------------------------------
 
-    public Game createGame(String gameName) throws ResponseException {
+    public CreateGameResult createGame(String gameName) throws ResponseException {
         var path = "/game";
-        //var request = new CreateGameRequest(gameName);
-        return null;
+        var request = new CreateGameRequest(authToken, gameName);
+        return this.makeRequest("POST", path, request, CreateGameResult.class);
     }
+
 
 
 
@@ -52,6 +57,11 @@ public class ServerFacade {
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
+            // Setting authToken for a session
+            if (authToken != null) {
+                http.addRequestProperty("Authorization", authToken);
+            }
+
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
@@ -63,7 +73,7 @@ public class ServerFacade {
 
     private void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
-            http.addRequestProperty("Content-Type", "application");
+            http.addRequestProperty("Content-Type", "application/json");
             String reqData = new Gson().toJson(request);
             try(OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
@@ -79,6 +89,16 @@ public class ServerFacade {
                 InputStreamReader reader = new InputStreamReader(respBody);
                 if (responseClass != null) {
                     response = new Gson().fromJson(reader, responseClass);
+                }
+
+                // Get the authToken from login
+                if (response instanceof LoginResult) {
+                    // Get the authToken
+                    String authToken = ((LoginResult) response).getAuthToken();
+                    setAuthToken(authToken);
+                } else if (response instanceof RegisterResult) {
+                    String authToken = ((RegisterResult) response).getAuthToken();
+                    setAuthToken(authToken);
                 }
             }
         }

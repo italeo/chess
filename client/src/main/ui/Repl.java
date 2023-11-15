@@ -20,7 +20,7 @@ public class Repl implements NotificationHandler {
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        while (!result.equals("quit")) {
+        while (result != null && !result.equals("quit")) {
             printPrompt();
             String line = scanner.nextLine();
 
