@@ -95,10 +95,6 @@ public class ServerFacade {
                     String authToken = ((RegisterResult) response).getAuthToken();
                     SessionManager.setAuthToken(authToken);
                 }
-
-                if (response instanceof CreateGameResult) {
-                    Integer gameID = ((CreateGameResult) response).getGameID();
-                }
             }
         }
         return response;

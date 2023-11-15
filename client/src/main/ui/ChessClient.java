@@ -1,13 +1,10 @@
 package ui;
 
-import chess.ChessGame;
-import chess.ChessGameImpl;
 import exception.ResponseException;
 import model.*;
 import request.*;
 import result.*;
 import server.ServerFacade;
-import server.SessionManager;
 
 import java.util.Arrays;
 
