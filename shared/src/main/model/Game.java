@@ -68,9 +68,7 @@ public class Game {
         this.blackUsername = blackUsername;
     }
 
-    public ChessGame getGame() {
-        return game;
-    }
+    public ChessGame getGame() { return game; }
 
     public void setGame(ChessGame game) {
         this.game = game;

@@ -95,6 +95,9 @@ public class ServerFacade {
                     String authToken = ((RegisterResult) response).getAuthToken();
                     SessionManager.setAuthToken(authToken);
                 }
+
+
+                // Retrieve the game???
             }
         }
         return response;
