@@ -1,11 +1,13 @@
 package ui;
 
+import chess.ChessGame;
+import chess.ChessGameImpl;
 import exception.ResponseException;
-import model.User;
-import request.LoginRequest;
-import result.LogoutResult;
-import result.RegisterResult;
+import model.*;
+import request.*;
+import result.*;
 import server.ServerFacade;
+import server.SessionManager;
 
 import java.util.Arrays;
 
@@ -28,12 +30,34 @@ public class ChessClient {
                 case "register" -> register(params);
                 case "login" -> login(params);
                 case "logout" -> logout();
+                case "create" -> createGame(params);
                 case "quit" -> "quit";
                 default -> help();
             };
         } catch (ResponseException e) {
             return e.getMessage();
         }
+    }
+
+    private String createGame(String[] params) {
+        if (params.length == 1) {
+            // Get the gameName entered by the user
+            String gameName = params[0];
+
+            try {
+                // Set that name as the gameName
+                CreateGameResult result = facade.createGame(gameName);
+
+                // Check if the game was create correctly
+                if(result.isSuccess()) {
+                    return "game created successfully now print board";
+                }
+
+            } catch (ResponseException e) {
+                return e.getMessage();
+            }
+        }
+        return null;
     }
 
     private String register(String... params) throws ResponseException {

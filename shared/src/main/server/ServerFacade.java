@@ -11,11 +11,6 @@ import java.net.*;
 
 public class ServerFacade {
     private final String serverUrl;
-    private static String authToken;
-    public static void setAuthToken(String authToken) {
-        ServerFacade.authToken = authToken;
-    }
-
     public ServerFacade(String serverUrl) {
         this.serverUrl = serverUrl;
     }
@@ -32,7 +27,7 @@ public class ServerFacade {
 
     public LogoutResult logout() throws ResponseException {
         var path = "/session";
-        LogoutRequest request = new LogoutRequest(authToken);
+        LogoutRequest request = new LogoutRequest(SessionManager.getAuthToken());
         return this.makeRequest("DELETE", path, request, LogoutResult.class);
     }
 
@@ -40,7 +35,7 @@ public class ServerFacade {
 
     public CreateGameResult createGame(String gameName) throws ResponseException {
         var path = "/game";
-        var request = new CreateGameRequest(authToken, gameName);
+        var request = new CreateGameRequest(SessionManager.getAuthToken(), gameName);
         return this.makeRequest("POST", path, request, CreateGameResult.class);
     }
 
@@ -58,8 +53,8 @@ public class ServerFacade {
             http.setDoOutput(true);
 
             // Setting authToken for a session
-            if (authToken != null) {
-                http.addRequestProperty("Authorization", authToken);
+            if (SessionManager.getAuthToken() != null) {
+                http.addRequestProperty("Authorization", SessionManager.getAuthToken());
             }
 
             writeBody(request, http);
@@ -95,10 +90,14 @@ public class ServerFacade {
                 if (response instanceof LoginResult) {
                     // Get the authToken
                     String authToken = ((LoginResult) response).getAuthToken();
-                    setAuthToken(authToken);
+                    SessionManager.setAuthToken(authToken);
                 } else if (response instanceof RegisterResult) {
                     String authToken = ((RegisterResult) response).getAuthToken();
-                    setAuthToken(authToken);
+                    SessionManager.setAuthToken(authToken);
+                }
+
+                if (response instanceof CreateGameResult) {
+                    Integer gameID = ((CreateGameResult) response).getGameID();
                 }
             }
         }
