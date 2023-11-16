@@ -8,11 +8,16 @@ import result.*;
 import java.io.*;
 import java.net.*;
 
-
 public class ServerFacade {
     private final String serverUrl;
+
     public ServerFacade(String serverUrl) {
         this.serverUrl = serverUrl;
+    }
+
+    public ClearResult clear() throws ResponseException {
+        var path = "/db";
+        return this.makeRequest("DELETE", path, null, ClearResult.class);
     }
 
     public RegisterResult registerUser(User request) throws ResponseException {
@@ -96,8 +101,12 @@ public class ServerFacade {
                     SessionManager.setAuthToken(authToken);
                 }
 
-
                 // Retrieve the game??
+                // get game ID, then chessGame which has board.
+                if (response instanceof CreateGameResult) {
+                    Integer gameID = ((CreateGameResult) response).getGameID();
+                    SessionManager.setGameID(gameID);
+                }
             }
         }
         return response;

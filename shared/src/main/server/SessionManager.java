@@ -9,11 +9,9 @@ public class SessionManager {
     public static void setAuthToken(String authToken) {
         SessionManager.authToken = authToken;
     }
-
     public static Integer getGameID() {
         return gameID;
     }
-
     public static void setGameID(Integer gameID) {
         SessionManager.gameID = gameID;
     }

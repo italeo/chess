@@ -24,6 +24,7 @@ public class ChessClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
+                case "clear" -> clear();
                 case "register" -> register(params);
                 case "login" -> login(params);
                 case "logout" -> logout();
@@ -34,6 +35,10 @@ public class ChessClient {
         } catch (ResponseException e) {
             return e.getMessage();
         }
+    }
+
+    private String clear() {
+        return "";
     }
 
     private String createGame(String[] params) {
@@ -130,6 +135,7 @@ public class ChessClient {
                 join <ID> [WHITE|BLACK|<empty>]- a game
                 observer <ID> - a game
                 logout - when you are done
+                clear - clear the data base
                 quit - playing chess
                 help - with possible commands
                 """;
