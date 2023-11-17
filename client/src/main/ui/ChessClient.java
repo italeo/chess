@@ -1,6 +1,6 @@
 package ui;
 
-import dao.GameDAO;
+
 import dataAccess.DataAccessException;
 import exception.ResponseException;
 import model.*;
@@ -39,6 +39,15 @@ public class ChessClient {
     }
 
     private String clear() {
+        try {
+            ClearResult result = facade.clear();
+            if (result.isSuccess()) {
+                String message = "Clear Successful!";
+                return message;
+            }
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
         return "";
     }
 
@@ -58,16 +67,11 @@ public class ChessClient {
                     // Draw the default board
                     ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
 
-                    Game newGame = (Game) result.getGame();
-                    boardDrawer.drawBoard(newGame);
-
                     return successMessage;
                 }
 
             } catch (ResponseException e) {
                 return e.getMessage();
-            } catch (DataAccessException e) {
-                throw new RuntimeException(e);
             }
         }
         return null;
@@ -137,6 +141,7 @@ public class ChessClient {
                     register <USERNAME> <PASSWORD> <EMAIL> - to create an account
                     login <USERNAME> <PASSWORD> - to play chess
                     quit - playing chess
+                    clear - clear the data base
                     help - with possible commands
                     """;
         }
@@ -146,8 +151,8 @@ public class ChessClient {
                 join <ID> [WHITE|BLACK|<empty>]- a game
                 observer <ID> - a game
                 logout - when you are done
-                clear - clear the data base
                 quit - playing chess
+                clear - clear the data base
                 help - with possible commands
                 """;
     }

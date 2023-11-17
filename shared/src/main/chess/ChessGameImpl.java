@@ -12,6 +12,7 @@ public class ChessGameImpl implements ChessGame {
 
     public ChessGameImpl() {
         this.teamTurn = TeamColor.WHITE;
+        board.resetBoard();
     }
 
     @Override
