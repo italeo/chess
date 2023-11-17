@@ -10,17 +10,17 @@ import model.Game;
 import server.SessionManager;
 
 public class ChessBoardDrawer {
-    private Game game;
+    private Game game = new Game();
     private GameDAO gameDAO = new GameDAO();
     private ChessBoard board;
 
     public void drawBoard(Game game) throws DataAccessException {
         try {
-            if (SessionManager.getGameID() != null) {
-                // Find the correct game
-                this.game = gameDAO.findGameByID(SessionManager.getGameID());
+            Integer gameID = SessionManager.getGameID();
+            if ( gameID != null) {
 
                 // Get the board
+                Game newGame = gameDAO.findGameByID(gameID);
                 this.board = game.getGame().getBoard();
 
                 // Iterate through the board and draw the board.

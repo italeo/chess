@@ -1,5 +1,6 @@
 package ui;
 
+import dao.GameDAO;
 import dataAccess.DataAccessException;
 import exception.ResponseException;
 import model.*;
