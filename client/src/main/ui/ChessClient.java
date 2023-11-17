@@ -1,12 +1,12 @@
 package ui;
 
-
-import dataAccess.DataAccessException;
 import exception.ResponseException;
 import model.*;
 import request.*;
 import result.*;
 import server.ServerFacade;
+import server.SessionManager;
+
 import java.util.Arrays;
 
 public class ChessClient {
@@ -30,6 +30,7 @@ public class ChessClient {
                 case "login" -> login(params);
                 case "logout" -> logout();
                 case "create" -> createGame(params);
+                case "join" -> joinGame(params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -38,12 +39,34 @@ public class ChessClient {
         }
     }
 
+    private String joinGame(String[] params) {
+        if (params.length ==2) {
+            String gameIDStr = params[0];
+            Integer gameID = Integer.parseInt(gameIDStr);
+            String playerColor = params[1];
+
+            try {
+                JoinGameResult result = facade.joinGame(gameID, playerColor);
+
+                if (result.isSuccess()) {
+                    // print the board here
+                    ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
+                    boardDrawer.drawBoard();
+                    return result.getMessage();
+                }
+            } catch (ResponseException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return "Entered wrong inputs, please try again";
+    }
+
     private String clear() {
         try {
             ClearResult result = facade.clear();
             if (result.isSuccess()) {
-                String message = "Clear Successful!";
-                return message;
+                return "Clear Successful!";
             }
         } catch (ResponseException e) {
             throw new RuntimeException(e);
@@ -62,12 +85,9 @@ public class ChessClient {
 
                 // Check if the game was create correctly
                 if(result.isSuccess()) {
-                    String successMessage = "game created successfully now print board";
-
-                    // Draw the default board
-                    ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
-
-                    return successMessage;
+                    Integer gameID = SessionManager.getGameID();
+                    String message = "game created successfully!\n";
+                    return message + "you can now join game: " + gameName + "\nwith gameID: " + gameID;
                 }
 
             } catch (ResponseException e) {

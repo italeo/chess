@@ -8,14 +8,14 @@ public class ChessBoardDrawer {
     private ChessGame game = new ChessGameImpl();
     private ChessBoard board;
 
-    public void drawBoard(Game game) {
+    public void drawBoard() {
 
         Integer gameID = SessionManager.getGameID();
         if ( gameID != null) {
 
             // Get the board
             // NOT THE RIGHT WAY
-            this.board = game.getGame().getBoard();
+            this.board = game.getBoard();
 
             // Iterate through the board and draw the board.
             for (int row = 1; row <= 8; row++) {

@@ -44,6 +44,12 @@ public class ServerFacade {
         return this.makeRequest("POST", path, request, CreateGameResult.class);
     }
 
+    public JoinGameResult joinGame(Integer gameID, String playerColor) throws ResponseException {
+        var path = "/game";
+        var request = new JoinGameRequest(SessionManager.getAuthToken(), playerColor, SessionManager.getGameID());
+        return this.makeRequest("POST", path, request, JoinGameResult.class);
+    }
+
 
 
 
