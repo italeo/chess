@@ -1,11 +1,11 @@
 package ui;
 
+import dataAccess.DataAccessException;
 import exception.ResponseException;
 import model.*;
 import request.*;
 import result.*;
 import server.ServerFacade;
-
 import java.util.Arrays;
 
 public class ChessClient {
@@ -52,11 +52,21 @@ public class ChessClient {
 
                 // Check if the game was create correctly
                 if(result.isSuccess()) {
-                    return "game created successfully now print board";
+                    String successMessage = "game created successfully now print board";
+
+                    // Draw the default board
+                    ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
+
+                    Game newGame = (Game) result.getGame();
+                    boardDrawer.drawBoard(newGame);
+
+                    return successMessage;
                 }
 
             } catch (ResponseException e) {
                 return e.getMessage();
+            } catch (DataAccessException e) {
+                throw new RuntimeException(e);
             }
         }
         return null;

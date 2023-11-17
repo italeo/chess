@@ -1,5 +1,6 @@
 package model;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 
 /** Sets the structure of the Chess game with the default rules that have been implemented.

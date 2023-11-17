@@ -47,7 +47,6 @@ public class ServerFacade {
 
 
 
-
     // ----------------------------------- END -----------------------------------
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
