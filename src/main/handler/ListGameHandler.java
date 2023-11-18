@@ -19,7 +19,7 @@ public class ListGameHandler implements Route {
     public Object handle(Request request, Response response) throws DataAccessException {
         Database db = new Database();
         Connection conn = db.getConnection();
-        ListGamesRequest listGamesRequest = new ListGamesRequest(request.headers("authorization"));
+        ListGamesRequest listGamesRequest = new ListGamesRequest(request.headers("Authorization"));
         ListGamesService service = new ListGamesService(new AuthTokenDAO(conn), new GameDAO(conn));
         ListGameResult result = service.listAvailableGames(listGamesRequest);
         response.type("application/json");

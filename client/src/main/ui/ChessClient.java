@@ -6,8 +6,9 @@ import request.*;
 import result.*;
 import server.ServerFacade;
 import server.SessionManager;
-
 import java.util.Arrays;
+import java.util.List;
+
 
 public class ChessClient {
     public final String serverUrl;
@@ -30,12 +31,35 @@ public class ChessClient {
                 case "login" -> login(params);
                 case "logout" -> logout();
                 case "create" -> createGame(params);
+                case "list" -> listGames();
                 case "join" -> joinGame(params);
                 case "quit" -> "quit";
                 default -> help();
             };
         } catch (ResponseException e) {
             return e.getMessage();
+        }
+    }
+
+    private String listGames() {
+        try {
+            ListGameResult result = facade.listGames();
+
+            if (result.isSuccess()) {
+                List<ListGameSuccessResult> games = SessionManager.getGames();
+
+                StringBuilder sb = new StringBuilder("Here are the available games!");
+
+                for (ListGameSuccessResult game : games) {
+                    sb.append("gameID: ").append(game.getGameID()).append(", name: ").append(game.getGameName()).append("\n");
+                }
+                return sb.toString();
+            } else {
+                return "There are no games available.";
+            }
+        } catch (ResponseException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

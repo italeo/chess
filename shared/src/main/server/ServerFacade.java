@@ -7,6 +7,7 @@ import request.*;
 import result.*;
 import java.io.*;
 import java.net.*;
+import java.util.List;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -40,17 +41,21 @@ public class ServerFacade {
 
     public CreateGameResult createGame(String gameName) throws ResponseException {
         var path = "/game";
-        var request = new CreateGameRequest(SessionManager.getAuthToken(), gameName);
+        CreateGameRequest request = new CreateGameRequest(SessionManager.getAuthToken(), gameName);
         return this.makeRequest("POST", path, request, CreateGameResult.class);
     }
 
     public JoinGameResult joinGame(Integer gameID, String playerColor) throws ResponseException {
         var path = "/game";
-        var request = new JoinGameRequest(SessionManager.getAuthToken(), playerColor, SessionManager.getGameID());
+        JoinGameRequest request = new JoinGameRequest(SessionManager.getAuthToken(), playerColor, gameID);
         return this.makeRequest("POST", path, request, JoinGameResult.class);
     }
 
-
+    public ListGameResult listGames() throws ResponseException {
+        var path = "/game";
+        ListGamesRequest request = new ListGamesRequest(SessionManager.getAuthToken());
+        return this.makeRequest("GET", path, request, ListGameResult.class);
+    }
 
 
     // ----------------------------------- END -----------------------------------
@@ -111,6 +116,12 @@ public class ServerFacade {
                 if (response instanceof CreateGameResult) {
                     Integer gameID = ((CreateGameResult) response).getGameID();
                     SessionManager.setGameID(gameID);
+                }
+
+                // Retrieve needed info to display the list of games
+                if (response instanceof ListGameResult gameResult) {
+                    List<ListGameSuccessResult> games = gameResult.getGames();
+                    SessionManager.setGames(games);
                 }
             }
         }

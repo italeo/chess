@@ -1,9 +1,13 @@
 package server;
 
+import result.ListGameSuccessResult;
+import java.util.List;
+
 public class SessionManager {
     private static String authToken;
     private static Integer gameID;
     private static String gameName;
+    private static List<ListGameSuccessResult> games;
     public static String getAuthToken() {
         return authToken;
     }
@@ -18,4 +22,6 @@ public class SessionManager {
     }
     public static String getGameName() { return gameName; }
     public static void setGameName(String gameName) { SessionManager.gameName = gameName; }
+    public static List<ListGameSuccessResult> getGames() { return games; }
+    public static void setGames(List<ListGameSuccessResult> games) { SessionManager.games = games; }
 }

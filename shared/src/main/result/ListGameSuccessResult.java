@@ -25,9 +25,9 @@ public class ListGameSuccessResult {
         this.blackUsername = blackUsername;
     }
 
-    public void setGameName(String gameName) {
-        this.gameName = gameName;
-    }
+    public void setGameName(String gameName) { this.gameName = gameName; }
+
+    public String getGameName() { return gameName; }
 
     public void setGameID(int gameID) {
         this.gameID = gameID;
