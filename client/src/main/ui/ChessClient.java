@@ -25,6 +25,13 @@ public class ChessClient {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+
+            // if the command is "quit" and the user is logged in, leave the game.
+            if (cmd.equals("quit") && state == State.LOGGED_IN) {
+                return quitGame();
+            }
+
+
             return switch (cmd) {
                 case "clear" -> clear();
                 case "register" -> register(params);
@@ -33,6 +40,7 @@ public class ChessClient {
                 case "create" -> createGame(params);
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
+                case "observer" -> observeGame(params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -51,6 +59,13 @@ public class ChessClient {
             throw new RuntimeException(e);
         }
         return "";
+    }
+
+    private String quitGame() {
+        // Switch out of game
+        state = State.LOGGED_IN;
+
+        return "Successfully quited the game.\n";
     }
 
     private String register(String... params) throws ResponseException {
@@ -156,6 +171,32 @@ public class ChessClient {
         }
     }
 
+    private String observeGame(String[] params) {
+        if (params.length == 1) {
+            String gameIDStr = params[0];
+            int gameID = Integer.parseInt(gameIDStr);
+
+            try {
+                JoinGameResult result = facade.joinGame(gameID, null);
+
+                if (result.isSuccess()) {
+                    // print the board here
+                    System.out.println("Before board\n");
+                    ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
+                    boardDrawer.drawBoard(gameID);
+                    System.out.flush();
+                    Thread.sleep(100);
+                    System.out.println("After board\n");
+                    return "Successfully Joined as an observer!\n";
+                }
+
+            } catch (ResponseException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return "Entered wrong inputs, please try again";
+    }
+
     private String joinGame(String[] params) {
         if (params.length == 2) {
             String gameIDStr = params[0];
@@ -167,11 +208,15 @@ public class ChessClient {
 
                 if (result.isSuccess()) {
                     // print the board here
+                    System.out.println("Before board\n");
                     ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
-                    boardDrawer.drawBoard();
+                    boardDrawer.drawBoard(gameID);
+                    System.out.flush();
+                    Thread.sleep(100);
+                    System.out.println("After board\n");
                     return "Successfully Joined game: " + gameID;
                 }
-            } catch (ResponseException e) {
+            } catch (ResponseException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
