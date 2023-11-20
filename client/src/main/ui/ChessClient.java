@@ -157,18 +157,19 @@ public class ChessClient {
     }
 
     private String joinGame(String[] params) {
-        if (params.length == 1) {
+        if (params.length == 2) {
             String gameIDStr = params[0];
             int gameID = Integer.parseInt(gameIDStr);
+            String playerColor = params[1];
 
             try {
-                JoinGameResult result = facade.joinGame(gameID, null);
+                JoinGameResult result = facade.joinGame(gameID, playerColor.toUpperCase());
 
                 if (result.isSuccess()) {
                     // print the board here
                     ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
                     boardDrawer.drawBoard();
-                    return result.getMessage();
+                    return "Successfully Joined game: " + gameID;
                 }
             } catch (ResponseException e) {
                 throw new RuntimeException(e);

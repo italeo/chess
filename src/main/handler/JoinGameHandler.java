@@ -21,7 +21,7 @@ public class JoinGameHandler implements Route {
         JoinGameRequest joinGameRequest = new Gson().fromJson(request.body(), JoinGameRequest.class);
         Database db = new Database();
         Connection conn = new Database().getConnection();
-        joinGameRequest.setAuthToken(request.headers("authorization"));
+        joinGameRequest.setAuthToken(request.headers("Authorization"));
         JoinGameService service = new JoinGameService(new AuthTokenDAO(conn), new GameDAO(conn));
         JoinGameResult result = service.joinGame(joinGameRequest);
         response.type("application/json");

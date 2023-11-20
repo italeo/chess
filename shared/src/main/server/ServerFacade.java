@@ -48,7 +48,7 @@ public class ServerFacade {
     public JoinGameResult joinGame(Integer gameID, String playerColor) throws ResponseException {
         var path = "/game";
         JoinGameRequest request = new JoinGameRequest(SessionManager.getAuthToken(), playerColor, gameID);
-        return this.makeRequest("POST", path, request, JoinGameResult.class);
+        return this.makeRequest("PUT", path, request, JoinGameResult.class);
     }
 
     public ListGameResult listGames() throws ResponseException {
@@ -73,11 +73,15 @@ public class ServerFacade {
             }
 
             http.connect();
+            
+            // Checks if the request body is empty or not
             if (request != null) {
                 writeBody(request, http);
             }
+            
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
+            
         } catch (Exception e) {
             throw new ResponseException(500, e.getMessage());
         }
