@@ -1,7 +1,6 @@
 package service;
 
 import dao.*;
-import dataAccess.DataAccessException;
 import model.*;
 import request.*;
 import result.*;
@@ -28,7 +27,7 @@ public class JoinGameService {
         this.gameDAO = gameDAO;
     }
 
-    public JoinGameResult joinGame(JoinGameRequest request) throws DataAccessException {
+    public JoinGameResult joinGame(JoinGameRequest request) {
         JoinGameResult result = new JoinGameResult();
         result.setSuccess(false);
 

@@ -41,51 +41,6 @@ public class ChessClient {
         }
     }
 
-    private String listGames() {
-        try {
-            ListGameResult result = facade.listGames();
-
-            if (result.isSuccess()) {
-                List<ListGameSuccessResult> games = SessionManager.getGames();
-
-                StringBuilder sb = new StringBuilder("Here are the available games!");
-
-                for (ListGameSuccessResult game : games) {
-                    sb.append("gameID: ").append(game.getGameID()).append(", name: ").append(game.getGameName()).append("\n");
-                }
-                return sb.toString();
-            } else {
-                return "There are no games available.";
-            }
-        } catch (ResponseException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
-
-    private String joinGame(String[] params) {
-        if (params.length ==2) {
-            String gameIDStr = params[0];
-            Integer gameID = Integer.parseInt(gameIDStr);
-            String playerColor = params[1];
-
-            try {
-                JoinGameResult result = facade.joinGame(gameID, playerColor);
-
-                if (result.isSuccess()) {
-                    // print the board here
-                    ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
-                    boardDrawer.drawBoard();
-                    return result.getMessage();
-                }
-            } catch (ResponseException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        return "Entered wrong inputs, please try again";
-    }
-
     private String clear() {
         try {
             ClearResult result = facade.clear();
@@ -96,29 +51,6 @@ public class ChessClient {
             throw new RuntimeException(e);
         }
         return "";
-    }
-
-    private String createGame(String[] params) {
-        if (params.length == 1) {
-            // Get the gameName entered by the user
-            String gameName = params[0];
-
-            try {
-                // Set that name as the gameName
-                CreateGameResult result = facade.createGame(gameName);
-
-                // Check if the game was create correctly
-                if(result.isSuccess()) {
-                    Integer gameID = SessionManager.getGameID();
-                    String message = "game created successfully!\n";
-                    return message + "you can now join game: " + gameName + "\nwith gameID: " + gameID;
-                }
-
-            } catch (ResponseException e) {
-                return e.getMessage();
-            }
-        }
-        return null;
     }
 
     private String register(String... params) throws ResponseException {
@@ -178,6 +110,75 @@ public class ChessClient {
             return e.getMessage();
         }
     }
+
+    // ----------------------------- GAME FUNCTION --------------------------------------------------------------
+    private String createGame(String[] params) {
+        if (params.length == 1) {
+            // Get the gameName entered by the user
+            String gameName = params[0];
+
+            try {
+                // Set that name as the gameName
+                CreateGameResult result = facade.createGame(gameName);
+
+                // Check if the game was create correctly
+                if(result.isSuccess()) {
+                    Integer gameID = SessionManager.getGameID();
+                    String message = "game created successfully!\n";
+                    return message + "you can now join game: " + gameName + "\nwith gameID: " + gameID + "\n";
+                }
+
+            } catch (ResponseException e) {
+                return e.getMessage();
+            }
+        }
+        return null;
+    }
+
+    private String listGames() {
+        try {
+            ListGameResult result = facade.listGames();
+
+            if (result.isSuccess()) {
+                List<ListGameSuccessResult> games = SessionManager.getGames();
+
+                StringBuilder sb = new StringBuilder("Here are the available games!\n");
+
+                for (ListGameSuccessResult game : games) {
+                    sb.append("gameID: ").append(game.getGameID()).append(", name: ").append(game.getGameName()).append("\n");
+                }
+                return sb.toString();
+            } else {
+                return "There are no games available.";
+            }
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String joinGame(String[] params) {
+        if (params.length == 1) {
+            String gameIDStr = params[0];
+            int gameID = Integer.parseInt(gameIDStr);
+
+            try {
+                JoinGameResult result = facade.joinGame(gameID, null);
+
+                if (result.isSuccess()) {
+                    // print the board here
+                    ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
+                    boardDrawer.drawBoard();
+                    return result.getMessage();
+                }
+            } catch (ResponseException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return "Entered wrong inputs, please try again";
+    }
+
+
+    // ----------------------------------------- END ------------------------------------------------------------
 
     public String help() {
         if (state == State.LOGGED_OUT) {

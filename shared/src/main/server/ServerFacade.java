@@ -53,8 +53,7 @@ public class ServerFacade {
 
     public ListGameResult listGames() throws ResponseException {
         var path = "/game";
-        ListGamesRequest request = new ListGamesRequest(SessionManager.getAuthToken());
-        return this.makeRequest("GET", path, request, ListGameResult.class);
+        return this.makeRequest("GET", path, null, ListGameResult.class);
     }
 
 
@@ -66,14 +65,17 @@ public class ServerFacade {
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
+            http.addRequestProperty("Content-Type", "application/json");
 
             // Setting authToken for a session
             if (SessionManager.getAuthToken() != null) {
                 http.addRequestProperty("Authorization", SessionManager.getAuthToken());
             }
 
-            writeBody(request, http);
             http.connect();
+            if (request != null) {
+                writeBody(request, http);
+            }
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (Exception e) {
@@ -83,7 +85,6 @@ public class ServerFacade {
 
     private void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
-            http.addRequestProperty("Content-Type", "application/json");
             String reqData = new Gson().toJson(request);
             try(OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
