@@ -21,16 +21,25 @@ public class ChessBoardDrawer {
 
             System.out.print(EscapeSequences.ERASE_SCREEN);
 
+            // Print top headers with column letters
+            drawColLetterHeader();
+
             // Iterate through the board and draw the board.
             for (int row = 1; row <= BOARD_SIZE_IN_SQUARES; row++) {
+                // Draw the rows with number header
+                drawRowNumberHeader(row);
+
                 for (int col = 1; col <= BOARD_SIZE_IN_SQUARES; col++) {
                     drawChessSquare(row, col);
                     System.out.print(EscapeSequences.RESET_TO_TERMINAL_DEFAULT);
 
                 }
-                System.out.print(EscapeSequences.RESET_TO_TERMINAL_DEFAULT);
+
+                drawRowNumberHeader(row);
                 System.out.println();
             }
+            // Draw the other column header
+            drawColLetterHeader();
         }
     }
 
@@ -41,5 +50,29 @@ public class ChessBoardDrawer {
             System.out.print(BLACK_SQUARE);
         }
         System.out.print(EscapeSequences.EMPTY);
+    }
+
+    private void drawExtraSquare(String color) {
+        System.out.print(color);
+        System.out.print(EscapeSequences.EMPTY);
+        System.out.print(EscapeSequences.RESET_TO_TERMINAL_DEFAULT);
+    }
+
+    private void drawColLetterHeader() {
+        System.out.print(BORDER_COLOR);
+        drawExtraSquare(BORDER_COLOR); //Top left corner
+        for (int col = 1; col <= BOARD_SIZE_IN_SQUARES; col++) {
+            System.out.print(BORDER_COLOR);
+            System.out.print(" " + (char) ('h' - col + 1) + " ");
+            System.out.print(EscapeSequences.RESET_TO_TERMINAL_DEFAULT);
+        }
+        drawExtraSquare(BORDER_COLOR); // Top right corner
+        System.out.println();
+    }
+
+    private void drawRowNumberHeader(int row) {
+        System.out.print(BORDER_COLOR);
+        System.out.print(" " + row + " ");
+        System.out.print(EscapeSequences.RESET_TO_TERMINAL_DEFAULT);
     }
 }
