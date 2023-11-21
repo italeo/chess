@@ -181,16 +181,13 @@ public class ChessClient {
 
                 if (result.isSuccess()) {
                     // print the board here
-                    System.out.println("Before board\n");
                     ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
                     boardDrawer.drawBoard(gameID);
                     System.out.flush();
-                    Thread.sleep(100);
-                    System.out.println("After board\n");
-                    return "Successfully Joined as an observer!\n";
+                    return "\nSuccessfully Joined as an observer!\n";
                 }
 
-            } catch (ResponseException | InterruptedException e) {
+            } catch (ResponseException e) {
                 throw new RuntimeException(e);
             }
         }

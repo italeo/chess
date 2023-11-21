@@ -1,35 +1,60 @@
 package ui;
-
 import chess.*;
 
 public class ChessBoardDrawer {
-    private ChessGame game = new ChessGameImpl();
-    private ChessBoard board;
+
+    private static final int SQUARE_SIZE_IN_CHARS = 3;
+    private static final int BOARD_SIZE_IN_SQUARES = 8;
+    private static final String WHITE_SQUARE = EscapeSequences.SET_BG_COLOR_WHITE + " ";
+    private static final String BLACK_SQUARE = EscapeSequences.SET_BG_COLOR_BLACK + " ";
+    private static final String BORDER_COLOR = EscapeSequences.SET_BG_COLOR_LIGHT_GREY;
+
+
+
+    private final ChessGame game = new ChessGameImpl();
 
     public void drawBoard(Integer gameID) {
+
         if ( gameID != null) {
 
             // Get the board
-            this.board = game.getBoard();
+            ChessBoard board = game.getBoard();
 
             System.out.print(EscapeSequences.ERASE_SCREEN);
 
             // Iterate through the board and draw the board.
-            for (int row = 1; row <= 8; row++) {
-                for (int col = 1; col <= 8; col++) {
-                    ChessPosition position = new ChessPositionImpl(row, col);
-                    ChessPiece piece = board.getPiece(position);
-                    if (piece != null) {
-                        String pieceSymbol = ChessPieceRepresentation.getPieceSymbol(piece.getPieceType(), piece.getTeamColor());
-                        String textColor = piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.SET_TEXT_COLOR_BLACK : EscapeSequences.SET_TEXT_COLOR_WHITE;
-                        String bgColor = piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.SET_BG_COLOR_WHITE : EscapeSequences.SET_BG_COLOR_BLACK;
-                        System.out.print(textColor + bgColor + pieceSymbol + EscapeSequences.RESET_TEXT_COLOR + EscapeSequences.RESET_BG_COLOR + " ");
-                    } else {
-                        System.out.print(EscapeSequences.SET_TEXT_COLOR_DARK_GREY + EscapeSequences.EMPTY + EscapeSequences.RESET_TEXT_COLOR + " ");
-                    }
+            for (int row = 1; row <= BOARD_SIZE_IN_SQUARES; row++) {
+                for (int col = 1; col <= BOARD_SIZE_IN_SQUARES; col++) {
+                    drawChessSquare(row, col);
+                    System.out.print(EscapeSequences.RESET_TO_TERMINAL_DEFAULT);
+
                 }
+                System.out.print(EscapeSequences.RESET_TO_TERMINAL_DEFAULT);
                 System.out.println();
             }
         }
+    }
+
+    private void drawChessSquare(int row, int col) {
+        if ((row + col) % 2 == 0) {
+            setWhite();
+            System.out.print(WHITE_SQUARE);
+        } else {
+            setBlack();
+            System.out.print(BLACK_SQUARE);
+        }
+
+        if (col < BOARD_SIZE_IN_SQUARES) {
+            setBlack();
+            System.out.print(EscapeSequences.EMPTY);
+        }
+    }
+
+    private void setBlack() {
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
+    }
+
+    private void setWhite() {
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
     }
 }
