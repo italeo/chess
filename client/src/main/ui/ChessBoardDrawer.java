@@ -25,12 +25,12 @@ public class ChessBoardDrawer {
             drawColLetterHeader();
 
             // Iterate through the board and draw the board.
-            for (int row = 1; row <= BOARD_SIZE_IN_SQUARES; row++) {
+            for (int row = BOARD_SIZE_IN_SQUARES; row >= 1; row--) {
                 // Draw the rows with number header
                 drawRowNumberHeader(row);
 
                 for (int col = 1; col <= BOARD_SIZE_IN_SQUARES; col++) {
-                    drawChessSquare(row, col);
+                    drawChessSquare(row, col, board);
                     System.out.print(EscapeSequences.RESET_TO_TERMINAL_DEFAULT);
 
                 }
@@ -43,12 +43,49 @@ public class ChessBoardDrawer {
         }
     }
 
-    private void drawChessSquare(int row, int col) {
+    private String getPieceSymbols(ChessPiece piece) {
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            return switch (piece.getPieceType()) {
+                case KING -> EscapeSequences.WHITE_KING;
+                case QUEEN -> EscapeSequences.WHITE_QUEEN;
+                case BISHOP -> EscapeSequences.WHITE_BISHOP;
+                case KNIGHT -> EscapeSequences.WHITE_KNIGHT;
+                case ROOK -> EscapeSequences.WHITE_ROOK;
+                case PAWN -> EscapeSequences.WHITE_PAWN;
+            };
+        } else {
+            return switch (piece.getPieceType()) {
+                case KING -> EscapeSequences.BLACK_KING;
+                case QUEEN -> EscapeSequences.BLACK_QUEEN;
+                case BISHOP -> EscapeSequences.BLACK_BISHOP;
+                case KNIGHT -> EscapeSequences.BLACK_KNIGHT;
+                case ROOK -> EscapeSequences.BLACK_ROOK;
+                case PAWN -> EscapeSequences.BLACK_PAWN;
+            };
+        }
+    }
+
+    private void drawChessSquare(int row, int col, ChessBoard board) {
         if ((row + col) % 2 == 0) {
             System.out.print(WHITE_SQUARE);
         } else {
             System.out.print(BLACK_SQUARE);
         }
+
+        ChessPosition position = new ChessPositionImpl(row, col);
+        ChessPiece piece = board.getPiece(position);
+
+        if (piece != null) {
+            String pieceSymbol = getPieceSymbols(piece);
+            String pieceColor = (piece.getTeamColor() == ChessGame.TeamColor.WHITE)
+                    ? EscapeSequences.SET_TEXT_COLOR_MAGENTA
+                    : EscapeSequences.SET_TEXT_COLOR_RED;
+            System.out.print(pieceColor + pieceSymbol);
+        } else {
+            System.out.print(EscapeSequences.EMPTY);
+        }
+
+
         System.out.print(EscapeSequences.EMPTY);
     }
 
