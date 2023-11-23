@@ -12,7 +12,35 @@ public class ChessBoardDrawer {
 
     private final ChessGame game = new ChessGameImpl();
 
-    public void drawBoard(Integer gameID) {
+
+    public void drawBoard(Integer gameID, String playerColor) {
+        if (gameID != null) {
+            System.out.print(EscapeSequences.ERASE_SCREEN);
+
+            // Determine which board to draw depending on the color
+
+            if (playerColor != null && (playerColor.equals("WHITE") || playerColor.equals("BLACK"))) {
+                if (playerColor.equals("WHITE")) {
+                    drawBoardWhite(gameID);
+                    drawBoardBlack(gameID);
+                } else {
+                    drawBoardBlack(gameID);
+                    drawBoardWhite(gameID);
+                }
+            } else {
+                // Prints the board with white pieces at the bottom first
+                // The default board
+                drawBoardWhite(gameID);
+                drawBoardBlack(gameID);
+            }
+        }
+    }
+
+
+
+
+
+    public void drawBoardWhite(Integer gameID) {
 
         if ( gameID != null) {
 
@@ -40,28 +68,6 @@ public class ChessBoardDrawer {
             }
             // Draw the other column header
             drawColLetterHeader();
-        }
-    }
-
-    private String getPieceSymbols(ChessPiece piece) {
-        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            return switch (piece.getPieceType()) {
-                case KING -> EscapeSequences.WHITE_KING;
-                case QUEEN -> EscapeSequences.WHITE_QUEEN;
-                case BISHOP -> EscapeSequences.WHITE_BISHOP;
-                case KNIGHT -> EscapeSequences.WHITE_KNIGHT;
-                case ROOK -> EscapeSequences.WHITE_ROOK;
-                case PAWN -> EscapeSequences.WHITE_PAWN;
-            };
-        } else {
-            return switch (piece.getPieceType()) {
-                case KING -> EscapeSequences.BLACK_KING;
-                case QUEEN -> EscapeSequences.BLACK_QUEEN;
-                case BISHOP -> EscapeSequences.BLACK_BISHOP;
-                case KNIGHT -> EscapeSequences.BLACK_KNIGHT;
-                case ROOK -> EscapeSequences.BLACK_ROOK;
-                case PAWN -> EscapeSequences.BLACK_PAWN;
-            };
         }
     }
 
@@ -100,7 +106,7 @@ public class ChessBoardDrawer {
         drawExtraSquare(BORDER_COLOR); //Top left corner
         for (int col = 1; col <= BOARD_SIZE_IN_SQUARES; col++) {
             System.out.print(BORDER_COLOR);
-            System.out.print(" " + (char) ('h' - col + 1) + " ");
+            System.out.print(" " + " " + " " + (char) ('h' - col + 1) + " " + " ");
             System.out.print(EscapeSequences.RESET_TO_TERMINAL_DEFAULT);
         }
         drawExtraSquare(BORDER_COLOR); // Top right corner
@@ -109,7 +115,78 @@ public class ChessBoardDrawer {
 
     private void drawRowNumberHeader(int row) {
         System.out.print(BORDER_COLOR);
-        System.out.print(" " + row + " ");
+        System.out.print(" " + (BOARD_SIZE_IN_SQUARES - row + 1) + " ");
         System.out.print(EscapeSequences.RESET_TO_TERMINAL_DEFAULT);
+    }
+
+
+    // ----------------------- FLIPPED BOARD ----------------------------------------
+    public void drawBoardBlack(Integer gameID) {
+        if (gameID != null) {
+            ChessBoard board = game.getBoard();
+
+            System.out.print(EscapeSequences.ERASE_SCREEN);
+
+            // Print top headers with column letters
+            drawColLetterHeaderFlipped();
+
+            // Iterate through the board and draw the board.
+            for (int row = 1; row <= BOARD_SIZE_IN_SQUARES; row++) {
+                // Draw the rows with number header
+                drawRowNumberHeaderFlipped(row);
+
+                for (int col = BOARD_SIZE_IN_SQUARES; col >= 1; col--) {
+                    drawChessSquare(row, col, board);
+                    System.out.print(EscapeSequences.RESET_TO_TERMINAL_DEFAULT);
+
+                }
+
+                drawRowNumberHeaderFlipped(row);
+                System.out.println();
+            }
+            // Draw the other column header
+            drawColLetterHeaderFlipped();
+
+        }
+    }
+
+    public void drawColLetterHeaderFlipped() {
+        System.out.print(BORDER_COLOR);
+        drawExtraSquare(BORDER_COLOR); //Top left corner
+        for (int col = BOARD_SIZE_IN_SQUARES; col >= 1; col--) {
+            System.out.print(BORDER_COLOR);
+            System.out.print(" " + " " + " " + (char) ('h' - col + 1) + " " + " ");
+            System.out.print(EscapeSequences.RESET_TO_TERMINAL_DEFAULT);
+        }
+        drawExtraSquare(BORDER_COLOR); // Top right corner
+        System.out.println();
+    }
+
+    public void drawRowNumberHeaderFlipped(int row) {
+        System.out.print(BORDER_COLOR);
+        System.out.print(" " + (BOARD_SIZE_IN_SQUARES - row + 1) + " ");
+        System.out.print(EscapeSequences.RESET_TO_TERMINAL_DEFAULT);
+    }
+
+    private String getPieceSymbols(ChessPiece piece) {
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            return switch (piece.getPieceType()) {
+                case KING -> EscapeSequences.WHITE_KING;
+                case QUEEN -> EscapeSequences.WHITE_QUEEN;
+                case BISHOP -> EscapeSequences.WHITE_BISHOP;
+                case KNIGHT -> EscapeSequences.WHITE_KNIGHT;
+                case ROOK -> EscapeSequences.WHITE_ROOK;
+                case PAWN -> EscapeSequences.WHITE_PAWN;
+            };
+        } else {
+            return switch (piece.getPieceType()) {
+                case KING -> EscapeSequences.BLACK_KING;
+                case QUEEN -> EscapeSequences.BLACK_QUEEN;
+                case BISHOP -> EscapeSequences.BLACK_BISHOP;
+                case KNIGHT -> EscapeSequences.BLACK_KNIGHT;
+                case ROOK -> EscapeSequences.BLACK_ROOK;
+                case PAWN -> EscapeSequences.BLACK_PAWN;
+            };
+        }
     }
 }

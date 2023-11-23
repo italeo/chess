@@ -182,7 +182,7 @@ public class ChessClient {
                 if (result.isSuccess()) {
                     // print the board here
                     ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
-                    boardDrawer.drawBoard(gameID);
+                    boardDrawer.drawBoard(gameID, null);
                     System.out.flush();
                     return "\nSuccessfully Joined as an observer!\n";
                 }
@@ -198,22 +198,19 @@ public class ChessClient {
         if (params.length == 2) {
             String gameIDStr = params[0];
             int gameID = Integer.parseInt(gameIDStr);
-            String playerColor = params[1];
+            String playerColor = params[1].toUpperCase();
 
             try {
-                JoinGameResult result = facade.joinGame(gameID, playerColor.toUpperCase());
+                JoinGameResult result = facade.joinGame(gameID, playerColor);
 
                 if (result.isSuccess()) {
                     // print the board here
-                    System.out.println("Before board\n");
                     ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
-                    boardDrawer.drawBoard(gameID);
+                    boardDrawer.drawBoard(gameID, playerColor.toUpperCase());
                     System.out.flush();
-                    Thread.sleep(100);
-                    System.out.println("After board\n");
                     return "Successfully Joined game: " + gameID;
                 }
-            } catch (ResponseException | InterruptedException e) {
+            } catch (ResponseException e) {
                 throw new RuntimeException(e);
             }
         }
