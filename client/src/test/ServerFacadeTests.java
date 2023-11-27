@@ -248,10 +248,8 @@ public class ServerFacadeTests {
         RegisterResult result = facade.registerUser(request);
         // Create a game request
         CreateGameRequest gameRequest0 = new CreateGameRequest(result.getAuthToken(), "game");
-        CreateGameRequest gameRequest1 = new CreateGameRequest(result.getAuthToken(), "game1");
         // Create the game
         CreateGameResult gameResult = facade.createGame(gameRequest0);
-        CreateGameResult gameResult1 = facade.createGame(gameRequest1);
 
         // Create a join game request to join without specifying which player color we are
         JoinGameRequest joinRequest = new JoinGameRequest(result.getAuthToken(), null, gameResult.getGameID());
