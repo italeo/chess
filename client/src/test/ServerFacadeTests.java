@@ -217,13 +217,50 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void joinGameSuccess_Test() {
+    public void joinGameSuccess_Test() throws ResponseException {
+        RegisterRequest request = new RegisterRequest("italeo", "password", "email");
+        // Register the user
+        RegisterResult result = facade.registerUser(request);
+        // Create a game request
+        CreateGameRequest gameRequest0 = new CreateGameRequest(result.getAuthToken(), "game");
+        CreateGameRequest gameRequest1 = new CreateGameRequest(result.getAuthToken(), "game1");
+        // Create the game
+        CreateGameResult gameResult = facade.createGame(gameRequest0);
+        CreateGameResult gameResult1 = facade.createGame(gameRequest1);
+
+        // Create a join game request to join as a White player
+        JoinGameRequest joinRequest = new JoinGameRequest(result.getAuthToken(), "WHITE", gameResult.getGameID());
+        // Create a join game request to join as a Black player
+        JoinGameRequest joinRequest1 = new JoinGameRequest(result.getAuthToken(), "BLACK", gameResult1.getGameID());
+        // join the game as an observer
+        // Check that there is no message which signifies a status code 200
+        // Checking for White user here
+        assertNull(facade.joinGame(joinRequest).getMessage());
+        // Checking for Black user here
+        assertNull(facade.joinGame(joinRequest1).getMessage());
 
     }
 
     @Test
-    public void joinGameFail_Test() {
+    public void joinGameFail_Test() throws ResponseException {
+        RegisterRequest request = new RegisterRequest("italeo", "password", "email");
+        // Register the user
+        RegisterResult result = facade.registerUser(request);
+        // Create a game request
+        CreateGameRequest gameRequest0 = new CreateGameRequest(result.getAuthToken(), "game");
+        CreateGameRequest gameRequest1 = new CreateGameRequest(result.getAuthToken(), "game1");
+        // Create the game
+        CreateGameResult gameResult = facade.createGame(gameRequest0);
+        CreateGameResult gameResult1 = facade.createGame(gameRequest1);
 
+        // Create a join game request to join without specifying which player color we are
+        JoinGameRequest joinRequest = new JoinGameRequest(result.getAuthToken(), null, gameResult.getGameID());
+
+        try {
+            facade.joinGame(joinRequest);
+        } catch (ResponseException ex) {
+            assertEquals(500,ex.getStatusCode());
+        }
     }
 }
 
