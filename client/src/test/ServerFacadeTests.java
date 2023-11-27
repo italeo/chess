@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import request.*;
 import result.CreateGameResult;
+import result.ListGameResult;
 import result.RegisterResult;
 import server.ServerFacade;
 
@@ -20,6 +21,26 @@ public class ServerFacadeTests {
     @AfterEach
     public void tearDown() throws ResponseException {
         facade.clear();
+    }
+
+    @Test
+    public void clearSuccess_Test() throws ResponseException {
+        // Create a dummy request for testing
+        RegisterRequest request = new RegisterRequest("italeo", "password", "email");
+        // Check the result to see if it is null indicating a status code of 200
+        assertNull(facade.registerUser(request).getMessage());
+
+        // Then we do a clear the db
+        facade.clear();
+
+        // Try and login which should fail
+        LoginRequest loginRequest = new LoginRequest("italeo", "password");
+        // login
+        try {
+            facade.login(loginRequest);
+        } catch (ResponseException ex) {
+            assertEquals(500, ex.getStatusCode());
+        }
     }
 
     @Test
@@ -87,6 +108,7 @@ public class ServerFacadeTests {
         CreateGameRequest gameRequest = new CreateGameRequest(result.getAuthToken(), "game1");
         CreateGameResult gameResult = facade.createGame(gameRequest);
         assertNull(gameResult.getMessage());
+        assertTrue(gameResult.isSuccess());
 
     }
 
@@ -99,22 +121,63 @@ public class ServerFacadeTests {
         // Create a bad request for the game
         CreateGameRequest gameRequest = new CreateGameRequest(result.getAuthToken(), null);
         try {
-            CreateGameResult gameResult = facade.createGame(gameRequest);
-
+            facade.createGame(gameRequest);
         } catch (ResponseException ex) {
             assertEquals(500,ex.getStatusCode());
         }
     }
 
     @Test
-    public void joinGameSuccess_Test() {
+    public void listGameSuccess_Test() throws ResponseException {
+        RegisterRequest request = new RegisterRequest("italeo", "password", "email");
+        // Register the user
+        RegisterResult result = facade.registerUser(request);
+        // Create game requests for the games
+        CreateGameRequest gameRequest0 = new CreateGameRequest(result.getAuthToken(), "game");
+        CreateGameRequest gameRequest1 = new CreateGameRequest(result.getAuthToken(), "game1");
+        CreateGameRequest gameRequest2 = new CreateGameRequest(result.getAuthToken(), "game2");
+        CreateGameRequest gameRequest3 = new CreateGameRequest(result.getAuthToken(), "game3");
 
+        // Create the games
+        facade.createGame(gameRequest0);
+        facade.createGame(gameRequest1);
+        facade.createGame(gameRequest2);
+        facade.createGame(gameRequest3);
 
+        // Create a new list game request
+        ListGamesRequest listRequest = new ListGamesRequest(result.getAuthToken());
+
+        // list the games
+        ListGameResult listGameResult = facade.listGames(listRequest);
+        assertNull(listGameResult.getMessage());
+        assertTrue(listGameResult.isSuccess());
     }
 
+    // Need to fix
     @Test
-    public void joinGameFail_Test() {
+    public void listGameFail_Test() throws ResponseException {
 
+        RegisterRequest request = new RegisterRequest("italeo", "password", "email");
+        // Register the user
+        RegisterResult result = facade.registerUser(request);
+        // Create game requests for the games
+        CreateGameRequest gameRequest0 = new CreateGameRequest(result.getAuthToken(), "game");
+        CreateGameRequest gameRequest1 = new CreateGameRequest(result.getAuthToken(), "game1");
+        CreateGameRequest gameRequest2 = new CreateGameRequest(result.getAuthToken(), "game2");
+        CreateGameRequest gameRequest3 = new CreateGameRequest(result.getAuthToken(), "game3");
+
+        // Create the games
+        facade.createGame(gameRequest0);
+        facade.createGame(gameRequest1);
+        facade.createGame(gameRequest2);
+        facade.createGame(gameRequest3);
+
+        ListGamesRequest listRequest = new ListGamesRequest(null);
+        try {
+            facade.listGames(listRequest);
+        } catch (ResponseException ex) {
+            assertEquals(500,ex.getStatusCode());
+        }
     }
 }
 

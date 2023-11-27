@@ -155,7 +155,8 @@ public class ChessClient {
 
     private String listGames() {
         try {
-            ListGameResult result = facade.listGames();
+            ListGamesRequest request = new ListGamesRequest(SessionManager.getAuthToken());
+            ListGameResult result = facade.listGames(request);
 
             if (result.isSuccess()) {
                 List<ListGameSuccessResult> games = SessionManager.getGames();

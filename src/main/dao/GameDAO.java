@@ -7,6 +7,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import model.*;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -196,61 +197,29 @@ public class GameDAO {
 
         @Override
         public ChessBoard read(JsonReader jsonReader) {
-            Gson gson = new Gson();
-            return gson.fromJson(jsonReader, ChessBoardImpl.class);
+            GsonBuilder builder = new GsonBuilder();
+            builder.registerTypeAdapter(ChessPiece.class, new PieceAdapter());
+            return builder.create().fromJson(jsonReader, ChessBoardImpl.class);
         }
     }
 
-    // Type adapter for ChessPieces
-    public static class PieceAdapter extends TypeAdapter<ChessPiece> {
 
-        // Had issues with serializing the pieces into the db, and add these seem to help
+    public static class PieceAdapter implements JsonDeserializer<ChessPiece> {
+
+
         @Override
-        public void write(JsonWriter jsonWriter, ChessPiece piece) throws IOException {
+        public ChessPiece deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            String pieceType = jsonElement.getAsJsonObject().get("type").getAsString();
             Gson gson = new Gson();
-
-            jsonWriter.beginObject();
-            jsonWriter.name("type").value(piece.getPieceType().toString());
-
-            // Switch based on the type of the chess piece
-            switch (piece.getPieceType()) {
-                case KING -> gson.toJson(piece, KingPieceImpl.class, jsonWriter);
-                case QUEEN -> gson.toJson(piece, QueenPieceImpl.class, jsonWriter);
-                case KNIGHT -> gson.toJson(piece, KnightPieceImpl.class, jsonWriter);
-                case BISHOP -> gson.toJson(piece, BishopPieceImpl.class, jsonWriter);
-                case ROOK -> gson.toJson(piece, RookPieceImpl.class, jsonWriter);
-                case PAWN -> gson.toJson(piece, PawnPieceImpl.class, jsonWriter);
-            }
-
-            jsonWriter.endObject();
-        }
-
-        // Correctly deserializes the data and map the interfaces to the correct concrete classes.
-        @Override
-        public ChessPiece read(JsonReader jsonReader) throws IOException {
-            Gson gson = new Gson();
-            jsonReader.beginObject();
-            ChessPieceImpl piece = null;
-
-            while (jsonReader.hasNext()) {
-                String name = jsonReader.nextName();
-
-                if ("type".equals(name)) {
-                    String typeString = jsonReader.nextString();
-                    // Switch based on the type of string
-                    piece = switch (typeString) {
-                        case "KING" -> gson.fromJson(jsonReader, KingPieceImpl.class);
-                        case "QUEEN" -> gson.fromJson(jsonReader, QueenPieceImpl.class);
-                        case "KNIGHT" -> gson.fromJson(jsonReader, KnightPieceImpl.class);
-                        case "BISHOP" -> gson.fromJson(jsonReader, BishopPieceImpl.class);
-                        case "ROOK" -> gson.fromJson(jsonReader, RookPieceImpl.class);
-                        case "PAWN" -> gson.fromJson(jsonReader, PawnPieceImpl.class);
-                        default -> throw new JsonParseException("Unknown chess piece type" + typeString);
+            return switch (pieceType) {
+                        case "KING" -> gson.fromJson(jsonElement, KingPieceImpl.class);
+                        case "QUEEN" -> gson.fromJson(jsonElement, QueenPieceImpl.class);
+                        case "KNIGHT" -> gson.fromJson(jsonElement, KnightPieceImpl.class);
+                        case "BISHOP" -> gson.fromJson(jsonElement, BishopPieceImpl.class);
+                        case "ROOK" -> gson.fromJson(jsonElement, RookPieceImpl.class);
+                        case "PAWN" -> gson.fromJson(jsonElement, PawnPieceImpl.class);
+                        default -> throw new JsonParseException("Unknown chess piece type" + pieceType);
                     };
-                }
-            }
-            jsonReader.endObject();
-            return piece;
         }
     }
 }

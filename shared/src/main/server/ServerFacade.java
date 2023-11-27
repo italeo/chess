@@ -48,8 +48,11 @@ public class ServerFacade {
         return this.makeRequest("PUT", path, request, JoinGameResult.class);
     }
 
-    public ListGameResult listGames() throws ResponseException {
+    public ListGameResult listGames(ListGamesRequest request) throws ResponseException {
         var path = "/game";
+        if (request.getAuthToken() == null) {
+            SessionManager.setAuthToken(null);
+        }
         return this.makeRequest("GET", path, null, ListGameResult.class);
     }
 
