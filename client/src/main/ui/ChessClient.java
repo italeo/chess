@@ -174,16 +174,16 @@ public class ChessClient {
     private String observeGame(String[] params) {
         if (params.length == 1) {
             String gameIDStr = params[0];
-            int index = indexer.get(Integer.parseInt(gameIDStr));
+            int gameID = indexer.get(Integer.parseInt(gameIDStr));
 
             try {
-                JoinGameRequest request = new JoinGameRequest(SessionManager.getAuthToken(), null, index);
+                JoinGameRequest request = new JoinGameRequest(SessionManager.getAuthToken(), null, gameID);
                 JoinGameResult result = facade.joinGame(request);
 
                 if (result.isSuccess()) {
                     // print the board here
                     ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
-                    boardDrawer.drawBoard(index, null);
+                    boardDrawer.drawBoard(gameID, null);
                     System.out.flush();
                     return "\nSuccessfully Joined as an observer!\n";
                 }
@@ -198,19 +198,19 @@ public class ChessClient {
     private String joinGame(String[] params) {
         if (params.length == 2) {
             String gameIDStr = params[0];
-            int index = indexer.get(Integer.parseInt(gameIDStr));
+            int gameID = indexer.get(Integer.parseInt(gameIDStr));
             String playerColor = params[1].toUpperCase();
 
             try {
-                JoinGameRequest request = new JoinGameRequest(SessionManager.getAuthToken(), playerColor, index);
+                JoinGameRequest request = new JoinGameRequest(SessionManager.getAuthToken(), playerColor, gameID);
                 JoinGameResult result = facade.joinGame(request);
 
                 if (result.isSuccess()) {
                     // print the board here
                     ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
-                    boardDrawer.drawBoard(index, playerColor.toUpperCase());
+                    boardDrawer.drawBoard(gameID, playerColor.toUpperCase());
                     System.out.flush();
-                    return "Successfully Joined game: " + index;
+                    return "Successfully Joined game: " + gameID + " as the " + playerColor.toUpperCase() + " player\n";
                 } else {
                     System.out.print("Error joining the game");
                     System.out.println(result.getMessage());

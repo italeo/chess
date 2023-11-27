@@ -45,6 +45,11 @@ public class ServerFacade {
 
     public JoinGameResult joinGame(JoinGameRequest request) throws ResponseException {
         var path = "/game";
+        if (request.getAuthToken() != null) {
+            SessionManager.setAuthToken(request.getAuthToken());
+        } else {
+            SessionManager.setAuthToken(null);
+        }
         return this.makeRequest("PUT", path, request, JoinGameResult.class);
     }
 

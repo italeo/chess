@@ -179,6 +179,52 @@ public class ServerFacadeTests {
             assertEquals(500,ex.getStatusCode());
         }
     }
+
+    @Test
+    public void observeGameSuccess_Test() throws ResponseException {
+        RegisterRequest request = new RegisterRequest("italeo", "password", "email");
+        // Register the user
+        RegisterResult result = facade.registerUser(request);
+        // Create a game request
+        CreateGameRequest gameRequest0 = new CreateGameRequest(result.getAuthToken(), "game");
+        // Create the game
+        CreateGameResult gameResult = facade.createGame(gameRequest0);
+
+        // Create a join game request to join as an observer
+        JoinGameRequest joinRequest = new JoinGameRequest(result.getAuthToken(), null, gameResult.getGameID());
+        // join the game as an observer
+        // Check that there is no message which signifies a status code 200
+        assertNull(facade.joinGame(joinRequest).getMessage());
+    }
+
+    @Test
+    public void observeGameFail_Test() throws ResponseException {
+        RegisterRequest request = new RegisterRequest("italeo", "password", "email");
+        // Register the user
+        RegisterResult result = facade.registerUser(request);
+        // Create a game request
+        CreateGameRequest gameRequest0 = new CreateGameRequest(result.getAuthToken(), "game");
+        // Create the game
+        CreateGameResult gameResult = facade.createGame(gameRequest0);
+        // Create a join game request to join as an observer with a bad authToken
+        JoinGameRequest joinRequest = new JoinGameRequest(null, null, gameResult.getGameID());
+        // join the game as an observer
+        try {
+            facade.joinGame(joinRequest);
+        } catch (ResponseException ex) {
+            assertEquals(500,ex.getStatusCode());
+        }
+    }
+
+    @Test
+    public void joinGameSuccess_Test() {
+
+    }
+
+    @Test
+    public void joinGameFail_Test() {
+
+    }
 }
 
 
