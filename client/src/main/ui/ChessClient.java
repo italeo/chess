@@ -1,7 +1,6 @@
 package ui;
 
 import exception.ResponseException;
-import model.Game;
 import request.*;
 import result.*;
 import server.ServerFacade;
@@ -15,7 +14,7 @@ public class ChessClient {
     public final String serverUrl;
     private final ServerFacade facade;
     private State state = State.LOGGED_OUT;
-    private HashMap<Integer, Integer> indexer;
+    private final HashMap<Integer, Integer> indexer;
 
     public ChessClient(String serverUrl) {
         this.serverUrl = serverUrl;
@@ -135,7 +134,6 @@ public class ChessClient {
 
             // Check if the game was create correctly
             if(result.isSuccess()) {
-                Integer gameID = SessionManager.getGameID();
                 return "game created successfully!\n";
             }
 
@@ -157,7 +155,15 @@ public class ChessClient {
 
                 for (ListGameSuccessResult game : games) {
 
-                    sb.append("Game index: " + index).append(" gameID: ").append(game.getGameID()).append(", name: ").append(game.getGameName()).append("\n");
+                    sb.append("Game index: " + index).append(" gameID: ")
+                            .append(game.getGameID())
+                            .append(", name: ")
+                            .append(game.getGameName())
+                            .append(", WhiteUser: ")
+                            .append(game.getWhiteUsername())
+                            .append(", BlackUser: ")
+                            .append(game.getBlackUsername())
+                            .append("\n");
 
                     // indexer
                     indexer.put(index++, game.getGameID());

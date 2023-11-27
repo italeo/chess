@@ -25,6 +25,10 @@ public class ListGameSuccessResult {
         this.blackUsername = blackUsername;
     }
 
+    public String getWhiteUsername() { return whiteUsername; }
+
+    public String getBlackUsername() { return blackUsername; }
+
     public void setGameName(String gameName) { this.gameName = gameName; }
 
     public String getGameName() { return gameName; }
