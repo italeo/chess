@@ -1,7 +1,6 @@
 package ui;
 
 import exception.ResponseException;
-import model.*;
 import request.*;
 import result.*;
 import server.ServerFacade;
@@ -70,18 +69,25 @@ public class ChessClient {
 
     private String register(String... params) throws ResponseException {
         if (params.length == 3) {
-            User newUser = new User(params[0], params[1], params[2]);
+            String username = params[0];
+            String password = params[1];
+            String email = params[2];
+            RegisterRequest newUser = new RegisterRequest(username, password, email);
             try {
                 RegisterResult result = facade.registerUser(newUser);
                 // Switch the state to login if it works.
-                String username = result.getUsername();
-                state = State.LOGGED_IN;
-                return String.format("Logged in as %s", username);
+                if (result.isSuccess()) {
+                    String newUsername = result.getUsername();
+                    state = State.LOGGED_IN;
+                    return String.format("Logged in as %s", newUsername);
+                } else {
+                    return result.getMessage();
+                }
             } catch (ResponseException e) {
-                throw new ResponseException(400, "Expected: <yourname>");
+                throw new ResponseException(403, "Error: already taken\n");
             }
         }
-        return "Invalid number of parameters";
+        return "Oops! Looks like you missed something while registering.\n";
     }
 
     private String login(String[] params) throws ResponseException {
@@ -127,25 +133,22 @@ public class ChessClient {
     }
 
     // ----------------------------- GAME FUNCTION --------------------------------------------------------------
-    private String createGame(String[] params) {
+    private String createGame(String[] params) throws ResponseException {
         if (params.length == 1) {
             // Get the gameName entered by the user
             String gameName = params[0];
 
-            try {
-                // Set that name as the gameName
-                CreateGameResult result = facade.createGame(gameName);
+            // Set that name as the gameName
+            CreateGameRequest request = new CreateGameRequest(SessionManager.getAuthToken(), gameName);
+            CreateGameResult result = facade.createGame(request);
 
-                // Check if the game was create correctly
-                if(result.isSuccess()) {
-                    Integer gameID = SessionManager.getGameID();
-                    String message = "game created successfully!\n";
-                    return message + "you can now join game: " + gameName + "\nwith gameID: " + gameID + "\n";
-                }
-
-            } catch (ResponseException e) {
-                return e.getMessage();
+            // Check if the game was create correctly
+            if(result.isSuccess()) {
+                Integer gameID = SessionManager.getGameID();
+                String message = "game created successfully!\n";
+                return message + "you can now join game: " + gameName + "\nwith gameID: " + gameID + "\n";
             }
+
         }
         return null;
     }
@@ -177,7 +180,8 @@ public class ChessClient {
             int gameID = Integer.parseInt(gameIDStr);
 
             try {
-                JoinGameResult result = facade.joinGame(gameID, null);
+                JoinGameRequest request = new JoinGameRequest(SessionManager.getAuthToken(), null, gameID);
+                JoinGameResult result = facade.joinGame(request);
 
                 if (result.isSuccess()) {
                     // print the board here
@@ -201,7 +205,8 @@ public class ChessClient {
             String playerColor = params[1].toUpperCase();
 
             try {
-                JoinGameResult result = facade.joinGame(gameID, playerColor);
+                JoinGameRequest request = new JoinGameRequest(SessionManager.getAuthToken(), playerColor, gameID);
+                JoinGameResult result = facade.joinGame(request);
 
                 if (result.isSuccess()) {
                     // print the board here

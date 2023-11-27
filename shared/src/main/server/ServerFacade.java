@@ -2,7 +2,6 @@ package server;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
-import model.*;
 import request.*;
 import result.*;
 import java.io.*;
@@ -21,7 +20,7 @@ public class ServerFacade {
         return this.makeRequest("DELETE", path, null, ClearResult.class);
     }
 
-    public RegisterResult registerUser(User request) throws ResponseException {
+    public RegisterResult registerUser(RegisterRequest request) throws ResponseException {
         var path = "/user";
         return this.makeRequest("POST", path, request, RegisterResult.class);
     }
@@ -39,15 +38,13 @@ public class ServerFacade {
 
     // ------------------------- GAME FUNCTIONALITY ------------------------------
 
-    public CreateGameResult createGame(String gameName) throws ResponseException {
+    public CreateGameResult createGame(CreateGameRequest request) throws ResponseException {
         var path = "/game";
-        CreateGameRequest request = new CreateGameRequest(SessionManager.getAuthToken(), gameName);
         return this.makeRequest("POST", path, request, CreateGameResult.class);
     }
 
-    public JoinGameResult joinGame(Integer gameID, String playerColor) throws ResponseException {
+    public JoinGameResult joinGame(JoinGameRequest request) throws ResponseException {
         var path = "/game";
-        JoinGameRequest request = new JoinGameRequest(SessionManager.getAuthToken(), playerColor, gameID);
         return this.makeRequest("PUT", path, request, JoinGameResult.class);
     }
 
