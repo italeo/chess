@@ -50,7 +50,9 @@ public class ServerFacade {
 
     public ListGameResult listGames(ListGamesRequest request) throws ResponseException {
         var path = "/game";
-        if (request.getAuthToken() == null) {
+        if (request.getAuthToken() != null) {
+            SessionManager.setAuthToken(request.getAuthToken());
+        } else {
             SessionManager.setAuthToken(null);
         }
         return this.makeRequest("GET", path, null, ListGameResult.class);

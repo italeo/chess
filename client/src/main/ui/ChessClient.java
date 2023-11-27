@@ -1,11 +1,13 @@
 package ui;
 
 import exception.ResponseException;
+import model.Game;
 import request.*;
 import result.*;
 import server.ServerFacade;
 import server.SessionManager;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -13,10 +15,12 @@ public class ChessClient {
     public final String serverUrl;
     private final ServerFacade facade;
     private State state = State.LOGGED_OUT;
+    private HashMap<Integer, Integer> indexer;
 
     public ChessClient(String serverUrl) {
         this.serverUrl = serverUrl;
         this.facade = new ServerFacade(serverUrl);
+        indexer = new HashMap<>();
     }
 
     public String eval(String input) {
@@ -24,12 +28,6 @@ public class ChessClient {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-
-            // if the command is "quit" and the user is logged in, leave the game.
-            if (cmd.equals("quit") && state == State.LOGGED_IN) {
-                return quitGame();
-            }
-
 
             return switch (cmd) {
                 case "clear" -> clear();
@@ -58,13 +56,6 @@ public class ChessClient {
             throw new RuntimeException(e);
         }
         return "";
-    }
-
-    private String quitGame() {
-        // Switch out of game
-        state = State.LOGGED_IN;
-
-        return "Successfully quited the game.\n";
     }
 
     private String register(String... params) throws ResponseException {
@@ -145,8 +136,7 @@ public class ChessClient {
             // Check if the game was create correctly
             if(result.isSuccess()) {
                 Integer gameID = SessionManager.getGameID();
-                String message = "game created successfully!\n";
-                return message + "you can now join game: " + gameName + "\nwith gameID: " + gameID + "\n";
+                return "game created successfully!\n";
             }
 
         }
@@ -157,6 +147,8 @@ public class ChessClient {
         try {
             ListGamesRequest request = new ListGamesRequest(SessionManager.getAuthToken());
             ListGameResult result = facade.listGames(request);
+            // Tracker needed to map the game index to the gameID
+            int index = 1;
 
             if (result.isSuccess()) {
                 List<ListGameSuccessResult> games = SessionManager.getGames();
@@ -164,7 +156,11 @@ public class ChessClient {
                 StringBuilder sb = new StringBuilder("Here are the available games!\n");
 
                 for (ListGameSuccessResult game : games) {
-                    sb.append("gameID: ").append(game.getGameID()).append(", name: ").append(game.getGameName()).append("\n");
+
+                    sb.append("Game index: " + index).append(" gameID: ").append(game.getGameID()).append(", name: ").append(game.getGameName()).append("\n");
+
+                    // indexer
+                    indexer.put(index++, game.getGameID());
                 }
                 return sb.toString();
             } else {
@@ -178,16 +174,16 @@ public class ChessClient {
     private String observeGame(String[] params) {
         if (params.length == 1) {
             String gameIDStr = params[0];
-            int gameID = Integer.parseInt(gameIDStr);
+            int index = indexer.get(Integer.parseInt(gameIDStr));
 
             try {
-                JoinGameRequest request = new JoinGameRequest(SessionManager.getAuthToken(), null, gameID);
+                JoinGameRequest request = new JoinGameRequest(SessionManager.getAuthToken(), null, index);
                 JoinGameResult result = facade.joinGame(request);
 
                 if (result.isSuccess()) {
                     // print the board here
                     ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
-                    boardDrawer.drawBoard(gameID, null);
+                    boardDrawer.drawBoard(index, null);
                     System.out.flush();
                     return "\nSuccessfully Joined as an observer!\n";
                 }
@@ -202,22 +198,26 @@ public class ChessClient {
     private String joinGame(String[] params) {
         if (params.length == 2) {
             String gameIDStr = params[0];
-            int gameID = Integer.parseInt(gameIDStr);
+            int index = indexer.get(Integer.parseInt(gameIDStr));
             String playerColor = params[1].toUpperCase();
 
             try {
-                JoinGameRequest request = new JoinGameRequest(SessionManager.getAuthToken(), playerColor, gameID);
+                JoinGameRequest request = new JoinGameRequest(SessionManager.getAuthToken(), playerColor, index);
                 JoinGameResult result = facade.joinGame(request);
 
                 if (result.isSuccess()) {
                     // print the board here
                     ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
-                    boardDrawer.drawBoard(gameID, playerColor.toUpperCase());
+                    boardDrawer.drawBoard(index, playerColor.toUpperCase());
                     System.out.flush();
-                    return "Successfully Joined game: " + gameID;
+                    return "Successfully Joined game: " + index;
+                } else {
+                    System.out.print("Error joining the game");
+                    System.out.println(result.getMessage());
                 }
             } catch (ResponseException e) {
-                throw new RuntimeException(e);
+                System.out.println("In the catch clause");
+                e.printStackTrace();
             }
         }
         return "Entered wrong inputs, please try again";

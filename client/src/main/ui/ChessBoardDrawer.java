@@ -36,10 +36,6 @@ public class ChessBoardDrawer {
         }
     }
 
-
-
-
-
     public void drawBoardWhite(Integer gameID) {
 
         if ( gameID != null) {
@@ -90,8 +86,6 @@ public class ChessBoardDrawer {
         } else {
             System.out.print(EscapeSequences.EMPTY);
         }
-
-
         System.out.print(EscapeSequences.EMPTY);
     }
 
