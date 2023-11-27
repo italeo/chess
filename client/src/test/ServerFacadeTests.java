@@ -24,7 +24,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void clearSuccess_Test() throws ResponseException {
+    public void clearSuccess_Test() throws Exception {
         // Create a dummy request for testing
         RegisterRequest request = new RegisterRequest("italeo", "password", "email");
         // Check the result to see if it is null indicating a status code of 200
@@ -44,7 +44,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void registerSuccess_Test() throws ResponseException {
+    public void registerSuccess_Test() throws Exception {
         // Create a dummy request for testing
         RegisterRequest request = new RegisterRequest("italeo", "password", "email");
         // Check the result to see if it is null indicating a status code of 200
@@ -52,7 +52,8 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void registerFail_Test() throws ResponseException {
+    public void registerFail_Test() throws
+            Exception {
         // Create a dummy request for testing
         RegisterRequest request = new RegisterRequest("italeo", "password", "email");
 
@@ -69,7 +70,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void loginSuccess_Test() throws ResponseException {
+    public void loginSuccess_Test() throws Exception {
         // Create a dummy request for testing
         RegisterRequest request = new RegisterRequest("italeo", "password", "email");
         // Register the user
@@ -81,7 +82,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void loginFail_Test() throws ResponseException {
+    public void loginFail_Test() throws Exception {
         // Create a dummy request for testing
         RegisterRequest request = new RegisterRequest("italeo", "password", "email");
         // Register the user
@@ -99,7 +100,7 @@ public class ServerFacadeTests {
 
 
     @Test
-    public void createGameSuccess_Test() throws ResponseException {
+    public void createGameSuccess_Test() throws Exception {
         // Create a dummy request for testing
         RegisterRequest request = new RegisterRequest("italeo", "password", "email");
         // Register the user
@@ -113,7 +114,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void createGameFail_Test() throws ResponseException {
+    public void createGameFail_Test() throws Exception {
         // Create a dummy request for testing
         RegisterRequest request = new RegisterRequest("italeo", "password", "email");
         // Register the user
@@ -128,7 +129,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void listGameSuccess_Test() throws ResponseException {
+    public void listGameSuccess_Test() throws Exception {
         RegisterRequest request = new RegisterRequest("italeo", "password", "email");
         // Register the user
         RegisterResult result = facade.registerUser(request);
@@ -155,7 +156,7 @@ public class ServerFacadeTests {
 
     // Need to fix
     @Test
-    public void listGameFail_Test() throws ResponseException {
+    public void listGameFail_Test() throws Exception {
 
         RegisterRequest request = new RegisterRequest("italeo", "password", "email");
         // Register the user
@@ -181,7 +182,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void observeGameSuccess_Test() throws ResponseException {
+    public void observeGameSuccess_Test() throws Exception {
         RegisterRequest request = new RegisterRequest("italeo", "password", "email");
         // Register the user
         RegisterResult result = facade.registerUser(request);
@@ -198,7 +199,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void observeGameFail_Test() throws ResponseException {
+    public void observeGameFail_Test() throws Exception {
         RegisterRequest request = new RegisterRequest("italeo", "password", "email");
         // Register the user
         RegisterResult result = facade.registerUser(request);
@@ -217,7 +218,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void joinGameSuccess_Test() throws ResponseException {
+    public void joinGameSuccess_Test() throws Exception {
         RegisterRequest request = new RegisterRequest("italeo", "password", "email");
         // Register the user
         RegisterResult result = facade.registerUser(request);
@@ -242,7 +243,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void joinGameFail_Test() throws ResponseException {
+    public void joinGameFail_Test() throws Exception {
         RegisterRequest request = new RegisterRequest("italeo", "password", "email");
         // Register the user
         RegisterResult result = facade.registerUser(request);

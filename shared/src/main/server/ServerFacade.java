@@ -15,22 +15,22 @@ public class ServerFacade {
         this.serverUrl = serverUrl;
     }
 
-    public ClearResult clear() throws ResponseException {
+    public ClearResult clear() throws Exception {
         var path = "/db";
         return this.makeRequest("DELETE", path, null, ClearResult.class);
     }
 
-    public RegisterResult registerUser(RegisterRequest request) throws ResponseException {
+    public RegisterResult registerUser(RegisterRequest request) throws Exception {
         var path = "/user";
         return this.makeRequest("POST", path, request, RegisterResult.class);
     }
 
-    public LoginResult login(LoginRequest request) throws ResponseException {
+    public LoginResult login(LoginRequest request) throws Exception {
         var path = "/session";
         return this.makeRequest("POST", path, request, LoginResult.class);
     }
 
-    public LogoutResult logout() throws ResponseException {
+    public LogoutResult logout() throws Exception {
         var path = "/session";
         LogoutRequest request = new LogoutRequest(SessionManager.getAuthToken());
         return this.makeRequest("DELETE", path, request, LogoutResult.class);
@@ -38,12 +38,12 @@ public class ServerFacade {
 
     // ------------------------- GAME FUNCTIONALITY ------------------------------
 
-    public CreateGameResult createGame(CreateGameRequest request) throws ResponseException {
+    public CreateGameResult createGame(CreateGameRequest request) throws Exception {
         var path = "/game";
         return this.makeRequest("POST", path, request, CreateGameResult.class);
     }
 
-    public JoinGameResult joinGame(JoinGameRequest request) throws ResponseException {
+    public JoinGameResult joinGame(JoinGameRequest request) throws Exception {
         var path = "/game";
         if (request.getAuthToken() != null) {
             SessionManager.setAuthToken(request.getAuthToken());
@@ -53,7 +53,7 @@ public class ServerFacade {
         return this.makeRequest("PUT", path, request, JoinGameResult.class);
     }
 
-    public ListGameResult listGames(ListGamesRequest request) throws ResponseException {
+    public ListGameResult listGames(ListGamesRequest request) throws Exception {
         var path = "/game";
         if (request.getAuthToken() != null) {
             SessionManager.setAuthToken(request.getAuthToken());
@@ -66,7 +66,7 @@ public class ServerFacade {
 
     // ----------------------------------- END -----------------------------------
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws Exception {
         try {
             URL url = new URI(serverUrl + path).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -90,7 +90,8 @@ public class ServerFacade {
             return readBody(http, responseClass);
             
         } catch (Exception e) {
-            throw new ResponseException(500, e.getMessage());
+            e.printStackTrace();
+            throw new Exception();
         }
     }
 

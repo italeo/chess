@@ -36,28 +36,29 @@ public class ChessClient {
                 case "create" -> createGame(params);
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
-                case "observer" -> observeGame(params);
+                case "observe" -> observeGame(params);
                 case "quit" -> "quit";
                 default -> help();
             };
-        } catch (ResponseException e) {
+        } catch (Exception e) {
             return e.getMessage();
         }
     }
 
-    private String clear() {
+    private String clear() throws Exception {
         try {
             ClearResult result = facade.clear();
             if (result.isSuccess()) {
                 return "Clear Successful!";
             }
-        } catch (ResponseException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
         }
         return "";
     }
 
-    private String register(String... params) throws ResponseException {
+    private String register(String... params) throws Exception {
         if (params.length == 3) {
             String username = params[0];
             String password = params[1];
@@ -73,14 +74,15 @@ public class ChessClient {
                 } else {
                     return result.getMessage();
                 }
-            } catch (ResponseException e) {
-                throw new ResponseException(403, "Error: already taken\n");
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Exception();
             }
         }
         return "Oops! Looks like you missed something while registering.\n";
     }
 
-    private String login(String[] params) throws ResponseException {
+    private String login(String[] params) throws Exception {
         if (params.length == 2) {
             String username = params[0];
             String password = params[1];
@@ -97,14 +99,15 @@ public class ChessClient {
                 // Return success message
                 return String.format("Logged in as %s", username);
 
-            } catch (ResponseException e) {
-                throw new ResponseException(400, e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Exception();
             }
         }
         return "Sorry you entered the wrong information, try again";
     }
 
-    private String logout() throws ResponseException {
+    private String logout() throws Exception {
 
         try {
             // Call logout method from Facade
@@ -117,13 +120,14 @@ public class ChessClient {
             } else {
                 return " Log out failed: ";
             }
-        } catch (ResponseException e) {
-            return e.getMessage();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
         }
     }
 
     // ----------------------------- GAME FUNCTION --------------------------------------------------------------
-    private String createGame(String[] params) throws ResponseException {
+    private String createGame(String[] params) throws Exception {
         if (params.length == 1) {
             // Get the gameName entered by the user
             String gameName = params[0];
@@ -141,7 +145,7 @@ public class ChessClient {
         return null;
     }
 
-    private String listGames() {
+    private String listGames() throws Exception {
         try {
             ListGamesRequest request = new ListGamesRequest(SessionManager.getAuthToken());
             ListGameResult result = facade.listGames(request);
@@ -172,12 +176,13 @@ public class ChessClient {
             } else {
                 return "There are no games available.";
             }
-        } catch (ResponseException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
         }
     }
 
-    private String observeGame(String[] params) {
+    private String observeGame(String[] params) throws Exception {
         if (params.length == 1) {
             String gameIDStr = params[0];
             int gameID = indexer.get(Integer.parseInt(gameIDStr));
@@ -194,14 +199,15 @@ public class ChessClient {
                     return "\nSuccessfully Joined as an observer!\n";
                 }
 
-            } catch (ResponseException e) {
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Exception();
             }
         }
         return "Entered wrong inputs, please try again";
     }
 
-    private String joinGame(String[] params) {
+    private String joinGame(String[] params) throws Exception {
         if (params.length == 2) {
             String gameIDStr = params[0];
             int gameID = indexer.get(Integer.parseInt(gameIDStr));
