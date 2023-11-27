@@ -26,7 +26,7 @@ public class Repl implements NotificationHandler {
 
             try {
                 result = client.eval(line);
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
+                System.out.print(result);
             } catch (Throwable e) {
                 System.out.print(e.getMessage());
             }
@@ -44,6 +44,6 @@ public class Repl implements NotificationHandler {
     private void printPrompt() {
         State currentState = client.getState();
         String stateString = (currentState == LOGGED_OUT) ? LOGGED_OUT.name() : LOGGED_IN.name();
-        System.out.print("\n" + SET_TEXT_BOLD + "[" + stateString + "]" + " >>> " + SET_TEXT_COLOR_GREEN);
+        System.out.print("\n" + SET_TEXT_BOLD + "[" + stateString + "]" + " >>> ");
     }
 }

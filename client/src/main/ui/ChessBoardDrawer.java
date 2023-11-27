@@ -82,7 +82,7 @@ public class ChessBoardDrawer {
             String pieceColor = (piece.getTeamColor() == ChessGame.TeamColor.WHITE)
                     ? EscapeSequences.SET_TEXT_COLOR_MAGENTA
                     : EscapeSequences.SET_TEXT_COLOR_RED;
-            System.out.print(pieceColor + pieceSymbol);
+            System.out.print(pieceColor + pieceSymbol + EscapeSequences.SET_TEXT_BOLD);
         } else {
             System.out.print(EscapeSequences.EMPTY);
         }
