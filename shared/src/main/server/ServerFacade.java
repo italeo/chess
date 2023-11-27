@@ -1,7 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import exception.ResponseException;
+
 import request.*;
 import result.*;
 import java.io.*;
@@ -85,8 +85,7 @@ public class ServerFacade {
             if (request != null) {
                 writeBody(request, http);
             }
-            
-            throwIfNotSuccessful(http);
+
             return readBody(http, responseClass);
             
         } catch (Exception e) {
@@ -139,16 +138,5 @@ public class ServerFacade {
             }
         }
         return response;
-    }
-
-    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
-        var status = http.getResponseCode();
-        if(!isSuccessful(status)) {
-            throw new ResponseException(status, "failure: " + status);
-        }
-    }
-
-    private boolean isSuccessful(int status) {
-        return status / 100 == 2;
     }
 }

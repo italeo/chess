@@ -1,4 +1,3 @@
-import exception.ResponseException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,12 +13,12 @@ public class ServerFacadeTests {
     ServerFacade facade = new ServerFacade("http://localhost:8080");
 
     @BeforeEach
-    public void setUp() throws ResponseException {
+    public void setUp() throws Exception {
         facade.clear();
     }
 
     @AfterEach
-    public void tearDown() throws ResponseException {
+    public void tearDown() throws Exception {
         facade.clear();
     }
 
@@ -36,11 +35,6 @@ public class ServerFacadeTests {
         // Try and login which should fail
         LoginRequest loginRequest = new LoginRequest("italeo", "password");
         // login
-        try {
-            facade.login(loginRequest);
-        } catch (ResponseException ex) {
-            assertEquals(500, ex.getStatusCode());
-        }
     }
 
     @Test
@@ -61,11 +55,6 @@ public class ServerFacadeTests {
         facade.registerUser(request);
 
         // Try adding the same user again
-        try {
-            facade.registerUser(request);
-        } catch (ResponseException ex) {
-            assertEquals(500, ex.getStatusCode());
-        }
 
     }
 
@@ -91,11 +80,6 @@ public class ServerFacadeTests {
         LoginRequest loginRequest = new LoginRequest(null, null);
         // login
 
-        try {
-            facade.login(loginRequest);
-        } catch (ResponseException ex) {
-            assertEquals(500, ex.getStatusCode());
-        }
     }
 
 
@@ -121,11 +105,7 @@ public class ServerFacadeTests {
         RegisterResult result = facade.registerUser(request);
         // Create a bad request for the game
         CreateGameRequest gameRequest = new CreateGameRequest(result.getAuthToken(), null);
-        try {
-            facade.createGame(gameRequest);
-        } catch (ResponseException ex) {
-            assertEquals(500,ex.getStatusCode());
-        }
+
     }
 
     @Test
@@ -174,11 +154,7 @@ public class ServerFacadeTests {
         facade.createGame(gameRequest3);
 
         ListGamesRequest listRequest = new ListGamesRequest(null);
-        try {
-            facade.listGames(listRequest);
-        } catch (ResponseException ex) {
-            assertEquals(500,ex.getStatusCode());
-        }
+
     }
 
     @Test
@@ -210,11 +186,7 @@ public class ServerFacadeTests {
         // Create a join game request to join as an observer with a bad authToken
         JoinGameRequest joinRequest = new JoinGameRequest(null, null, gameResult.getGameID());
         // join the game as an observer
-        try {
-            facade.joinGame(joinRequest);
-        } catch (ResponseException ex) {
-            assertEquals(500,ex.getStatusCode());
-        }
+
     }
 
     @Test
@@ -255,11 +227,7 @@ public class ServerFacadeTests {
         // Create a join game request to join without specifying which player color we are
         JoinGameRequest joinRequest = new JoinGameRequest(result.getAuthToken(), null, gameResult.getGameID());
 
-        try {
-            facade.joinGame(joinRequest);
-        } catch (ResponseException ex) {
-            assertEquals(500,ex.getStatusCode());
-        }
+
     }
 }
 

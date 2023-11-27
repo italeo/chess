@@ -1,6 +1,5 @@
 package ui;
 
-import exception.ResponseException;
 import request.*;
 import result.*;
 import server.ServerFacade;
@@ -207,7 +206,7 @@ public class ChessClient {
         return "Entered wrong inputs, please try again";
     }
 
-    private String joinGame(String[] params) throws Exception {
+    private String joinGame(String[] params) {
         if (params.length == 2) {
             String gameIDStr = params[0];
             int gameID = indexer.get(Integer.parseInt(gameIDStr));
@@ -227,7 +226,7 @@ public class ChessClient {
                     System.out.print("Error joining the game");
                     System.out.println(result.getMessage());
                 }
-            } catch (ResponseException e) {
+            } catch (Exception e) {
                 System.out.println("In the catch clause");
                 e.printStackTrace();
             }
