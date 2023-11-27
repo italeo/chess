@@ -99,8 +99,9 @@ public class ChessClient {
                 return String.format("Logged in as %s", username);
 
             } catch (Exception e) {
-                e.printStackTrace();
-                throw new Exception();
+                System.out.print("Login failed. Make sure the user is registered\n");
+
+                return "sorry login failed";
             }
         }
         return "Sorry you entered the wrong information, try again";

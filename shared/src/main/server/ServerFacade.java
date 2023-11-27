@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 
+import exception.ResponseException;
 import request.*;
 import result.*;
 import java.io.*;
@@ -89,8 +90,8 @@ public class ServerFacade {
             return readBody(http, responseClass);
             
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception();
+            System.out.println("Error occurred in makeRequest");
+            throw new ResponseException("Server request failed", e);
         }
     }
 
