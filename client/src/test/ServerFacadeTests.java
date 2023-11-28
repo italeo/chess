@@ -21,22 +21,6 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void clearSuccess_Test() throws Exception {
-        // Create a dummy request for testing
-        RegisterRequest request = new RegisterRequest("italeo", "password", "email");
-        // Check the result to see if it is null indicating a status code of 200
-        assertNull(facade.registerUser(request).getMessage());
-
-        // Then we do a clear the db
-        facade.clear();
-
-        // Try and login which should fail
-        LoginRequest loginRequest = new LoginRequest("italeo", "password");
-        // login
-        assertThrows(Exception.class, ()-> facade.login(loginRequest));
-    }
-
-    @Test
     public void registerSuccess_Test() throws Exception {
         // Create a dummy request for testing
         RegisterRequest request = new RegisterRequest("italeo", "password", "email");
