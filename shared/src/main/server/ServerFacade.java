@@ -90,7 +90,6 @@ public class ServerFacade {
             return readBody(http, responseClass);
             
         } catch (Exception e) {
-            System.out.println("Error occurred in makeRequest");
             throw new ResponseException("Server request failed", e);
         }
     }

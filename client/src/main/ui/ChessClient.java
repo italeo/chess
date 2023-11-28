@@ -44,20 +44,19 @@ public class ChessClient {
         }
     }
 
-    private String clear() throws Exception {
+    private String clear() {
         try {
             ClearResult result = facade.clear();
             if (result.isSuccess()) {
                 return "Clear Successful!";
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception();
+            return "Error: clear failed";
         }
         return "";
     }
 
-    private String register(String... params) throws Exception {
+    private String register(String... params) {
         if (params.length == 3) {
             String username = params[0];
             String password = params[1];
@@ -74,14 +73,13 @@ public class ChessClient {
                     return result.getMessage();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
-                throw new Exception();
+                return "Error: Register failed\n";
             }
         }
         return "Oops! Looks like you missed something while registering.\n";
     }
 
-    private String login(String[] params) throws Exception {
+    private String login(String[] params) {
         if (params.length == 2) {
             String username = params[0];
             String password = params[1];
@@ -99,15 +97,13 @@ public class ChessClient {
                 return String.format("Logged in as %s", username);
 
             } catch (Exception e) {
-                System.out.print("Login failed. Make sure the user is registered\n");
-
-                return "sorry login failed";
+                return "Error: login failed\n";
             }
         }
         return "Sorry you entered the wrong information, try again";
     }
 
-    private String logout() throws Exception {
+    private String logout() {
 
         try {
             // Call logout method from Facade
@@ -121,8 +117,7 @@ public class ChessClient {
                 return " Log out failed: ";
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception();
+            return "Error: logout fail\n";
         }
     }
 
@@ -145,7 +140,7 @@ public class ChessClient {
         return null;
     }
 
-    private String listGames() throws Exception {
+    private String listGames() {
         try {
             ListGamesRequest request = new ListGamesRequest(SessionManager.getAuthToken());
             ListGameResult result = facade.listGames(request);
@@ -177,12 +172,11 @@ public class ChessClient {
                 return "There are no games available.";
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception();
+            return "Error: listGames failed\n";
         }
     }
 
-    private String observeGame(String[] params) throws Exception {
+    private String observeGame(String[] params) {
         if (params.length == 1) {
             String gameIDStr = params[0];
             int gameID = indexer.get(Integer.parseInt(gameIDStr));
@@ -200,8 +194,7 @@ public class ChessClient {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
-                throw new Exception();
+                return "Error: observe Game\n";
             }
         }
         return "Entered wrong inputs, please try again";
@@ -228,8 +221,7 @@ public class ChessClient {
                     System.out.println(result.getMessage());
                 }
             } catch (Exception e) {
-                System.out.println("In the catch clause");
-                e.printStackTrace();
+                return "Error: join game";
             }
         }
         return "Entered wrong inputs, please try again";
