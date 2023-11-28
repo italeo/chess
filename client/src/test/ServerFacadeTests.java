@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import request.*;
 import result.*;
 import server.ServerFacade;
+import server.SessionManager;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -223,6 +224,29 @@ public class ServerFacadeTests {
 
         // Check to see that an exception is thrown
         assertThrows(Exception.class, ()-> facade.joinGame(joinRequest));
+    }
+
+    @Test
+    public void logoutSuccess_Test() throws Exception {
+        RegisterRequest request = new RegisterRequest("italeo", "password", "email");
+        // Register the user
+        RegisterResult result = facade.registerUser(request);
+        // Test the logout with new logout request
+        LogoutRequest logoutRequest = new LogoutRequest(result.getAuthToken());
+        assertNull(facade.logout(logoutRequest).getMessage());
+    }
+
+    @Test
+    public void logoutFail_Test() throws Exception {
+        RegisterRequest request = new RegisterRequest("italeo", "password", "email");
+        // Register the user
+        RegisterResult result = facade.registerUser(request);
+        String authToken = result.getAuthToken();
+        SessionManager.setAuthToken(authToken);
+        // Test the logout with bad authToken
+        SessionManager.setAuthToken(null);
+        LogoutRequest logoutRequest = new LogoutRequest(SessionManager.getAuthToken());
+        assertThrows(Exception.class, ()-> facade.logout(logoutRequest));
     }
 }
 

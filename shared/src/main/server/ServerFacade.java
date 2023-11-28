@@ -31,9 +31,8 @@ public class ServerFacade {
         return this.makeRequest("POST", path, request, LoginResult.class);
     }
 
-    public LogoutResult logout() throws Exception {
+    public LogoutResult logout(LogoutRequest request) throws Exception {
         var path = "/session";
-        LogoutRequest request = new LogoutRequest(SessionManager.getAuthToken());
         return this.makeRequest("DELETE", path, request, LogoutResult.class);
     }
 

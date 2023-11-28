@@ -76,7 +76,7 @@ public class ChessClient {
                 return "Error: Register failed\n";
             }
         }
-        return "Oops! Looks like you missed something while registering.\n";
+        return "Looks like you missed a few things while registering. Please try again\n";
     }
 
     private String login(String[] params) {
@@ -97,7 +97,7 @@ public class ChessClient {
                 return String.format("Logged in as %s", username);
 
             } catch (Exception e) {
-                return "Error: login failed\n";
+                return "Oops! Looks like this user isn't registered.\n";
             }
         }
         return "Sorry you entered the wrong information, try again";
@@ -106,8 +106,9 @@ public class ChessClient {
     private String logout() {
 
         try {
+            LogoutRequest request = new LogoutRequest(SessionManager.getAuthToken());
             // Call logout method from Facade
-            LogoutResult result = facade.logout();
+            LogoutResult result = facade.logout(request);
             if (result.isSuccess()) {
                 // Update the state
                 state = State.LOGGED_OUT;
@@ -135,7 +136,8 @@ public class ChessClient {
             if(result.isSuccess()) {
                 return "game created successfully!\n";
             }
-
+        } else {
+            return "Please enter the name of your game.";
         }
         return null;
     }
@@ -144,6 +146,7 @@ public class ChessClient {
         try {
             ListGamesRequest request = new ListGamesRequest(SessionManager.getAuthToken());
             ListGameResult result = facade.listGames(request);
+
             // Tracker needed to map the game index to the gameID
             int index = 1;
 
@@ -154,9 +157,9 @@ public class ChessClient {
 
                 for (ListGameSuccessResult game : games) {
 
-                    sb.append("Game index: " + index).append(" gameID: ")
+                    sb.append("Game index: ").append(index).append(" gameID: ")
                             .append(game.getGameID())
-                            .append(", name: ")
+                            .append(", Name: ")
                             .append(game.getGameName())
                             .append(", WhiteUser: ")
                             .append(game.getWhiteUsername())
@@ -169,7 +172,7 @@ public class ChessClient {
                 }
                 return sb.toString();
             } else {
-                return "There are no games available.";
+                return "Create a game!";
             }
         } catch (Exception e) {
             return "Error: listGames failed\n";
@@ -221,7 +224,7 @@ public class ChessClient {
                     System.out.println(result.getMessage());
                 }
             } catch (Exception e) {
-                return "Error: join game";
+                return "Oops! looks like you entered the wrong info. Try again please";
             }
         }
         return "Entered wrong inputs, please try again";
@@ -244,7 +247,7 @@ public class ChessClient {
                 create <NAME> - a game
                 list - games
                 join <ID> [WHITE|BLACK|<empty>]- a game
-                observer <ID> - a game
+                observe <ID> - a game
                 logout - when you are done
                 quit - playing chess
                 clear - clear the data base
