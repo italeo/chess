@@ -22,16 +22,13 @@ public class ChessBoardDrawer {
             if (playerColor != null && (playerColor.equals("WHITE") || playerColor.equals("BLACK"))) {
                 if (playerColor.equals("WHITE")) {
                     drawBoardWhite(gameID);
-                    drawBoardBlack(gameID);
                 } else {
                     drawBoardBlack(gameID);
-                    drawBoardWhite(gameID);
                 }
             } else {
                 // Prints the board with white pieces at the bottom first
                 // The default board
                 drawBoardWhite(gameID);
-                drawBoardBlack(gameID);
             }
         }
     }
