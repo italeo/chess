@@ -1,9 +1,12 @@
 package webSeverMessages.userCommands;
 
-public class Resign {
+import webSocketMessages.userCommands.UserGameCommand;
+
+public class Resign extends UserGameCommand {
     private Integer gameID;
 
     public Resign(Integer gameID) {
+        super(String.valueOf(CommandType.RESIGN));
         this.gameID = gameID;
     }
 
