@@ -36,7 +36,6 @@ public class WebSocketHandler {
         // Perform the necessary actions
 
 
-
     }
 
     private void observerCmd(Session session, UserGameCommand userCommand) {
