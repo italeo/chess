@@ -3,6 +3,7 @@ package handler.webSocket;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.*;
 import org.eclipse.jetty.websocket.api.annotations.*;
+import webSeverMessages.userCommands.*;
 import webSocketMessages.userCommands.UserGameCommand;
 
 @WebSocket
@@ -18,35 +19,35 @@ public class WebSocketHandler {
 
         // Handling different command types
         switch (userCommand.getCommandType()) {
-            case JOIN_PLAYER -> joinPlayerCmd(session, userCommand);
-            case JOIN_OBSERVER -> observerCmd(session, userCommand);
-            case MAKE_MOVE -> makeMoveCmd(session, userCommand);
-            case LEAVE -> leaveCmd(session, userCommand);
-            case RESIGN -> resignCmd(session, userCommand);
+            case JOIN_PLAYER -> joinPlayerCmd(session, message);
+            case JOIN_OBSERVER -> observerCmd(session, message);
+            case MAKE_MOVE -> makeMoveCmd(session, message);
+            case LEAVE -> leaveCmd(session, message);
+            case RESIGN -> resignCmd(session, message);
         }
     }
 
-    private void joinPlayerCmd(Session session, UserGameCommand userCommand) {
-        // Get the authToken to verify the "root client"
-        String authToken = userCommand.getAuthString();
-
+    private void joinPlayerCmd(Session session, String message) {
+        JoinPlayer joinPlayer = new Gson().fromJson(message, JoinPlayer.class);
         // Add connection to set of connections in connectionManager
-
-        // Perform the necessary actions
-
-
+        int gameID = joinPlayer.getGameID();
+        connections.add(gameID, session);
     }
 
-    private void observerCmd(Session session, UserGameCommand userCommand) {
+    private void observerCmd(Session session, String message) {
+        JoinObserver joinObserver = new Gson().fromJson(message, JoinObserver.class);
     }
 
-    private void makeMoveCmd(Session session, UserGameCommand userCommand) {
+    private void makeMoveCmd(Session session, String message) {
+        MakeMove makeMove = new Gson().fromJson(message, MakeMove.class);
     }
 
-    private void leaveCmd(Session session, UserGameCommand userCommand) {
+    private void leaveCmd(Session session, String message) {
+        Leave leave = new Gson().fromJson(message, Leave.class);
     }
 
-    private void resignCmd(Session session, UserGameCommand userCommand) {
+    private void resignCmd(Session session, String message) {
+        Resign resign = new Gson().fromJson(message, Resign.class);
     }
 
 
