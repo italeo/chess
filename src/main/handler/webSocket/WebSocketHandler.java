@@ -1,5 +1,6 @@
 package handler.webSocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.*;
 import org.eclipse.jetty.websocket.api.annotations.*;
@@ -29,9 +30,13 @@ public class WebSocketHandler {
 
     private void joinPlayerCmd(Session session, String message) {
         JoinPlayer joinPlayer = new Gson().fromJson(message, JoinPlayer.class);
-        // Add connection to set of connections in connectionManager
+
         int gameID = joinPlayer.getGameID();
+        ChessGame.TeamColor playerColor = joinPlayer.getTeamColor();
+        // Add the connection to the set
         connections.add(gameID, session);
+
+
     }
 
     private void observerCmd(Session session, String message) {

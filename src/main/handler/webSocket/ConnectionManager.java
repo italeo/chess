@@ -1,37 +1,49 @@
 package handler.webSocket;
 
 import org.eclipse.jetty.websocket.api.Session;
-import javax.management.Notification;
+import webSeverMessages.serverMessages.Notification;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class ConnectionManager {
-    public final ConcurrentHashMap<Integer, Connection> connections = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<Integer, Set<Session>> connections = new ConcurrentHashMap<>();
 
     public void add(Integer gameID, Session session) {
-        var connection = new Connection(gameID, session);
-        connections.put(gameID, connection);
+        connections.compute(gameID, (key, existingSet) -> {
+            if (existingSet == null) {
+                existingSet = new CopyOnWriteArraySet<>();
+            }
+            existingSet.add(session);
+            return existingSet;
+        });
     }
 
-    public void remove(Integer gameID) { connections.remove(gameID); }
+    public void remove(Integer gameID, Session session ) {
+        connections.computeIfPresent(gameID, (key, existingSet) -> {
+            existingSet.remove(session);
+            if (existingSet.isEmpty()) {
+                return null;
+            }
+            return existingSet;
+        });
+    }
 
     public void broadcast(Integer excludeGameID, Notification notification) throws IOException {
-        var removeList = new ArrayList<Connection>();
-        for (var c : connections.values()) {
-            if (c.session.isOpen()) {
-                if (!c.gameID.equals(excludeGameID)) {
-                    c.send(notification.toString());
+        for (var entry : connections.entrySet()) {
+            var gameID = entry.getKey();
+            var sessionSet = entry.getValue();
+
+            if (!gameID.equals(excludeGameID)) {
+                for (var session : sessionSet) {
+                    if (session.isOpen()) {
+                        session.getRemote().sendString(notification.getMessage());
+                    }
                 }
-            } else {
-                removeList.add(c);
             }
         }
-
-        // Removing any connections that were left open
-        for (var c : removeList) {
-            connections.remove(c.gameID);
-        }
-
     }
 }
