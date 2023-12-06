@@ -4,7 +4,6 @@ import spark.Spark;
 public class Server {
 
     private void run() {
-        // Sets the fixed port to 8080
         Spark.port(8080);
         Spark.externalStaticFileLocation("web");
         Spark.init();
@@ -20,6 +19,7 @@ public class Server {
     }
 
     public static void main(String[] args) {
+
         new Server().run();
     }
 }

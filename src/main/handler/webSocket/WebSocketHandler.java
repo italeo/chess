@@ -21,7 +21,7 @@ public class WebSocketHandler {
         // Parse the incoming JSON message
         UserGameCommand userCommand = new Gson().fromJson(message, UserGameCommand.class);
 
-        // Validate the authToken
+        // fixme: What are we checking for with the authToken? Null?
         String authToken = userCommand.getAuthString();
 
         // Handling different command types
@@ -43,7 +43,7 @@ public class WebSocketHandler {
         connections.add(gameID, session);
 
         // Send load game back to client
-
+        // fixme: How do I get the current state of the board from the server?
 
         // Message to notify other players
         String msg = String.format("%s joined as %s player", message, playerColor);
