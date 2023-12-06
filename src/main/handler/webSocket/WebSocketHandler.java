@@ -4,8 +4,11 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.*;
 import org.eclipse.jetty.websocket.api.annotations.*;
+import webSeverMessages.serverMessages.Notification;
 import webSeverMessages.userCommands.*;
 import webSocketMessages.userCommands.UserGameCommand;
+
+import java.io.IOException;
 
 @WebSocket
 public class WebSocketHandler {
@@ -14,9 +17,12 @@ public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) {
+    public void onMessage(Session session, String message) throws IOException {
         // Parse the incoming JSON message
         UserGameCommand userCommand = new Gson().fromJson(message, UserGameCommand.class);
+
+        // Validate the authToken
+        String authToken = userCommand.getAuthString();
 
         // Handling different command types
         switch (userCommand.getCommandType()) {
@@ -28,7 +34,7 @@ public class WebSocketHandler {
         }
     }
 
-    private void joinPlayerCmd(Session session, String message) {
+    private void joinPlayerCmd(Session session, String message) throws IOException {
         JoinPlayer joinPlayer = new Gson().fromJson(message, JoinPlayer.class);
 
         int gameID = joinPlayer.getGameID();
@@ -36,7 +42,13 @@ public class WebSocketHandler {
         // Add the connection to the set
         connections.add(gameID, session);
 
+        // Send load game back to client
 
+
+        // Message to notify other players
+        String msg = String.format("%s joined as %s player", message, playerColor);
+        var notification = new Notification(message);
+        connections.broadcast(gameID, notification);
     }
 
     private void observerCmd(Session session, String message) {

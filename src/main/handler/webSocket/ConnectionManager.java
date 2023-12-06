@@ -2,9 +2,7 @@ package handler.webSocket;
 
 import org.eclipse.jetty.websocket.api.Session;
 import webSeverMessages.serverMessages.Notification;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
