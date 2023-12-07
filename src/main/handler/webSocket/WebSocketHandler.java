@@ -2,11 +2,17 @@ package handler.webSocket;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import dao.AuthTokenDAO;
+import dao.GameDAO;
+import dataAccess.DataAccessException;
+import dataAccess.Database;
 import org.eclipse.jetty.websocket.api.*;
 import org.eclipse.jetty.websocket.api.annotations.*;
+import webSeverMessages.serverMessages.LoadGame;
 import webSeverMessages.serverMessages.Notification;
 import webSeverMessages.userCommands.*;
 import webSocketMessages.userCommands.UserGameCommand;
+import java.sql.Connection;
 
 import java.io.IOException;
 
@@ -15,14 +21,12 @@ public class WebSocketHandler {
 
     // Responsible to handle all web socket connections
     private final ConnectionManager connections = new ConnectionManager();
-
+    private final Database db = new Database();
+    private Connection conn;
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws IOException {
+    public void onMessage(Session session, String message) throws IOException, DataAccessException {
         // Parse the incoming JSON message
         UserGameCommand userCommand = new Gson().fromJson(message, UserGameCommand.class);
-
-        // fixme: What are we checking for with the authToken? Null?
-        String authToken = userCommand.getAuthString();
 
         // Handling different command types
         switch (userCommand.getCommandType()) {
@@ -32,23 +36,40 @@ public class WebSocketHandler {
             case LEAVE -> leaveCmd(session, message);
             case RESIGN -> resignCmd(session, message);
         }
+
     }
 
-    private void joinPlayerCmd(Session session, String message) throws IOException {
+    private void joinPlayerCmd(Session session, String message) throws IOException, DataAccessException {
         JoinPlayer joinPlayer = new Gson().fromJson(message, JoinPlayer.class);
+        conn = db.getConnection();
+        GameDAO gameDAO = new GameDAO(conn);
+        AuthTokenDAO authTokenDAO = new AuthTokenDAO(conn);
+        joinPlayer.getAuthString();
+
+        // Check that the authToken from the message is valid
+        System.out.print(message);
 
         int gameID = joinPlayer.getGameID();
         ChessGame.TeamColor playerColor = joinPlayer.getTeamColor();
         // Add the connection to the set
         connections.add(gameID, session);
 
+        // Get the current state of the game
+        var currentGameState = gameDAO.findGameByID(gameID);
+
         // Send load game back to client
-        // fixme: How do I get the current state of the board from the server?
+        LoadGame loadGame = new LoadGame(currentGameState);
+        var rootMessage = String.format("Game loaded");
+        Notification rootClientNotification = new Notification(rootMessage);
+        System.out.print(rootMessage);
+        session.getRemote().sendString(rootClientNotification.getMessage());
+
 
         // Message to notify other players
         String msg = String.format("%s joined as %s player", message, playerColor);
-        var notification = new Notification(message);
-        connections.broadcast(gameID, notification);
+        var allOthersNotification = new Notification(msg);
+        System.out.print(msg);
+        connections.broadcast(gameID, allOthersNotification);
     }
 
     private void observerCmd(Session session, String message) {

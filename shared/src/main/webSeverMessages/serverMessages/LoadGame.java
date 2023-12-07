@@ -1,16 +1,17 @@
 package webSeverMessages.serverMessages;
 
+import model.Game;
 import webSocketMessages.serverMessages.ServerMessage;
 
 public class LoadGame extends ServerMessage {
-    private String game;
+    private Game game;
 
-    public LoadGame(String game) {
+    public LoadGame(Game game) {
         super(ServerMessageType.LOAD_GAME);
         this.game = game;
     }
 
-    public String getGame() {
+    public Game getGame() {
         return game;
     }
 }

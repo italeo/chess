@@ -3,11 +3,12 @@ package webSeverMessages.userCommands;
 import webSocketMessages.userCommands.UserGameCommand;
 
 public class Leave extends UserGameCommand {
-    private Integer gameID;
+    public Integer gameID;
 
-    public Leave(Integer gameID) {
-        super(String.valueOf(CommandType.LEAVE));
+    public Leave(String authToken, Integer gameID) {
+        super(authToken);
         this.gameID = gameID;
+        this.commandType = CommandType.LEAVE;
     }
 
     public Integer getGameID() {
