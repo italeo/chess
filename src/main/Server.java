@@ -1,9 +1,8 @@
 import handler.*;
 import handler.webSocket.WebSocketHandler;
-import spark.Spark;
+import spark.*;
 
 public class Server {
-// fixme: Set up the webSocket portion of the Server
     private final WebSocketHandler webSocketHandler = new WebSocketHandler();
 
     private void run() {

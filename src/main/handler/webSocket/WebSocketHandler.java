@@ -6,6 +6,7 @@ import dao.AuthTokenDAO;
 import dao.GameDAO;
 import dataAccess.DataAccessException;
 import dataAccess.Database;
+import model.Game;
 import org.eclipse.jetty.websocket.api.*;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import webSeverMessages.serverMessages.LoadGame;
@@ -23,8 +24,9 @@ public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
     private final Database db = new Database();
     private Connection conn;
+
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws IOException, DataAccessException {
+    public void onMessage(Session session, String message) throws DataAccessException {
         // Parse the incoming JSON message
         UserGameCommand userCommand = new Gson().fromJson(message, UserGameCommand.class);
 
@@ -39,37 +41,46 @@ public class WebSocketHandler {
 
     }
 
-    private void joinPlayerCmd(Session session, String message) throws IOException, DataAccessException {
+    private void joinPlayerCmd(Session session, String message) throws DataAccessException {
         JoinPlayer joinPlayer = new Gson().fromJson(message, JoinPlayer.class);
         conn = db.getConnection();
         GameDAO gameDAO = new GameDAO(conn);
         AuthTokenDAO authTokenDAO = new AuthTokenDAO(conn);
-        joinPlayer.getAuthString();
+        String authToken = joinPlayer.getAuthString();
 
         // Check that the authToken from the message is valid
-        System.out.print(message);
+        if (authTokenDAO.find(authToken) != null) {
+            String username = authTokenDAO.find(authToken).getUsername();
+            try {
+                int gameID = joinPlayer.getGameID();
+                ChessGame.TeamColor playerColor = joinPlayer.getTeamColor();
 
-        int gameID = joinPlayer.getGameID();
-        ChessGame.TeamColor playerColor = joinPlayer.getTeamColor();
-        // Add the connection to the set
-        connections.add(gameID, session);
+                // Added the connection to the map
+                connections.add(gameID, session);
 
-        // Get the current state of the game
-        var currentGameState = gameDAO.findGameByID(gameID);
+                // Get the current state of the game
+                Game currentGame = gameDAO.findGameByID(gameID);
+                System.out.println(currentGame);
+                // Send load game back to client
+                LoadGame loadGame = new LoadGame(currentGame);
+                System.out.println(loadGame);
+                // Serialize type game to a string
+                String loadGameJson = new Gson().toJson(loadGame);
+                if (session.isOpen()) {
+                    session.getRemote().sendString(loadGameJson);
+                    System.out.println(loadGameJson);
+                }
 
-        // Send load game back to client
-        LoadGame loadGame = new LoadGame(currentGameState);
-        var rootMessage = String.format("Game loaded");
-        Notification rootClientNotification = new Notification(rootMessage);
-        System.out.print(rootMessage);
-        session.getRemote().sendString(rootClientNotification.getMessage());
-
-
-        // Message to notify other players
-        String msg = String.format("%s joined as %s player", message, playerColor);
-        var allOthersNotification = new Notification(msg);
-        System.out.print(msg);
-        connections.broadcast(gameID, allOthersNotification);
+                // Message to notify other players
+                String msg = String.format("%s joined as %s player", username, playerColor);
+                System.out.println(msg);
+                var allOthersNotification = new Notification(msg);
+                System.out.println(allOthersNotification);
+                connections.broadcast(gameID, allOthersNotification, session);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void observerCmd(Session session, String message) {
