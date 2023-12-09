@@ -15,7 +15,6 @@ import webSeverMessages.serverMessages.Notification;
 import webSeverMessages.userCommands.*;
 import webSocketMessages.userCommands.UserGameCommand;
 import java.sql.Connection;
-
 import java.io.IOException;
 
 @WebSocket
@@ -27,7 +26,7 @@ public class WebSocketHandler {
     private Connection conn;
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws DataAccessException {
+    public void onMessage(Session session, String message) throws DataAccessException, IOException {
         conn = db.getConnection();
         // Parse the incoming JSON message
         UserGameCommand userCommand = new Gson().fromJson(message, UserGameCommand.class);
@@ -111,40 +110,57 @@ public class WebSocketHandler {
     }
 
 
-    private void observerCmd(Session session, String message) throws DataAccessException {
+    private void observerCmd(Session session, String message) throws DataAccessException, IOException {
         JoinObserver joinObserver = new Gson().fromJson(message, JoinObserver.class);
         GameDAO gameDAO = new GameDAO(conn);
         AuthTokenDAO authTokenDAO = new AuthTokenDAO(conn);
         String authToken = joinObserver.getAuthString();
+        Gson gson = new Gson();
 
         if (authTokenDAO.find(authToken) != null) {
             try {
                 String username = authTokenDAO.find(authToken).getUsername();
                 int gameID = joinObserver.getGameID();
 
-                // Add to connection set
-                connections.add(gameID, session, authToken, username, null);
+                if (gameDAO.findGameByID(gameID) != null) {
+                    // Add to connection set
+                    connections.add(gameID, session, authToken, username, null);
 
-                // Get current state of game
-                Game currentGame = gameDAO.findGameByID(gameID);
+                    // Get current state of game
+                    Game currentGame = gameDAO.findGameByID(gameID);
 
-                // send loadGame back to client
-                LoadGame loadGame = new LoadGame(currentGame);
-                // Serialize type game to string
-                String loadGameJson = new Gson().toJson(loadGame);
-                // Send the serverMessage
-                if (session.isOpen()) {
-                    session.getRemote().sendString(loadGameJson);
+                    // send loadGame back to client
+                    LoadGame loadGame = new LoadGame(currentGame);
+                    // Serialize type game to string
+                    String loadGameJson = gson.toJson(loadGame);
+                    // Send the serverMessage
+                    if (session.isOpen()) {
+                        session.getRemote().sendString(loadGameJson);
+                    }
+
+                    // Build and send the notification to others
+                    String notificationMsg = String.format("%s joined as an observer.", username);
+                    Notification notification = new Notification(notificationMsg);
+                    connections.broadcast(gameID, notification, username);
+                } else {
+                    String errorMSg = String.format("Sorry the gameID: %s, is incorrect", gameID);
+                    Error error = new Error(errorMSg);
+                    String errorJson = gson.toJson(error);
+                    if (session.isOpen()) {
+                        session.getRemote().sendString(errorJson);
+                    }
                 }
-
-                // Build and send the notification to others
-                String notificationMsg = String.format("%s joined as an observer.", username);
-                Notification notification = new Notification(notificationMsg);
-                connections.broadcast(gameID, notification, username);
 
 
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        } else {
+            String errorMSg = String.format("Sorry the authToken: %s, is incorrect", authToken);
+            Error error = new Error(errorMSg);
+            String errorJson = gson.toJson(error);
+            if (session.isOpen()) {
+                session.getRemote().sendString(errorJson);
             }
         }
 
