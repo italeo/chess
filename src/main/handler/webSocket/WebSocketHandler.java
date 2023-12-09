@@ -64,19 +64,25 @@ public class WebSocketHandler {
                 // Get the current state of the game
                 Game currentGame = gameDAO.findGameByID(gameID);
 
+                // Error severMessage
+                String errorMsg = String.format("Sorry %s already taken", playerColor);
+                Error errorNotification = new Error(errorMsg);
+                String errorJson = gson.toJson(errorNotification);
+
                 // Update the game according to player color
-                if (playerColor == ChessGame.TeamColor.WHITE) {
+                if (playerColor == ChessGame.TeamColor.WHITE && currentGame.getWhiteUsername() == null) {
                     currentGame.setWhiteUsername(username);
                     gameDAO.updateGame(currentGame);
-                } else if (playerColor == ChessGame.TeamColor.BLACK) {
+                    System.out.println("In white");
+                } else if (playerColor == ChessGame.TeamColor.BLACK && currentGame.getBlackUsername() == null) {
                     currentGame.setBlackUsername(username);
                     gameDAO.updateGame(currentGame);
+                    System.out.println("In black");
                 } else {
-                    String errorMsg = String.format("Sorry color already taken");
-                    Error errorNotification = new Error(errorMsg);
-                    String errorJson = gson.toJson(errorNotification);
                     if (session.isOpen()) {
                         session.getRemote().sendString(errorJson);
+                        System.out.println("Error message sent");
+                        return;
                     }
                 }
 
@@ -109,7 +115,6 @@ public class WebSocketHandler {
         if (authTokenDAO.find(authToken) != null) {
             try {
                 String username = authTokenDAO.find(authToken).getUsername();
-                System.out.println("The root user: " + username);
                 int gameID = joinObserver.getGameID();
 
                 // Add to connection set
@@ -117,7 +122,6 @@ public class WebSocketHandler {
 
                 // Get current state of game
                 Game currentGame = gameDAO.findGameByID(gameID);
-                System.out.println("The current game: " + currentGame);
 
                 // send loadGame back to client
                 LoadGame loadGame = new LoadGame(currentGame);
