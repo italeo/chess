@@ -25,15 +25,14 @@ public class ConnectionManager {
 
 
 
-    public void broadcast(Integer gameID, Notification notification, String excludeUsername) throws IOException {
+    public void broadcast(Integer gameID, String notification, String excludeUsername) throws IOException {
         List<Connection> closedConnections = new ArrayList<>();
         Set<Connection> connectionSet = connections.get(gameID);
 
-        String notificationJson = new Gson().toJson(notification);
         for (var c : connectionSet) {
             if (c.session.isOpen()) {
                 if (!c.username.equals(excludeUsername)) {
-                    c.send(notificationJson);
+                    c.send(notification);
                     System.out.println("In the Notifications message");
                 }
             } else {
