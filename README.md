@@ -1,0 +1,2 @@
+# chess
+- check the dependencies
