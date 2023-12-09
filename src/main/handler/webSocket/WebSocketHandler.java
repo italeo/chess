@@ -61,39 +61,40 @@ public class WebSocketHandler {
                 // Added the connection to the map
                 connections.add(gameID, session, authToken, username, playerColor);
 
-                // Get the current state of the game
+                // Get the game
                 Game currentGame = gameDAO.findGameByID(gameID);
 
-                // Error severMessage
-                String errorMsg = String.format("Sorry %s already taken", playerColor);
-                Error errorNotification = new Error(errorMsg);
-                String errorJson = gson.toJson(errorNotification);
-
-                // Update the game according to player color
+                // check if either color is already taken
+                // if so send ERROR message
                 if ((playerColor == ChessGame.TeamColor.WHITE && currentGame.getWhiteUsername() != null) ||
                         (playerColor == ChessGame.TeamColor.BLACK && currentGame.getBlackUsername() != null)) {
                     if (session.isOpen()) {
+                        // Error severMessage
+                        String errorMsg = String.format("Sorry %s is already taken", playerColor);
+                        Error errorNotification = new Error(errorMsg);
+                        String errorJson = gson.toJson(errorNotification);
                         session.getRemote().sendString(errorJson);
-                       return;
+                        System.out.println("In the Error message");
                     }
+                } else {
+                    // Update the game according to player color
+                    updatePlayerColor(currentGame, playerColor, username);
+                    gameDAO.updateGame(currentGame);
+                    // Send load game back to client
+                    LoadGame loadGame = new LoadGame(currentGame);
+                    // Serialize type game to a string
+                    String loadGameJson = gson.toJson(loadGame);
+                    if (session.isOpen()) {
+                        session.getRemote().sendString(loadGameJson);
+                        System.out.println("In the Load message");
+                    }
+
+                    // Message to notify other players
+                    String notificationMsg = String.format("%s joined as %s player", username, playerColor);
+                    Notification allOthersNotification = new Notification(notificationMsg);
+                    connections.broadcast(gameID, allOthersNotification, username);
                 }
 
-                // Update the game according to player color
-                updatePlayerColor(currentGame, playerColor, username);
-                gameDAO.updateGame(currentGame);
-
-                // Send load game back to client
-                LoadGame loadGame = new LoadGame(currentGame);
-                // Serialize type game to a string
-                String loadGameJson = gson.toJson(loadGame);
-                if (session.isOpen()) {
-                    session.getRemote().sendString(loadGameJson);
-                }
-
-                // Message to notify other players
-                String notificationMsg = String.format("%s joined as %s player", username, playerColor);
-                Notification allOthersNotification = new Notification(notificationMsg);
-                connections.broadcast(gameID, allOthersNotification, username);
 
             } catch (IOException e) {
                 e.printStackTrace();

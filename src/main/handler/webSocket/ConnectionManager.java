@@ -34,6 +34,7 @@ public class ConnectionManager {
             if (c.session.isOpen()) {
                 if (!c.username.equals(excludeUsername)) {
                     c.send(notificationJson);
+                    System.out.println("In the Notifications message");
                 }
             } else {
                 closedConnections.add(c);
