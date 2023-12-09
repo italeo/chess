@@ -167,7 +167,7 @@ public class GameDAO {
 
     // ------------------------------- TYPE ADAPTER CLASSES -------------------------------------------------------
 
-    // Type adapter for ChessGame need to change to JsonSerializer
+    // Type adapter for ChessGame need to change to JsonSerializer  n
     public static class GameAdapter extends TypeAdapter<ChessGame> {
 
         @Override
