@@ -1,7 +1,9 @@
 package handler.webSocket;
 
 import chess.ChessGame;
+import chess.ChessGameImpl;
 import chess.ChessMove;
+import chess.ChessMoveImpl;
 import com.google.gson.Gson;
 import dao.AuthTokenDAO;
 import dao.GameDAO;
@@ -164,16 +166,34 @@ public class WebSocketHandler {
                 session.getRemote().sendString(errorJson);
             }
         }
-
-
-
     }
 
-    private void makeMoveCmd(Session session, String message) {
+    private void makeMoveCmd(Session session, String message) throws DataAccessException {
         MakeMove makeMove = new Gson().fromJson(message, MakeMove.class);
         String authToken = makeMove.getAuthString();
         ChessMove move = makeMove.getMove();
         Integer gameID = makeMove.getGameID();
+        GameDAO gameDAO = new GameDAO(conn);
+        AuthTokenDAO authTokenDAO = new AuthTokenDAO(conn);
+        AuthToken auth = authTokenDAO.find(authToken);
+        String rootClient = auth.getUsername();
+        Game game = gameDAO.findGameByID(gameID);
+        ChessGameImpl gameImpl = new ChessGameImpl();
+
+        // Validate the authToken and the gameID
+        if (auth != null && gameDAO.findGameByID(gameID) != null) {
+
+            // validate the move?
+            gameImpl.validMoves(move.getStartPosition());
+
+            // Update game to rep move in db
+
+            // Send loadGame to 'ALL CLIENTS' in the game and rootClient
+
+            //
+        }
+
+
     }
 
     private void leaveCmd(Session session, String message) {
