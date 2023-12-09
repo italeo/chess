@@ -1,9 +1,6 @@
 package handler.webSocket;
 
-import chess.ChessGame;
-import chess.ChessGameImpl;
-import chess.ChessMove;
-import chess.InvalidMoveException;
+import chess.*;
 import com.google.gson.Gson;
 import dao.AuthTokenDAO;
 import dao.GameDAO;
@@ -181,34 +178,56 @@ public class WebSocketHandler {
         AuthToken auth = authTokenDAO.find(authToken);
         String rootClient = auth.getUsername();
         Game game = gameDAO.findGameByID(gameID);
-        ChessGameImpl gameImpl = new ChessGameImpl();
 
         // Validate the authToken and the gameID
         if (gameDAO.findGameByID(gameID) != null) {
             System.out.println("gameID is valid");
             // validate the move?
-             gameImpl.makeMove((ChessMove) move.getStartPosition());
-            System.out.println("After makeMove for gameImpl");
-            // Update game to rep move in db
-            gameDAO.insert(game);
-            System.out.println("After insert");
+            if(isValidMove(move, game)) {
 
-            // Send loadGame to 'ALL CLIENTS' in the game and rootClient
-            LoadGame loadGame = new LoadGame(game);
-            String loadGameJson = gson.toJson(loadGame);
-            if (session.isOpen()) {
-                session.getRemote().sendString(loadGameJson);
-                System.out.println("sending new loadGame to rootClient");
+                // Make the move/update the move on the board for the game
+                game.getGame().makeMove(move);
+                // Update that move in the db
+                gameDAO.updateGame(game);
+
+                // Create the LoadGame server message
+                LoadGame loadGame = new LoadGame(game);
+                String loadGameJson = gson.toJson(loadGame);
+                if (session.isOpen()) {
+                    session.getRemote().sendString(loadGameJson);
+                }
+
+                // Build the Notification server message
+
+                // The piece in action
+                ChessPiece piece = game.getGame().getBoard().getPiece(move.getStartPosition());
+
+                // The position the piece was moved to
+                ChessPosition position = move.getEndPosition();
+                String notificationMsg = String.format("%s moved to %s", piece, position);
+                Notification notification = new Notification(notificationMsg);
+                String notificationJson = gson.toJson(notification);
+                connections.broadcast(gameID, notificationJson, rootClient);
+            } else {
+                Error errorMsg = new Error("Invalid move");
+                if (session.isOpen()) {
+                    session.getRemote().sendString(gson.toJson(errorMsg));
+                }
             }
-            connections.broadcast(gameID, loadGameJson, rootClient);
-            System.out.println("sending new loadGame to all other clients");
+        } else {
+            Error errorMsg = new Error("authToken or gameID is invalid");
+            if (session.isOpen()) {
+                session.getRemote().sendString(gson.toJson(errorMsg));
+            }
+        }
+    }
 
-            // Send Notification to all other clients
-            String notificationMsg = String.format("%s made a move: %s", rootClient, move);
-            Notification notification = new Notification(notificationMsg);
-            String notificationJson = gson.toJson(notification);
-            connections.broadcast(gameID, notificationJson, rootClient);
-            System.out.println("sending notification to all other clients");
+    private boolean isValidMove(ChessMove move, Game game) {
+        Collection<ChessMove> validMoves = game.getGame().validMoves(move.getStartPosition());
+        if (!validMoves.isEmpty() && validMoves.contains(move)) {
+            return true;
+        } else {
+            return false;
         }
     }
 
