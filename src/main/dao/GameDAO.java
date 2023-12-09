@@ -219,7 +219,7 @@ public class GameDAO {
                         case "ROOK" -> gson.fromJson(jsonElement, RookPieceImpl.class);
                         case "PAWN" -> gson.fromJson(jsonElement, PawnPieceImpl.class);
                         default -> throw new JsonParseException("Unknown chess piece type" + pieceType);
-                    };
+            };
         }
     }
 }

@@ -6,6 +6,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import webSeverMessages.serverMessages.Notification;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,8 +24,11 @@ public class ConnectionManager {
         });
     }
 
-    public void remove(String username) {
-        connections.remove(username);
+    public void remove(Session rootSession, String username, Integer gameID) {
+        Set<Connection> connectionSet = connections.get(gameID);
+        if (connectionSet != null) {
+            connectionSet.removeIf(c -> c.session.equals(rootSession));
+        }
     }
 
     public void broadcast(Integer gameID, String notification, String excludeUsername) throws IOException {
@@ -35,15 +39,13 @@ public class ConnectionManager {
             if (c.session.isOpen()) {
                 if (!c.username.equals(excludeUsername)) {
                     c.send(notification);
-                    System.out.println("In the Notifications message");
                 }
             } else {
                 closedConnections.add(c);
             }
         }
+
+        // Clean up any open connections
         closedConnections.forEach(connectionSet::remove);
     }
-
-
-    // ---------------------- Might need a broadcast to all method?? ---------------------
 }

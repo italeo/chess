@@ -3,7 +3,7 @@ package handler.webSocket;
 import chess.ChessGame;
 import chess.ChessGameImpl;
 import chess.ChessMove;
-import chess.ChessMoveImpl;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dao.AuthTokenDAO;
 import dao.GameDAO;
@@ -20,6 +20,8 @@ import webSeverMessages.userCommands.*;
 import webSocketMessages.userCommands.UserGameCommand;
 import java.sql.Connection;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 
 @WebSocket
@@ -31,7 +33,7 @@ public class WebSocketHandler {
     private Connection conn;
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws DataAccessException, IOException {
+    public void onMessage(Session session, String message) throws DataAccessException, IOException, InvalidMoveException {
         conn = db.getConnection();
         // Parse the incoming JSON message
         UserGameCommand userCommand = new Gson().fromJson(message, UserGameCommand.class);
@@ -168,12 +170,13 @@ public class WebSocketHandler {
         }
     }
 
-    private void makeMoveCmd(Session session, String message) throws DataAccessException {
+    private void makeMoveCmd(Session session, String message) throws DataAccessException, IOException, InvalidMoveException {
         MakeMove makeMove = new Gson().fromJson(message, MakeMove.class);
         String authToken = makeMove.getAuthString();
         ChessMove move = makeMove.getMove();
         Integer gameID = makeMove.getGameID();
         GameDAO gameDAO = new GameDAO(conn);
+        Gson gson = new Gson();
         AuthTokenDAO authTokenDAO = new AuthTokenDAO(conn);
         AuthToken auth = authTokenDAO.find(authToken);
         String rootClient = auth.getUsername();
@@ -181,19 +184,32 @@ public class WebSocketHandler {
         ChessGameImpl gameImpl = new ChessGameImpl();
 
         // Validate the authToken and the gameID
-        if (auth != null && gameDAO.findGameByID(gameID) != null) {
-
+        if (gameDAO.findGameByID(gameID) != null) {
+            System.out.println("gameID is valid");
             // validate the move?
-            gameImpl.validMoves(move.getStartPosition());
-
+             gameImpl.makeMove((ChessMove) move.getStartPosition());
+            System.out.println("After makeMove for gameImpl");
             // Update game to rep move in db
+            gameDAO.insert(game);
+            System.out.println("After insert");
 
             // Send loadGame to 'ALL CLIENTS' in the game and rootClient
+            LoadGame loadGame = new LoadGame(game);
+            String loadGameJson = gson.toJson(loadGame);
+            if (session.isOpen()) {
+                session.getRemote().sendString(loadGameJson);
+                System.out.println("sending new loadGame to rootClient");
+            }
+            connections.broadcast(gameID, loadGameJson, rootClient);
+            System.out.println("sending new loadGame to all other clients");
 
-            //
+            // Send Notification to all other clients
+            String notificationMsg = String.format("%s made a move: %s", rootClient, move);
+            Notification notification = new Notification(notificationMsg);
+            String notificationJson = gson.toJson(notification);
+            connections.broadcast(gameID, notificationJson, rootClient);
+            System.out.println("sending notification to all other clients");
         }
-
-
     }
 
     private void leaveCmd(Session session, String message) {
