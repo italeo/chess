@@ -212,8 +212,36 @@ public class WebSocketHandler {
         }
     }
 
-    private void leaveCmd(Session session, String message) {
+    private void leaveCmd(Session session, String message) throws DataAccessException, IOException {
         Leave leave = new Gson().fromJson(message, Leave.class);
+        AuthTokenDAO authTokenDAO = new AuthTokenDAO(conn);
+        GameDAO gameDAO = new GameDAO(conn);
+        Game game = gameDAO.findGameByID(leave.getGameID());
+        int gameID = leave.getGameID();
+        AuthToken auth = authTokenDAO.find(leave.getAuthString());
+        Gson gson = new Gson();
+
+        // Validate the game and the authToken is the correct one
+        if (game != null && auth != null) {
+            String rootClient = auth.getUsername();
+
+            // Remove the root client
+            connections.remove(session, rootClient, gameID);
+
+            // update the changes in the game
+            gameDAO.updateGame(game);
+
+            // build the notification for all other users/client
+            String notificationMsg = String.format("%s has left the game", rootClient);
+            Notification notification = new Notification(notificationMsg);
+            String notificationJson = gson.toJson(notification);
+            connections.broadcast(gameID, notificationJson, "");
+        } else {
+            // Build the Error server message
+            Error error = new Error("Error leaving the game");
+            String errorJson = gson.toJson(error);
+            session.getRemote().sendString(errorJson);
+        }
     }
 
     private void resignCmd(Session session, String message) {
