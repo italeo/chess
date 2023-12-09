@@ -23,14 +23,4 @@ public class Connection {
     public void send(String msg) throws IOException {
         session.getRemote().sendString(msg);
     }
-
-    @Override
-    public int hashCode() {
-        return authToken.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return authToken.equals(((Connection) obj).authToken);
-    }
 }

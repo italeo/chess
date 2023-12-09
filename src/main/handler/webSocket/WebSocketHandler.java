@@ -9,6 +9,7 @@ import dataAccess.Database;
 import model.Game;
 import org.eclipse.jetty.websocket.api.*;
 import org.eclipse.jetty.websocket.api.annotations.*;
+import webSeverMessages.serverMessages.Error;
 import webSeverMessages.serverMessages.LoadGame;
 import webSeverMessages.serverMessages.Notification;
 import webSeverMessages.userCommands.*;
@@ -47,13 +48,13 @@ public class WebSocketHandler {
         GameDAO gameDAO = new GameDAO(conn);
         AuthTokenDAO authTokenDAO = new AuthTokenDAO(conn);
         String authToken = joinPlayer.getAuthString();
+        Gson gson = new Gson();
 
         // Check that the authToken from the message is valid
         if (authTokenDAO.find(authToken) != null) {
             try {
                 // The root client
                 String username = authTokenDAO.find(authToken).getUsername();
-                System.out.println("The root user: " + username);
                 int gameID = joinPlayer.getGameID();
                 ChessGame.TeamColor playerColor = joinPlayer.getTeamColor();
 
@@ -62,22 +63,35 @@ public class WebSocketHandler {
 
                 // Get the current state of the game
                 Game currentGame = gameDAO.findGameByID(gameID);
-                System.out.println("The game: "+ currentGame);
+
+                // Update the game according to player color
+                if (playerColor == ChessGame.TeamColor.WHITE) {
+                    currentGame.setWhiteUsername(username);
+                    gameDAO.updateGame(currentGame);
+                } else if (playerColor == ChessGame.TeamColor.BLACK) {
+                    currentGame.setBlackUsername(username);
+                    gameDAO.updateGame(currentGame);
+                } else {
+                    String errorMsg = String.format("Sorry color already taken");
+                    Error errorNotification = new Error(errorMsg);
+                    String errorJson = gson.toJson(errorNotification);
+                    if (session.isOpen()) {
+                        session.getRemote().sendString(errorJson);
+                    }
+                }
+
                 // Send load game back to client
                 LoadGame loadGame = new LoadGame(currentGame);
-                System.out.println("The loadGame: " + loadGame);
+
                 // Serialize type game to a string
-                String loadGameJson = new Gson().toJson(loadGame);
+                String loadGameJson = gson.toJson(loadGame);
                 if (session.isOpen()) {
                     session.getRemote().sendString(loadGameJson);
-                    System.out.println("loadGameJson" + loadGameJson);
                 }
 
                 // Message to notify other players
                 String notificationMsg = String.format("%s joined as %s player", username, playerColor);
-                System.out.println(notificationMsg);
                 Notification allOthersNotification = new Notification(notificationMsg);
-                System.out.println("notification to other users: " + allOthersNotification);
                 connections.broadcast(gameID, allOthersNotification, username);
 
             } catch (IOException e) {
