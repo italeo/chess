@@ -1,11 +1,13 @@
 package handler.webSocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import dao.AuthTokenDAO;
 import dao.GameDAO;
 import dataAccess.DataAccessException;
 import dataAccess.Database;
+import model.AuthToken;
 import model.Game;
 import org.eclipse.jetty.websocket.api.*;
 import org.eclipse.jetty.websocket.api.annotations.*;
@@ -16,6 +18,7 @@ import webSeverMessages.userCommands.*;
 import webSocketMessages.userCommands.UserGameCommand;
 import java.sql.Connection;
 import java.io.IOException;
+import java.util.Objects;
 
 @WebSocket
 public class WebSocketHandler {
@@ -50,9 +53,10 @@ public class WebSocketHandler {
         Integer gameID = joinPlayer.getGameID();
         ChessGame.TeamColor playerColor = joinPlayer.getTeamColor();
         Gson gson = new Gson();
+        AuthToken auth = authTokenDAO.find(authToken);
 
         // Check that the authToken from the message is valid
-        if (authTokenDAO.find(authToken) != null) {
+        if (auth != null) {
 
             // Get the rootClient
             String rootClient = authTokenDAO.find(authToken).getUsername();
@@ -60,45 +64,50 @@ public class WebSocketHandler {
             // get the game
             Game game = gameDAO.findGameByID(gameID);
 
-            if ((playerColor == ChessGame.TeamColor.WHITE && game.getWhiteUsername() == null) ||
-                    (playerColor == ChessGame.TeamColor.BLACK) && game.getBlackUsername() == null) {
+            if (gameDAO.findGameByID(gameID) != null) {
 
-                connections.add(gameID, session, authToken, rootClient, playerColor);
+                if ((playerColor == ChessGame.TeamColor.WHITE && Objects.equals(game.getWhiteUsername(), auth.getUsername())) ||
+                        (playerColor == ChessGame.TeamColor.BLACK) && Objects.equals(game.getBlackUsername(), auth.getUsername())) {
 
-                updatePlayerColor(game, playerColor, rootClient);
-                gameDAO.updateGame(game);
+                    connections.add(gameID, session, authToken, rootClient, playerColor);
 
-                // create LoadGame
-                LoadGame loadGame = new LoadGame(game);
-                String loadGameJson = gson.toJson(loadGame);
-                if (session.isOpen()) {
-                    session.getRemote().sendString(loadGameJson);
+                    // create LoadGame
+                    LoadGame loadGame = new LoadGame(game);
+                    String loadGameJson = gson.toJson(loadGame);
+                    if (session.isOpen()) {
+                        session.getRemote().sendString(loadGameJson);
+                    }
+
+                    // Send Notification to others
+                    String notificationMsg = String.format("%s joined as %s player", rootClient, playerColor);
+                    Notification notification = new Notification(notificationMsg);
+                    String notificationJson = gson.toJson(notification);
+                    connections.broadcast(gameID, notificationJson, rootClient);
+                } else {
+                    String errorMsg = String.format("%s is already taken", playerColor);
+                    Error error = new Error(errorMsg);
+                    String errorJson = gson.toJson(error);
+                    if (session.isOpen()) {
+                        session.getRemote().sendString(errorJson);
+                    }
                 }
-
-                // Send Notification to others
-                String notificationMsg = String.format("%s joined as %s player", rootClient, playerColor);
-                Notification notification = new Notification(notificationMsg);
-                String notificationJson = gson.toJson(notification);
-                connections.broadcast(gameID, notificationJson, rootClient);
             } else {
-                String errorMsg = String.format("%s is already taken", playerColor);
+                String errorMsg = String.format("game %s does not exist", gameID);
                 Error error = new Error(errorMsg);
                 String errorJson = gson.toJson(error);
                 if (session.isOpen()) {
                     session.getRemote().sendString(errorJson);
                 }
             }
+        } else {
+            String errorMsg = String.format("Invalid authToken: %S", authToken);
+            Error error = new Error(errorMsg);
+            String errorJson = gson.toJson(error);
+            if (session.isOpen()) {
+                session.getRemote().sendString(errorJson);
+            }
         }
     }
-
-    private void updatePlayerColor(Game currentGame, ChessGame.TeamColor playerColor, String username) {
-        if (playerColor == ChessGame.TeamColor.WHITE) {
-            currentGame.setWhiteUsername(username);
-        } else if (playerColor == ChessGame.TeamColor.BLACK) {
-            currentGame.setBlackUsername(username);
-        }
-    }
-
 
     private void observerCmd(Session session, String message) throws DataAccessException, IOException {
         JoinObserver joinObserver = new Gson().fromJson(message, JoinObserver.class);
@@ -106,11 +115,12 @@ public class WebSocketHandler {
         AuthTokenDAO authTokenDAO = new AuthTokenDAO(conn);
         String authToken = joinObserver.getAuthString();
         Gson gson = new Gson();
+        AuthToken auth = authTokenDAO.find(authToken);
+        int gameID = joinObserver.getGameID();
 
-        if (authTokenDAO.find(authToken) != null) {
+        if (auth != null) {
             try {
-                String username = authTokenDAO.find(authToken).getUsername();
-                int gameID = joinObserver.getGameID();
+                String username = auth.getUsername();
 
                 if (gameDAO.findGameByID(gameID) != null) {
                     // Add to connection set
@@ -161,6 +171,9 @@ public class WebSocketHandler {
 
     private void makeMoveCmd(Session session, String message) {
         MakeMove makeMove = new Gson().fromJson(message, MakeMove.class);
+        String authToken = makeMove.getAuthString();
+        ChessMove move = makeMove.getMove();
+        Integer gameID = makeMove.getGameID();
     }
 
     private void leaveCmd(Session session, String message) {

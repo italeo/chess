@@ -23,7 +23,9 @@ public class ConnectionManager {
         });
     }
 
-
+    public void remove(String username) {
+        connections.remove(username);
+    }
 
     public void broadcast(Integer gameID, String notification, String excludeUsername) throws IOException {
         List<Connection> closedConnections = new ArrayList<>();
