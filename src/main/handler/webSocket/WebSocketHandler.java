@@ -70,25 +70,20 @@ public class WebSocketHandler {
                 String errorJson = gson.toJson(errorNotification);
 
                 // Update the game according to player color
-                if (playerColor == ChessGame.TeamColor.WHITE && currentGame.getWhiteUsername() == null) {
-                    currentGame.setWhiteUsername(username);
-                    gameDAO.updateGame(currentGame);
-                    System.out.println("In white");
-                } else if (playerColor == ChessGame.TeamColor.BLACK && currentGame.getBlackUsername() == null) {
-                    currentGame.setBlackUsername(username);
-                    gameDAO.updateGame(currentGame);
-                    System.out.println("In black");
-                } else {
+                if ((playerColor == ChessGame.TeamColor.WHITE && currentGame.getWhiteUsername() != null) ||
+                        (playerColor == ChessGame.TeamColor.BLACK && currentGame.getBlackUsername() != null)) {
                     if (session.isOpen()) {
                         session.getRemote().sendString(errorJson);
-                        System.out.println("Error message sent");
-                        return;
+                       return;
                     }
                 }
 
+                // Update the game according to player color
+                updatePlayerColor(currentGame, playerColor, username);
+                gameDAO.updateGame(currentGame);
+
                 // Send load game back to client
                 LoadGame loadGame = new LoadGame(currentGame);
-
                 // Serialize type game to a string
                 String loadGameJson = gson.toJson(loadGame);
                 if (session.isOpen()) {
@@ -105,6 +100,15 @@ public class WebSocketHandler {
             }
         }
     }
+
+    private void updatePlayerColor(Game currentGame, ChessGame.TeamColor playerColor, String username) {
+        if (playerColor == ChessGame.TeamColor.WHITE) {
+            currentGame.setWhiteUsername(username);
+        } else if (playerColor == ChessGame.TeamColor.BLACK) {
+            currentGame.setBlackUsername(username);
+        }
+    }
+
 
     private void observerCmd(Session session, String message) throws DataAccessException {
         JoinObserver joinObserver = new Gson().fromJson(message, JoinObserver.class);
