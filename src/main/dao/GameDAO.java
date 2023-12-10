@@ -3,10 +3,7 @@ package dao;
 import chess.*;
 import dataAccess.DataAccessException;
 import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import model.*;
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -44,19 +41,12 @@ public class GameDAO {
            stmt.setString(3, game.getBlackUsername());
            stmt.setString(4, game.getGameName());
 
-           // Registering type adapters for the interfaces
-           var builder = new GsonBuilder();
-           builder.registerTypeAdapter(ChessGame.class, new GameAdapter());
-           builder.registerTypeAdapter(ChessBoard.class, new BoardAdapter());
-           builder.registerTypeAdapter(ChessPiece.class, new PieceAdapter());
-           Gson gson = builder.create();
-
            // Serialize and store game type ChessGame as JSON
-           var json = gson.toJson(game.getGame());
+           var json = new Gson().toJson(game.getGame());
            stmt.setString(5, json);
-
            // Execute the update
            stmt.executeUpdate();
+
        } catch (SQLException e) {
            throw new DataAccessException("Error with inserting a game: " + e.getMessage());
        }
@@ -93,12 +83,9 @@ public class GameDAO {
 
                     // Register the adapters to convert the string to type ChessGame
                     var builder = new GsonBuilder();
-                    builder.registerTypeAdapter(ChessGame.class, new GameAdapter());
                     builder.registerTypeAdapter(ChessBoard.class, new BoardAdapter());
-                    builder.registerTypeAdapter(ChessPiece.class, new PieceAdapter());
-                    Gson gson = builder.create();
 
-                    ChessGame game = gson.fromJson(json, ChessGameImpl.class);
+                    ChessGame game = builder.create().fromJson(json, ChessGameImpl.class);
                     return new Game(myGameID, whiteUsername, blackUsername, gameName, game);
                 }
             }
@@ -115,13 +102,6 @@ public class GameDAO {
             stmt.setString(1, game.getWhiteUsername());
             stmt.setString(2, game.getBlackUsername());
             stmt.setString(3, game.getGameName());
-
-            // Register the type adapters
-            GsonBuilder builder = new GsonBuilder();
-            builder.registerTypeAdapter(ChessGame.class, new GameAdapter());
-            builder.registerTypeAdapter(ChessBoard.class, new BoardAdapter());
-            builder.registerTypeAdapter(ChessPiece.class, new PieceAdapter());
-            builder.create();
 
             String json = new Gson().toJson(game.getGame());
 
@@ -154,9 +134,8 @@ public class GameDAO {
                 builder.registerTypeAdapter(ChessGame.class, new GameAdapter());
                 builder.registerTypeAdapter(ChessBoard.class, new BoardAdapter());
                 builder.registerTypeAdapter(ChessPiece.class, new PieceAdapter());
-                Gson gson = builder.create();
 
-                ChessGame game = gson.fromJson(json, ChessGameImpl.class);
+                ChessGame game = builder.create().fromJson(json, ChessGameImpl.class);
                 games.add(new Game(gameID, whiteUsername, blackUsername, gameName, game));
             }
         } catch (SQLException e) {
@@ -168,38 +147,21 @@ public class GameDAO {
     // ------------------------------- TYPE ADAPTER CLASSES -------------------------------------------------------
 
     // Type adapter for ChessGame need to change to JsonSerializer  n
-    public static class GameAdapter extends TypeAdapter<ChessGame> {
-
+    public static class GameAdapter implements JsonDeserializer<ChessGame> {
         @Override
-        public void write(JsonWriter jsonWriter, ChessGame game) throws IOException {
-            Gson gson = new Gson();
-            // Creates a JSON representation to the game to write to the JSON writer
-            String jsonGame = gson.toJson(game);
-            jsonWriter.jsonValue(jsonGame);
-        }
-
-        @Override
-        public ChessGame read(JsonReader jsonReader) {
-            Gson gson = new Gson();
-            return gson.fromJson(jsonReader, ChessGameImpl.class);
+        public ChessGame deserialize(JsonElement el, Type type, JsonDeserializationContext ctx) throws JsonParseException {
+            return new Gson().fromJson(el, ChessGameImpl.class);
         }
     }
 
     // Type adapter for ChessBoard
-    public static class BoardAdapter extends TypeAdapter<ChessBoard> {
-
+    public static class BoardAdapter implements JsonDeserializer<ChessBoard> {
         @Override
-        public void write(JsonWriter jsonWriter, ChessBoard board) throws IOException {
-            Gson gson = new Gson();
-            String jsonBoard = gson.toJson(board);
-            jsonWriter.jsonValue(jsonBoard);
-        }
-
-        @Override
-        public ChessBoard read(JsonReader jsonReader) {
-            GsonBuilder builder = new GsonBuilder();
+        public ChessBoard deserialize(JsonElement el, Type type, JsonDeserializationContext ctx) throws JsonParseException {
+            var builder = new GsonBuilder();
             builder.registerTypeAdapter(ChessPiece.class, new PieceAdapter());
-            return builder.create().fromJson(jsonReader, ChessBoardImpl.class);
+
+            return builder.create().fromJson(el, ChessBoardImpl.class);
         }
     }
 
