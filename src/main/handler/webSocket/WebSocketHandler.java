@@ -15,7 +15,6 @@ import webSeverMessages.serverMessages.LoadGame;
 import webSeverMessages.serverMessages.Notification;
 import webSeverMessages.userCommands.*;
 import webSocketMessages.userCommands.UserGameCommand;
-
 import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.io.IOException;
@@ -169,23 +168,23 @@ public class WebSocketHandler {
     }
 
     private void makeMoveCmd(Session session, String message) throws DataAccessException, IOException, InvalidMoveException {
-        MakeMove makeMove = new Gson().fromJson(message, MakeMove.class);
+
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(ChessMove.class, new ChessMoveDeserializer());
+        builder.registerTypeAdapter(ChessPosition.class, new ChessPositionDeserializer());
+
+        MakeMove makeMove = builder.create().fromJson(message, MakeMove.class);
         String authToken = makeMove.getAuthString();
         ChessMove move = makeMove.getMove();
         Integer gameID = makeMove.getGameID();
         GameDAO gameDAO = new GameDAO(conn);
-        // ------------------ Register typeAdapters -----------------------------------
-        GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(ChessGame.class, new GameDAO.GameAdapter());
-        builder.registerTypeAdapter(ChessBoard.class, new GameDAO.BoardAdapter());
-        builder.registerTypeAdapter(ChessPiece.class, new GameDAO.PieceAdapter());
-        builder.registerTypeAdapter(ChessMove.class, new ChessMoveDeserializer());
-        Gson gson = builder.create();
-        // ----------------------------- END ----------------------------------------
         AuthTokenDAO authTokenDAO = new AuthTokenDAO(conn);
+        Gson gson = new Gson();
         AuthToken auth = authTokenDAO.find(authToken);
         String rootClient = auth.getUsername();
         Game game = gameDAO.findGameByID(gameID);
+
+        System.out.println("The game: " + game);
 
         // Validate the authToken and the gameID
         if (game != null) {
@@ -193,16 +192,21 @@ public class WebSocketHandler {
             // validate the move?
             if(isValidMove(move, game)) {
 
+                System.out.println("After the isValidMove check");
                 // Make the move/update the move on the board for the game
+                System.out.println("the game: " + game);
                 game.getGame().makeMove(move);
                 // Update that move in the db
                 gameDAO.updateGame(game);
+                System.out.println("After the updateGame");
 
                 // Create the LoadGame server message
                 LoadGame loadGame = new LoadGame(game);
                 String loadGameJson = gson.toJson(loadGame);
                 if (session.isOpen()) {
                     session.getRemote().sendString(loadGameJson);
+                    System.out.println("After sending LoadGame");
+
                 }
 
                 // Build the Notification server message
@@ -216,23 +220,31 @@ public class WebSocketHandler {
                 Notification notification = new Notification(notificationMsg);
                 String notificationJson = gson.toJson(notification);
                 connections.broadcast(gameID, notificationJson, rootClient);
+                System.out.println("After send th notification");
+
             } else {
                 Error errorMsg = new Error("Invalid move");
                 if (session.isOpen()) {
                     session.getRemote().sendString(gson.toJson(errorMsg));
+                    System.out.println("In isValidMove error");
                 }
             }
         } else {
             Error errorMsg = new Error("authToken or gameID is invalid");
             if (session.isOpen()) {
                 session.getRemote().sendString(gson.toJson(errorMsg));
+                System.out.println("In gameID null error");
             }
         }
     }
 
     private boolean isValidMove(ChessMove move, Game game) {
-        Collection<ChessMove> validMoves = game.getGame().validMoves(move.getStartPosition());
+        ChessGame chessGame = game.getGame();
+        System.out.println("chessGame: " + chessGame);
+        Collection<ChessMove> validMoves = chessGame.validMoves(move.getStartPosition());
         return !validMoves.isEmpty() && validMoves.contains(move);
+
+//        return false;
     }
 
     private void leaveCmd(Session session, String message) throws DataAccessException, IOException {
@@ -275,15 +287,15 @@ public class WebSocketHandler {
 
         @Override
         public ChessMove deserialize(JsonElement el, Type type, JsonDeserializationContext ctx) throws JsonParseException {
-            JsonObject jsonObject = el.getAsJsonObject();
+            return ctx.deserialize(el, ChessMoveImpl.class);
+        }
+    }
 
-            // Deserialize the starting position
-            ChessPosition startPosition = ctx.deserialize(jsonObject.get("startPosition"), ChessPosition.class);
-            // Deserialize the ending position
-            ChessPosition endPosition = ctx.deserialize(jsonObject.get("endPosition"), ChessPosition.class);
-            // Deserialize promote piece
-            ChessPiece.PieceType promotePiece = ChessPiece.PieceType.valueOf(jsonObject.get("promotePiece").getAsString());
-            return new ChessMoveImpl(startPosition, endPosition, promotePiece);
+    private static class ChessPositionDeserializer implements JsonDeserializer<ChessPosition> {
+
+        @Override
+        public ChessPosition deserialize(JsonElement el, Type type, JsonDeserializationContext ctx) throws JsonParseException {
+            return ctx.deserialize(el, ChessPositionImpl.class);
         }
     }
 }

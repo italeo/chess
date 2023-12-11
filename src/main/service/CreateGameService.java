@@ -1,5 +1,7 @@
 package service;
 
+import chess.ChessGame;
+import chess.ChessGameImpl;
 import dao.*;
 import dataAccess.DataAccessException;
 import model.*;
@@ -30,6 +32,12 @@ public class CreateGameService {
         CreateGameResult result = new CreateGameResult();
         Game newGame = new Game();
         int gameID;
+
+        ChessGame chessGame = new ChessGameImpl();
+        chessGame.getBoard().resetBoard();
+
+        newGame.setGame(chessGame);
+
 
         // Checks if the request is valid, if not return the right error message
         if (!validRequest(request)) {
