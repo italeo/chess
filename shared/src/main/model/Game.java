@@ -14,6 +14,7 @@ public class Game {
     private String gameName;
     /** The implementation of the game. */
     private ChessGame game;
+    private boolean endGameMarker = false;
 
     public Game() {
     }
@@ -27,12 +28,13 @@ public class Game {
      * */
 
 
-    public Game(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {
+    public Game(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game, boolean endGameMaker) {
         this.gameID = gameID;
         this.whiteUsername = whiteUsername;
         this.blackUsername = blackUsername;
         this.gameName = gameName;
         this.game = game;
+        this.endGameMarker = endGameMaker;
     }
 
     public int getGameID() {
@@ -71,5 +73,13 @@ public class Game {
 
     public void setGame(ChessGame game) {
         this.game = game;
+    }
+
+    public boolean isEndGameMarker() {
+        return endGameMarker;
+    }
+
+    public void setEndGameMarker(boolean endGameMarker) {
+        this.endGameMarker = endGameMarker;
     }
 }

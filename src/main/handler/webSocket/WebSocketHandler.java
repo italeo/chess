@@ -143,7 +143,10 @@ public class WebSocketHandler {
                     String notificationMsg = String.format("%s joined as an observer.", username);
                     Notification notification = new Notification(notificationMsg);
                     String notificationJson = gson.toJson(notification);
+
+                    // Broadcast loadGame to everyone else
                     connections.broadcast(gameID, notificationJson, username);
+
                 } else {
                     String errorMSg = String.format("Sorry the gameID: %s, is incorrect", gameID);
                     Error error = new Error(errorMSg);
@@ -300,8 +303,19 @@ public class WebSocketHandler {
         }
     }
 
-    private void resignCmd(Session session, String message) {
+    private void resignCmd(Session session, String message) throws DataAccessException {
         Resign resign = new Gson().fromJson(message, Resign.class);
+        AuthTokenDAO authTokenDAO = new AuthTokenDAO(conn);
+        GameDAO gameDAO = new GameDAO(conn);
+        int gameID = resign.getGameID();
+        Game game = gameDAO.findGameByID(gameID);
+        AuthToken auth = authTokenDAO.find(resign.getAuthString());
+        Gson gson = new Gson();
+
+        if (game != null && auth != null) {
+            String rootClient = auth.getUsername();
+
+        }
     }
 
     private static class ChessMoveDeserializer implements JsonDeserializer<ChessMove> {
