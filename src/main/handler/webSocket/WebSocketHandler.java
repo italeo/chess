@@ -15,6 +15,7 @@ import webSeverMessages.serverMessages.LoadGame;
 import webSeverMessages.serverMessages.Notification;
 import webSeverMessages.userCommands.*;
 import webSocketMessages.userCommands.UserGameCommand;
+
 import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.io.IOException;
@@ -184,59 +185,52 @@ public class WebSocketHandler {
         AuthTokenDAO authTokenDAO = new AuthTokenDAO(conn);
         Gson gson = new Gson();
         AuthToken auth = authTokenDAO.find(authToken);
-        String rootClient = auth.getUsername();
         Game game = gameDAO.findGameByID(gameID);
 
         // Validate the authToken and the gameID
         if (game != null) {
 
-            if (!game.getGame().isMarkEndOfGame()) {
+            // Check if it's the users' turn
+            if (isPlayersTurn(auth, game)) {
 
-                // Check if it's the users' turn
-                if (isPlayersTurn(auth, game)) {
+                // validate the move?
+                if (isValidMove(move, game)) {
 
-                    // validate the move?
-                    if (isValidMove(move, game)) {
+                    String rootClient = auth.getUsername();
 
-                        // Make the move/update the move on the board for the game
-                        game.getGame().makeMove(move);
-                        // Update that move in the db
-                        gameDAO.updateGame(game);
+                    // Make the move/update the move on the board for the game
+                    game.getGame().makeMove(move);
+                    // Update that move in the db
+                    gameDAO.updateGame(game);
 
-                        // Create the LoadGame server message
-                        LoadGame loadGame = new LoadGame(game);
-                        String loadGameJson = gson.toJson(loadGame);
-                        if (session.isOpen()) {
-                            session.getRemote().sendString(loadGameJson);
-                        }
-                        connections.broadcast(gameID, loadGameJson, rootClient);
-
-                        // Build the Notification server message
-
-                        // The piece in action
-                        ChessPiece piece = game.getGame().getBoard().getPiece(move.getStartPosition());
-
-                        // The position the piece was moved to
-                        ChessPosition position = move.getEndPosition();
-                        String notificationMsg = String.format("%s moved to %s", piece, position);
-                        Notification notification = new Notification(notificationMsg);
-                        String notificationJson = gson.toJson(notification);
-                        connections.broadcast(gameID, notificationJson, rootClient);
-
-                    } else {
-                        Error errorMsg = new Error("Invalid move");
-                        if (session.isOpen()) {
-                            session.getRemote().sendString(gson.toJson(errorMsg));
-                        }
+                    // Create the LoadGame server message
+                    LoadGame loadGame = new LoadGame(game);
+                    String loadGameJson = gson.toJson(loadGame);
+                    if (session.isOpen()) {
+                        session.getRemote().sendString(loadGameJson);
                     }
+                    connections.broadcast(gameID, loadGameJson, rootClient);
+
+                    // Build the Notification server message
+
+                    // The piece in action
+                    ChessPiece piece = game.getGame().getBoard().getPiece(move.getStartPosition());
+
+                    // The position the piece was moved to
+                    ChessPosition position = move.getEndPosition();
+                    String notificationMsg = String.format("%s moved to %s", piece, position);
+                    Notification notification = new Notification(notificationMsg);
+                    String notificationJson = gson.toJson(notification);
+                    connections.broadcast(gameID, notificationJson, rootClient);
+
                 } else {
-                    Error errorMsg = new Error("Sorry not your turn");
+                    Error errorMsg = new Error("Invalid move");
                     if (session.isOpen()) {
                         session.getRemote().sendString(gson.toJson(errorMsg));
                     }
                 }
             } else {
-                Error errorMsg = new Error("game is over");
+                Error errorMsg = new Error("Sorry not your turn");
                 if (session.isOpen()) {
                     session.getRemote().sendString(gson.toJson(errorMsg));
                 }
@@ -298,7 +292,7 @@ public class WebSocketHandler {
         }
     }
 
-    private void resignCmd(Session session, String message) throws DataAccessException, IOException{
+    private void resignCmd(Session session, String message) throws DataAccessException, IOException {
         Resign resign = new Gson().fromJson(message, Resign.class);
         AuthTokenDAO authTokenDAO = new AuthTokenDAO(conn);
         GameDAO gameDAO = new GameDAO(conn);
@@ -307,35 +301,52 @@ public class WebSocketHandler {
         AuthToken auth = authTokenDAO.find(resign.getAuthString());
         Gson gson = new Gson();
 
-        if (game != null && auth != null && !game.getGame().isMarkEndOfGame()) {
+        if (auth != null && game != null) {
 
-            // get the rootClient
-            String rootClient = auth.getUsername();
-            System.out.println("The rootClient: " + rootClient);
+            // Check that the user attempting to resign is a player and not an observer
+            if (isPlayer(auth, game)) {
 
-            // Set the game to as game Over
-            game.setMarkEndOfGame(true);
+                // Get the rootClient
+                String rootClient = auth.getUsername();
+                System.out.println("The rootClient: " + rootClient);
+                // Set the end of game status
+                game.setMarkEndOfGame(true);
+                // Update the new changes in the db
+                gameDAO.updateGame(game);
 
-            // Update the db so that the game is over
-            gameDAO.updateGame(game);
-
-            String notificationMsg = String.format("%s resigned and left the game.", rootClient);
-            Notification notification = new Notification(notificationMsg);
-            String notificationJson = gson.toJson(notification);
-            connections.broadcast(gameID, notificationJson, rootClient);
-            System.out.println("In the Notification");
-
+                // Build the Notification serverMessage, which will be sent to all clients in the game
+                String notificationMsg = String.format("%s has left the game!", rootClient);
+                Notification notification = new Notification(notificationMsg);
+                String notificationJson = gson.toJson(notification);
+                connections.broadcast(gameID, notificationJson, rootClient);
+                if (session.isOpen()) {
+                    session.getRemote().sendString(notificationJson);
+                }
+                System.out.println("After notification has been sent");
+            } else {
+                Error error = new Error("Sorry you cannot resign from the game");
+                String errorJson = gson.toJson(error);
+                if (session.isOpen()) {
+                    session.getRemote().sendString(errorJson);
+                }
+            }
         } else {
-            String errorMsg = String.format("making a move for game: %s, is not allowed", gameID);
-            Error error = new Error(errorMsg);
+            // Send an Error serverMessage
+            Error error = new Error("Error in resigning");
             String errorJson = gson.toJson(error);
             if (session.isOpen()) {
-                System.out.println("In the Error message");
                 session.getRemote().sendString(errorJson);
             }
         }
     }
 
+    private boolean isPlayer(AuthToken auth, Game game) {
+        // Checks that the user is a player and not an observer
+        return (auth.getUsername().equals(game.getWhiteUsername()) || (auth.getUsername().equals(game.getBlackUsername())));
+    }
+
+    // ----------------------------------------- Type Adapters ----------------------------------------------
+    // --------------------------------- For ChessMove && ChessPosition -------------------------------------
     private static class ChessMoveDeserializer implements JsonDeserializer<ChessMove> {
 
         @Override
@@ -351,4 +362,6 @@ public class WebSocketHandler {
             return ctx.deserialize(el, ChessPositionImpl.class);
         }
     }
+
+    // -------------------------------------------------- END ------------------------------------------------
 }
