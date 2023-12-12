@@ -43,8 +43,13 @@ public class Repl implements NotificationHandler {
 
     private void printPrompt() {
         State currentState = client.getState();
-        String stateString = (currentState == LOGGED_OUT) ? LOGGED_OUT.name() : LOGGED_IN.name();
-        System.out.print("\n" + SET_TEXT_BOLD + "[" + stateString + "]" + " >>> ");
+        String stateString = currentState.name();
+        if (currentState == GAME_PLAY) {
+            System.out.print("\n" + SET_TEXT_BOLD + "[" + GAME_PLAY + "]" + " >>> ");
+        } else {
+            System.out.print("\n" + SET_TEXT_BOLD + "[" + stateString + "]" + " >>> ");
+        }
+
     }
 
 }

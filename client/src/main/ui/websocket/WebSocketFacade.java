@@ -1,7 +1,9 @@
 package ui.websocket;
 
 import com.google.gson.Gson;
+import model.User;
 import webSeverMessages.serverMessages.Notification;
+import webSocketMessages.userCommands.UserGameCommand;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -39,4 +41,25 @@ public class WebSocketFacade extends Endpoint {
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
+
+    // ---------------------- Methods needed to connect to WebSocketHandler -----------------------------------
+
+    // Might not need redraw call
+    public void redraw() {
+
+    }
+
+    public void leaveGame(String authToken) {
+        var userCmd = new UserGameCommand(authToken);
+    }
+
+    public void make() {
+
+    }
+
+    public void resign() {
+
+    }
+
+    // ------------------------------------------- END --------------------------------------------------------
 }

@@ -38,6 +38,7 @@ public class ChessClient {
                 case "join" -> joinGame(params);
                 case "observe" -> observeGame(params);
                 case "quit" -> "quit";
+                case "help" -> help();
                 default -> (state == State.GAME_PLAY) ? gamePlayCommands(cmd, params) : help();
             };
         } catch (Exception e) {
@@ -214,6 +215,9 @@ public class ChessClient {
             int gameID = indexer.get(Integer.parseInt(gameIDStr));
 
             try {
+                // Change state into GAME_PLAY
+                state = State.GAME_PLAY;
+
                 JoinGameRequest request = new JoinGameRequest(SessionManager.getAuthToken(), null, gameID);
                 JoinGameResult result = facade.joinGame(request);
 
@@ -239,7 +243,7 @@ public class ChessClient {
             String playerColor = params[1].toUpperCase();
 
             try {
-
+                // Change state into GAME_PLAY
                 state = State.GAME_PLAY;
 
                 JoinGameRequest request = new JoinGameRequest(SessionManager.getAuthToken(), playerColor, gameID);
@@ -291,6 +295,7 @@ public class ChessClient {
                     leave - Removes the user from the game
                     make - make a move in the game when it is your turn
                     resign - Allows you to resign the game, if you do you will forfeit the game
+                    highlight - Highlights the valid move for a piece
                     help - with possible commands
                     """;
         }
