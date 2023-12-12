@@ -9,11 +9,21 @@ public class ChessGameImpl implements ChessGame {
 
     private TeamColor teamTurn;
     private ChessBoard board = new ChessBoardImpl();
+    private boolean makeEndOfGame = false;
 
     public ChessGameImpl() {
         this.teamTurn = TeamColor.WHITE;
         board.resetBoard();
     }
+
+
+//    public boolean isMarkEndOfGame() {
+//        return makeEndOfGame;
+//    }
+//
+//    public void setMakeEndOfGame(boolean makeEndOfGame) {
+//        this.makeEndOfGame = makeEndOfGame;
+//    }
 
     @Override
     public TeamColor getTeamTurn() {
@@ -186,5 +196,15 @@ public class ChessGameImpl implements ChessGame {
     @Override
     public ChessBoard getBoard() {
         return board;
+    }
+
+    @Override
+    public boolean isMarkEndFfGame() {
+        return makeEndOfGame;
+    }
+
+    @Override
+    public void setMarkEndOfGame(boolean markEndOfGame) {
+        this.makeEndOfGame = markEndOfGame;
     }
 }

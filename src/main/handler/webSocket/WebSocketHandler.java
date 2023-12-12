@@ -303,7 +303,7 @@ public class WebSocketHandler {
         }
     }
 
-    private void resignCmd(Session session, String message) throws DataAccessException {
+    private void resignCmd(Session session, String message) throws DataAccessException, IOException{
         Resign resign = new Gson().fromJson(message, Resign.class);
         AuthTokenDAO authTokenDAO = new AuthTokenDAO(conn);
         GameDAO gameDAO = new GameDAO(conn);
@@ -312,9 +312,29 @@ public class WebSocketHandler {
         AuthToken auth = authTokenDAO.find(resign.getAuthString());
         Gson gson = new Gson();
 
-        if (game != null && auth != null) {
+        if (game != null && auth != null && !game.getGame().isMarkEndFfGame()) {
+
+            // get the rootClient
             String rootClient = auth.getUsername();
 
+            // Set the game to as game Over
+            game.setEndGameMarker(true);
+
+            // Update the db so that the game is over
+            gameDAO.updateGame(game);
+
+            String notificationMsg = String.format("%s resigned and left the game.", rootClient);
+            Notification notification = new Notification(notificationMsg);
+            String notificationJson = gson.toJson(notification);
+            connections.broadcast(gameID, notificationJson, "");
+
+        } else {
+            String errorMsg = String.format("Resigning the game: %s", gameID);
+            Error error = new Error(errorMsg);
+            String errorJson = gson.toJson(error);
+            if (session.isOpen()) {
+                session.getRemote().sendString(errorJson);
+            }
         }
     }
 
