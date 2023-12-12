@@ -78,7 +78,7 @@ public interface ChessGame {
      */
     ChessBoard getBoard();
 
-    boolean isMarkEndFfGame();
+    boolean isMarkEndOfGame();
 
     void setMarkEndOfGame(boolean markEndOfGame);
 }

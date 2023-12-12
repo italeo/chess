@@ -17,14 +17,6 @@ public class ChessGameImpl implements ChessGame {
     }
 
 
-//    public boolean isMarkEndOfGame() {
-//        return makeEndOfGame;
-//    }
-//
-//    public void setMakeEndOfGame(boolean makeEndOfGame) {
-//        this.makeEndOfGame = makeEndOfGame;
-//    }
-
     @Override
     public TeamColor getTeamTurn() {
         return teamTurn;
@@ -198,12 +190,11 @@ public class ChessGameImpl implements ChessGame {
         return board;
     }
 
-    @Override
-    public boolean isMarkEndFfGame() {
+
+    public boolean isMarkEndOfGame() {
         return makeEndOfGame;
     }
 
-    @Override
     public void setMarkEndOfGame(boolean markEndOfGame) {
         this.makeEndOfGame = markEndOfGame;
     }
