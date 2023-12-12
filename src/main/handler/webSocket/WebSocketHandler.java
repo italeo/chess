@@ -299,8 +299,7 @@ public class WebSocketHandler {
         Gson gson = new Gson();
         String rootClient = auth.getUsername();
 
-        if (auth != null && game != null && !game.getGame().isMarkEndOfGame() &&
-                ((game.getBlackUsername().equals(rootClient)) || (game.getWhiteUsername().equals(rootClient)))) {
+        if (game != null && !game.getGame().isMarkEndOfGame() && (game.getBlackUsername().equals(rootClient) || game.getWhiteUsername().equals(rootClient))) {
 
             // Check that the user attempting to resign is a player and not an observer
             // Get the rootClient
@@ -325,11 +324,6 @@ public class WebSocketHandler {
                 session.getRemote().sendString(errorJson);
             }
         }
-    }
-
-    private boolean isPlayer(AuthToken auth, Game game) {
-        // Checks that the user is a player and not an observer
-        return (auth.getUsername().equals(game.getWhiteUsername()) || (auth.getUsername().equals(game.getBlackUsername())));
     }
 
     // ----------------------------------------- Type Adapters ----------------------------------------------

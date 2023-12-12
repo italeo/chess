@@ -16,7 +16,6 @@ public class ChessGameImpl implements ChessGame {
         board.resetBoard();
     }
 
-
     @Override
     public TeamColor getTeamTurn() {
         return teamTurn;
@@ -40,7 +39,7 @@ public class ChessGameImpl implements ChessGame {
         // Generates the list of all possible moves for the piece if there is one in the starting position
         List<ChessMove> moves = (List<ChessMove>) piece.pieceMoves(board, startPosition);
         for (ChessMove move : moves) {
-           // ChessBoard temp = tempBoard(allMove, board);
+            // ChessBoard temp = tempBoard(allMove, board);
             board.addPiece(startPosition, null);
             ChessPiece piecePosition = board.getPiece(move.getEndPosition());
             board.addPiece(move.getEndPosition(), piece);
@@ -74,8 +73,7 @@ public class ChessGameImpl implements ChessGame {
                     board.addPiece(move.getEndPosition(), promotedPiece);
                 }
             }
-        }
-        else {
+        } else {
             throw new InvalidMoveException();
         }
     }
@@ -101,10 +99,10 @@ public class ChessGameImpl implements ChessGame {
 
                 if (possibleKing == null) {
                     continue;
-                }
-                else if (possibleKing.getTeamColor() == teamColor && possibleKing.getPieceType() ==
-                        ChessPiece.PieceType.KING) { realKingPos = position; }
-                else if (possibleKing.getTeamColor() != teamColor) {
+                } else if (possibleKing.getTeamColor() == teamColor && possibleKing.getPieceType() ==
+                        ChessPiece.PieceType.KING) {
+                    realKingPos = position;
+                } else if (possibleKing.getTeamColor() != teamColor) {
                     piecesPosition.addAll(possibleKing.pieceMoves(board, position));
                 }
             }
@@ -153,7 +151,7 @@ public class ChessGameImpl implements ChessGame {
                 tempBoard.removePiece(move.getStartPosition());
 
                 // Check if the king is still in check
-                if(!isInCheck(teamColor)) {
+                if (!isInCheck(teamColor)) {
                     return true;
                 }
             }
