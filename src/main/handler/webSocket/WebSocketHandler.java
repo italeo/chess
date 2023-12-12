@@ -188,15 +188,14 @@ public class WebSocketHandler {
         Game game = gameDAO.findGameByID(gameID);
 
         // Validate the authToken and the gameID
-        if (game != null) {
+        if (game != null && !game.getGame().isMarkEndOfGame()) {
 
             // Check if it's the users' turn
             if (isPlayersTurn(auth, game)) {
 
+                String rootClient = auth.getUsername();
                 // validate the move?
                 if (isValidMove(move, game)) {
-
-                    String rootClient = auth.getUsername();
 
                     // Make the move/update the move on the board for the game
                     game.getGame().makeMove(move);
@@ -206,19 +205,17 @@ public class WebSocketHandler {
                     // Create the LoadGame server message
                     LoadGame loadGame = new LoadGame(game);
                     String loadGameJson = gson.toJson(loadGame);
+                    connections.broadcast(gameID, loadGameJson, rootClient);
                     if (session.isOpen()) {
                         session.getRemote().sendString(loadGameJson);
                     }
-                    connections.broadcast(gameID, loadGameJson, rootClient);
+
 
                     // Build the Notification server message
 
-                    // The piece in action
-                    ChessPiece piece = game.getGame().getBoard().getPiece(move.getStartPosition());
+                    // fixme: print the message to something nicer
 
-                    // The position the piece was moved to
-                    ChessPosition position = move.getEndPosition();
-                    String notificationMsg = String.format("%s moved to %s", piece, position);
+                    String notificationMsg = String.format("move was made");
                     Notification notification = new Notification(notificationMsg);
                     String notificationJson = gson.toJson(notification);
                     connections.broadcast(gameID, notificationJson, rootClient);
@@ -300,36 +297,26 @@ public class WebSocketHandler {
         Game game = gameDAO.findGameByID(gameID);
         AuthToken auth = authTokenDAO.find(resign.getAuthString());
         Gson gson = new Gson();
+        String rootClient = auth.getUsername();
 
-        if (auth != null && game != null) {
+        if (auth != null && game != null && !game.getGame().isMarkEndOfGame() &&
+                ((game.getBlackUsername().equals(rootClient)) || (game.getWhiteUsername().equals(rootClient)))) {
 
             // Check that the user attempting to resign is a player and not an observer
-            if (isPlayer(auth, game)) {
+            // Get the rootClient
 
-                // Get the rootClient
-                String rootClient = auth.getUsername();
-                System.out.println("The rootClient: " + rootClient);
-                // Set the end of game status
-                game.setMarkEndOfGame(true);
-                // Update the new changes in the db
-                gameDAO.updateGame(game);
+            System.out.println("The rootClient: " + rootClient);
+            // Set the end of game status
+            game.getGame().setMarkEndOfGame(true);
+            // Update the new changes in the db
+            gameDAO.updateGame(game);
 
-                // Build the Notification serverMessage, which will be sent to all clients in the game
-                String notificationMsg = String.format("%s has left the game!", rootClient);
-                Notification notification = new Notification(notificationMsg);
-                String notificationJson = gson.toJson(notification);
-                connections.broadcast(gameID, notificationJson, rootClient);
-                if (session.isOpen()) {
-                    session.getRemote().sendString(notificationJson);
-                }
-                System.out.println("After notification has been sent");
-            } else {
-                Error error = new Error("Sorry you cannot resign from the game");
-                String errorJson = gson.toJson(error);
-                if (session.isOpen()) {
-                    session.getRemote().sendString(errorJson);
-                }
-            }
+            // Build the Notification serverMessage, which will be sent to all clients in the game
+            String notificationMsg = String.format("%s has left the game!", rootClient);
+            Notification notification = new Notification(notificationMsg);
+            String notificationJson = gson.toJson(notification);
+            connections.broadcast(gameID, notificationJson, "");
+            System.out.println("After notification has been sent");
         } else {
             // Send an Error serverMessage
             Error error = new Error("Error in resigning");
