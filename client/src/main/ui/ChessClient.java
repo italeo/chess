@@ -48,12 +48,30 @@ public class ChessClient {
     private String gamePlayCommands(String cmd, String[] params) {
         return switch (cmd) {
             case "redraw" -> redraw();
-            case "leave" -> leave();
+            case "leave" -> leaveGame();
             case "make" -> makeMove();
             case "resign" -> resign();
             default -> "Invalid command for game play state, type 'help' for list of valid commands.";
         };
     }
+
+    private String redraw() {
+        return "";
+    }
+
+    private String leaveGame() {
+        return "";
+    }
+
+
+    private String makeMove() {
+        return "";
+    }
+
+    private String resign() {
+        return "";
+    }
+
 
     private String clear() {
         try {

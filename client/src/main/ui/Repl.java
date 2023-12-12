@@ -1,10 +1,13 @@
 package ui;
 
 import ui.websocket.NotificationHandler;
-import javax.management.Notification;
+import webSeverMessages.serverMessages.Notification;
+
 import java.util.Scanner;
+
 import static ui.EscapeSequences.*;
 import static ui.State.*;
+
 public class Repl implements NotificationHandler {
     // Needed to call the client that handles all the functionality of the game
     private final ChessClient client;
@@ -33,7 +36,6 @@ public class Repl implements NotificationHandler {
     }
 
 
-    @Override
     public void notify(Notification notification) {
         System.out.print(SET_TEXT_COLOR_RED + notification.getMessage());
         printPrompt();
@@ -44,4 +46,5 @@ public class Repl implements NotificationHandler {
         String stateString = (currentState == LOGGED_OUT) ? LOGGED_OUT.name() : LOGGED_IN.name();
         System.out.print("\n" + SET_TEXT_BOLD + "[" + stateString + "]" + " >>> ");
     }
+
 }
