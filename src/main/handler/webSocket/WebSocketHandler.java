@@ -314,7 +314,7 @@ public class WebSocketHandler {
             System.out.println("The rootClient: " + rootClient);
 
             // Set the game to as game Over
-            game.setEndGameMarker(true);
+            game.setMarkEndOfGame(true);
 
             // Update the db so that the game is over
             gameDAO.updateGame(game);

@@ -14,14 +14,14 @@ public class Game {
     private String gameName;
     /** The implementation of the game. */
     private ChessGame game;
-    private boolean endGameMarker = false;
+    private boolean markEndOfGame = false;
 
-    public boolean isEndGameMarker() {
-        return endGameMarker;
+    public void setMarkEndOfGame(boolean markEndOfGame) {
+        this.markEndOfGame = markEndOfGame;
     }
 
-    public void setEndGameMarker(boolean markEndOfGame) {
-        this.endGameMarker = markEndOfGame;
+    public boolean isMarkEndOfGame() {
+        return markEndOfGame;
     }
 
     public Game() {
