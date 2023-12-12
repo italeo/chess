@@ -4,6 +4,7 @@ import request.*;
 import result.*;
 import server.ServerFacade;
 import server.SessionManager;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -133,7 +134,7 @@ public class ChessClient {
             CreateGameResult result = facade.createGame(request);
 
             // Check if the game was create correctly
-            if(result.isSuccess()) {
+            if (result.isSuccess()) {
                 return "game created successfully!\n";
             }
         } else {
@@ -210,6 +211,9 @@ public class ChessClient {
             String playerColor = params[1].toUpperCase();
 
             try {
+
+                state = State.GAME_PLAY;
+
                 JoinGameRequest request = new JoinGameRequest(SessionManager.getAuthToken(), playerColor, gameID);
                 JoinGameResult result = facade.joinGame(request);
 
@@ -242,17 +246,26 @@ public class ChessClient {
                     clear - clear the data base
                     help - with possible commands
                     """;
+        } else if (state == State.LOGGED_IN) {
+            return """
+                    create <NAME> - a game
+                    list - games
+                    join <ID> [WHITE|BLACK|<empty>]- a game
+                    observe <ID> - a game
+                    logout - when you are done
+                    quit - playing chess
+                    clear - clear the data base
+                    help - with possible commands
+                    """;
+        } else {
+            return """
+                    redraw - Redraws the chess board upon the user’s request.
+                    leave - Removes the user from the game
+                    make - make a move in the game when it is your turn
+                    resign - Allows you to resign the game, if you do you will forfeit the game
+                    help - with possible commands
+                    """;
         }
-        return """
-                create <NAME> - a game
-                list - games
-                join <ID> [WHITE|BLACK|<empty>]- a game
-                observe <ID> - a game
-                logout - when you are done
-                quit - playing chess
-                clear - clear the data base
-                help - with possible commands
-                """;
     }
 
     public State getState() {
