@@ -299,7 +299,8 @@ public class WebSocketHandler {
         Gson gson = new Gson();
         String rootClient = auth.getUsername();
 
-        if (game != null && !game.getGame().isMarkEndOfGame() && (game.getBlackUsername().equals(rootClient) || game.getWhiteUsername().equals(rootClient))) {
+        if (game != null && !game.getGame().isMarkEndOfGame() && (game.getBlackUsername().equals(rootClient) ||
+                game.getWhiteUsername().equals(rootClient))) {
 
             // Check that the user attempting to resign is a player and not an observer
             // Get the rootClient

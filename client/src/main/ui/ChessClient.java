@@ -275,7 +275,6 @@ public class ChessClient {
                     register <USERNAME> <PASSWORD> <EMAIL> - to create an account
                     login <USERNAME> <PASSWORD> - to play chess
                     quit - playing chess
-                    clear - clear the data base
                     help - with possible commands
                     """;
         } else if (state == State.LOGGED_IN) {
@@ -293,9 +292,9 @@ public class ChessClient {
             return """
                     redraw - Redraws the chess board upon the user’s request.
                     leave - Removes the user from the game
-                    make - make a move in the game when it is your turn
+                    make <moves>- make a move in the game when it is your turn
                     resign - Allows you to resign the game, if you do you will forfeit the game
-                    highlight - Highlights the valid move for a piece
+                    highlight <help> - Highlights the valid move for a piece
                     help - with possible commands
                     """;
         }
