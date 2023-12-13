@@ -271,7 +271,7 @@ public class WebSocketHandler {
             String rootClient = auth.getUsername();
 
             // Remove the root client
-            connections.remove(session, rootClient, gameID);
+            connections.remove(session, gameID);
 
             // update the changes in the game
             gameDAO.updateGame(game);

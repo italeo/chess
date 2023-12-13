@@ -14,7 +14,6 @@ import webSocketMessages.serverMessages.ServerMessage;
 
 import javax.websocket.*;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -34,8 +33,8 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    Gson gson = new Gson();
-                    ServerMessage serverMessage = gson.fromJson(message, ServerMessage.class);
+                    var deserializer = createGsonDeserializer();
+                    ServerMessage serverMessage = deserializer.fromJson(message, ServerMessage.class);
                     switch (serverMessage.getServerMessageType()) {
                         case ERROR -> errorNotification(message);
                         case LOAD_GAME -> loadGameNotification(message);
@@ -54,16 +53,17 @@ public class WebSocketFacade extends Endpoint {
     }
 
     private void loadGameNotification(String message) {
-        LoadGame loadGameMsg = new Gson().fromJson(message, LoadGame.class);
+        var deserializer = createGsonDeserializer();
+        LoadGame loadGameMsg = deserializer.fromJson(message, LoadGame.class);
         Game game = loadGameMsg.getGame();
-        System.out.println("The game from LoadGame: " + game);
+        System.out.println("\nThe game from LoadGame: " + game);
 
         // Implement the logic to print the game/board to the screen
     }
 
     private void generalNotification(String message) {
-        var deserializer = createGsonDeserializer();
-        Notification notification = deserializer.fromJson(message, Notification.class);
+        Gson gson = new Gson();
+        Notification notification = gson.fromJson(message, Notification.class);
         String notificationMsg = notification.getMessage();
         System.out.print(notificationMsg);
     }
@@ -96,45 +96,6 @@ public class WebSocketFacade extends Endpoint {
 
 
     // ------------------------------- TYPE ADAPTER CLASSES -------------------------------------------------------
-
-    // Type adapter for ChessGame need to change to JsonSerializer  n
-//    public static class GameAdapter implements JsonDeserializer<ChessGame> {
-//        @Override
-//        public ChessGame deserialize(JsonElement el, Type type, JsonDeserializationContext ctx) throws JsonParseException {
-//            return new Gson().fromJson(el, ChessGameImpl.class);
-//        }
-//    }
-//
-//    // Type adapter for ChessBoard
-//    public static class BoardAdapter implements JsonDeserializer<ChessBoard> {
-//        @Override
-//        public ChessBoard deserialize(JsonElement el, Type type, JsonDeserializationContext ctx) throws JsonParseException {
-//            var builder = new GsonBuilder();
-//            builder.registerTypeAdapter(ChessPiece.class, new PieceAdapter());
-//
-//            return builder.create().fromJson(el, ChessBoardImpl.class);
-//        }
-//    }
-//
-//
-//    public static class PieceAdapter implements JsonDeserializer<ChessPiece> {
-//
-//
-//        @Override
-//        public ChessPiece deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-//            String pieceType = jsonElement.getAsJsonObject().get("type").getAsString();
-//            Gson gson = new Gson();
-//            return switch (pieceType) {
-//                case "KING" -> gson.fromJson(jsonElement, KingPieceImpl.class);
-//                case "QUEEN" -> gson.fromJson(jsonElement, QueenPieceImpl.class);
-//                case "KNIGHT" -> gson.fromJson(jsonElement, KnightPieceImpl.class);
-//                case "BISHOP" -> gson.fromJson(jsonElement, BishopPieceImpl.class);
-//                case "ROOK" -> gson.fromJson(jsonElement, RookPieceImpl.class);
-//                case "PAWN" -> gson.fromJson(jsonElement, PawnPieceImpl.class);
-//                default -> throw new JsonParseException("Unknown chess piece type" + pieceType);
-//            };
-//        }
-//    }
     public static Gson createGsonDeserializer() {
         GsonBuilder gsonBuilder = new GsonBuilder();
 

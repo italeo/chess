@@ -1,12 +1,10 @@
 package handler.webSocket;
 
 import chess.ChessGame;
-import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
-import webSeverMessages.serverMessages.Notification;
+
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +22,7 @@ public class ConnectionManager {
         });
     }
 
-    public void remove(Session rootSession, String username, Integer gameID) {
+    public void remove(Session rootSession, Integer gameID) {
         Set<Connection> connectionSet = connections.get(gameID);
         if (connectionSet != null) {
             connectionSet.removeIf(c -> c.session.equals(rootSession));
