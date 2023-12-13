@@ -50,29 +50,12 @@ public class ChessClient {
         return switch (cmd) {
             case "redraw" -> redraw();
             case "leave" -> leaveGame();
-            case "make" -> makeMove();
+            case "make" -> makeMove(params);
             case "resign" -> resign();
+            case "highlight" -> highlight(params);
             default -> "Invalid command for game play state, type 'help' for list of valid commands.";
         };
     }
-
-    private String redraw() {
-        return "";
-    }
-
-    private String leaveGame() {
-        return "";
-    }
-
-
-    private String makeMove() {
-        return "";
-    }
-
-    private String resign() {
-        return "";
-    }
-
 
     private String clear() {
         try {
@@ -209,6 +192,9 @@ public class ChessClient {
         }
     }
 
+    // ---------------------------------- USES WEB SOCKETS -------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------
+
     private String observeGame(String[] params) {
         if (params.length == 1) {
             String gameIDStr = params[0];
@@ -266,6 +252,30 @@ public class ChessClient {
         return "Entered wrong inputs, please try again";
     }
 
+    private String redraw() {
+        return "";
+    }
+
+    private String leaveGame() {
+        return "";
+    }
+
+
+    private String makeMove(String[] params) {
+        return "";
+    }
+
+    private String highlight(String[] params) {
+        return "";
+    }
+
+    private String resign() {
+        return "";
+    }
+
+    // ----------------------------------------- END ----------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------
+
 
     // ----------------------------------------- END ------------------------------------------------------------
 
@@ -292,9 +302,9 @@ public class ChessClient {
             return """
                     redraw - Redraws the chess board upon the user’s request.
                     leave - Removes the user from the game
-                    make <moves> - make a move in the game when it is your turn (only for players)
+                    make <move> - make a move in the game when it is your turn (only for players)
+                    highlight <piece> - Highlights the valid move for a piece (specify with letters. e.g. K = King)
                     resign - Allows you to resign the game, if you do you will forfeit the game
-                    highlight <help> - Highlights the valid move for a piece
                     help - with possible commands
                     """;
         }
