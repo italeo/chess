@@ -292,7 +292,7 @@ public class ChessClient {
             return """
                     redraw - Redraws the chess board upon the user’s request.
                     leave - Removes the user from the game
-                    make <moves>- make a move in the game when it is your turn
+                    make <moves> - make a move in the game when it is your turn (only for players)
                     resign - Allows you to resign the game, if you do you will forfeit the game
                     highlight <help> - Highlights the valid move for a piece
                     help - with possible commands
