@@ -1,9 +1,11 @@
 package ui.websocket;
 
 import com.google.gson.Gson;
-import model.User;
 import webSeverMessages.serverMessages.Notification;
-import webSocketMessages.userCommands.UserGameCommand;
+import webSeverMessages.userCommands.JoinObserver;
+import webSeverMessages.userCommands.JoinPlayer;
+import webSeverMessages.userCommands.Leave;
+import webSeverMessages.userCommands.Resign;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -29,12 +31,33 @@ public class WebSocketFacade extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     Notification notification = new Gson().fromJson(message, Notification.class);
+                    switch (notification.getServerMessageType()) {
+                        case ERROR -> errorNotification(notification);
+                        case LOAD_GAME -> loadGameNotification(notification);
+                        case NOTIFICATION -> generalNotification(notification);
+                    }
                     notificationHandler.notify(notification);
                 }
             });
         } catch (URISyntaxException | IOException | DeploymentException e) {
             e.printStackTrace();
         }
+    }
+
+    // ---------------- Methods to display the Notifications on to the screen --------------------------
+    private void errorNotification(Notification notification) {
+        String errorMsg = notification.getMessage();
+        System.out.print(errorMsg);
+    }
+
+    private void loadGameNotification(Notification notification) {
+        String loadGameMsg = notification.getMessage();
+        System.out.print(loadGameMsg);
+    }
+
+    private void generalNotification(Notification notification) {
+        String notificationMsg = notification.getMessage();
+        System.out.print(notificationMsg);
     }
 
     // Required method for EndPoint
@@ -44,22 +67,22 @@ public class WebSocketFacade extends Endpoint {
 
     // ---------------------- Methods needed to connect to WebSocketHandler -----------------------------------
 
-    // Might not need redraw call
-    public void redraw() {
-
+    public void joinObserver(JoinObserver joinObserver) throws Exception {
+        this.session.getBasicRemote().sendText(new Gson().toJson(joinObserver));
     }
 
-    public void leaveGame(String authToken) {
-        var userCmd = new UserGameCommand(authToken);
+    public void joinPlayer(JoinPlayer joinPlayer) throws Exception {
+        this.session.getBasicRemote().sendText(new Gson().toJson(joinPlayer));
     }
 
-    public void make() {
-
+    public void leaveGame(Leave leave) throws Exception {
+        this.session.getBasicRemote().sendText(new Gson().toJson(leave));
     }
 
-    public void resign() {
-
+    public void resignPlayer(Resign resign) throws Exception {
+        this.session.getBasicRemote().sendText(new Gson().toJson(resign));
     }
+
 
     // ------------------------------------------- END --------------------------------------------------------
 }
