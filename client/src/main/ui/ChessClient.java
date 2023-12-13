@@ -219,9 +219,9 @@ public class ChessClient {
                     webSocketFacade.joinObserver(joinObserver);
 
                     // print the board here
-                    ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
-                    boardDrawer.drawBoard(gameID, null);
-                    System.out.flush();
+//                    ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
+//                    boardDrawer.drawBoard(gameID, null);
+//                    System.out.flush();
                     return "\nSuccessfully Joined as an observer!\n";
                 }
 
