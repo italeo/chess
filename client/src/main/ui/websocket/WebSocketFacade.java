@@ -17,11 +17,10 @@ public class WebSocketFacade extends Endpoint {
     Session session;
     NotificationHandler notificationHandler;
 
-    public WebSocketFacade(String url, NotificationHandler notificationHandler) {
+    public WebSocketFacade(String url) {
         try {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/connect");
-            this.notificationHandler = notificationHandler;
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
@@ -36,7 +35,7 @@ public class WebSocketFacade extends Endpoint {
                         case LOAD_GAME -> loadGameNotification(notification);
                         case NOTIFICATION -> generalNotification(notification);
                     }
-                    notificationHandler.notify(notification);
+                    //notificationHandler.notify(notification);
                 }
             });
         } catch (URISyntaxException | IOException | DeploymentException e) {

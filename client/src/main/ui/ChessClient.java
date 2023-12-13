@@ -4,6 +4,8 @@ import request.*;
 import result.*;
 import server.ServerFacade;
 import server.SessionManager;
+import ui.websocket.WebSocketFacade;
+import webSeverMessages.userCommands.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,11 +17,13 @@ public class ChessClient {
     private final ServerFacade facade;
     private State state = State.LOGGED_OUT;
     private final HashMap<Integer, Integer> indexer;
+    private final WebSocketFacade webSocketFacade;
 
     public ChessClient(String serverUrl) {
         this.serverUrl = serverUrl;
         this.facade = new ServerFacade(serverUrl);
         indexer = new HashMap<>();
+        this.webSocketFacade = new WebSocketFacade(serverUrl);
     }
 
     public String eval(String input) {
@@ -199,6 +203,7 @@ public class ChessClient {
         if (params.length == 1) {
             String gameIDStr = params[0];
             int gameID = indexer.get(Integer.parseInt(gameIDStr));
+            String authToken = SessionManager.getAuthToken();
 
             try {
                 // Change state into GAME_PLAY
@@ -208,6 +213,11 @@ public class ChessClient {
                 JoinGameResult result = facade.joinGame(request);
 
                 if (result.isSuccess()) {
+
+                    // Send the UserCommand??
+                    JoinObserver joinObserver = new JoinObserver(authToken, gameID);
+                    webSocketFacade.joinObserver(joinObserver);
+
                     // print the board here
                     ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
                     boardDrawer.drawBoard(gameID, null);
@@ -236,6 +246,10 @@ public class ChessClient {
                 JoinGameResult result = facade.joinGame(request);
 
                 if (result.isSuccess()) {
+
+                    // Send the UserCommand??
+
+
                     // print the board here
                     ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
                     boardDrawer.drawBoard(gameID, playerColor.toUpperCase());
