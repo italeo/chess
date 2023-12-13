@@ -251,9 +251,6 @@ public class ChessClient {
 
 
                     // print the board here
-                    ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
-                    boardDrawer.drawBoard(gameID, playerColor.toUpperCase());
-                    System.out.flush();
                     return "Successfully Joined game: " + gameID + " as the " + playerColor.toUpperCase() + " player\n";
                 } else {
                     System.out.print("Error joining the game");
@@ -271,6 +268,7 @@ public class ChessClient {
     }
 
     private String leaveGame() {
+
         return "";
     }
 

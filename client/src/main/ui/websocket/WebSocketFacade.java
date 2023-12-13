@@ -3,6 +3,9 @@ package ui.websocket;
 import chess.*;
 import com.google.gson.*;
 import model.Game;
+import server.SessionManager;
+import ui.ChessBoardDrawer;
+import ui.Repl;
 import webSeverMessages.serverMessages.Error;
 import webSeverMessages.serverMessages.LoadGame;
 import webSeverMessages.serverMessages.Notification;
@@ -56,7 +59,14 @@ public class WebSocketFacade extends Endpoint {
         var deserializer = createGsonDeserializer();
         LoadGame loadGameMsg = deserializer.fromJson(message, LoadGame.class);
         Game game = loadGameMsg.getGame();
-        System.out.println("\nThe game from LoadGame: " + game);
+
+        // Save game to sessionManager
+        SessionManager.setGame(game);
+
+        // Draw the current state of the board
+        ChessBoardDrawer chessBoardDrawer = new ChessBoardDrawer();
+        System.out.println("\n");
+        chessBoardDrawer.drawBoard(game);
 
         // Implement the logic to print the game/board to the screen
     }
@@ -66,6 +76,7 @@ public class WebSocketFacade extends Endpoint {
         Notification notification = gson.fromJson(message, Notification.class);
         String notificationMsg = notification.getMessage();
         System.out.print(notificationMsg);
+
     }
 
     // Required method for EndPoint

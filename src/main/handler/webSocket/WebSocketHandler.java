@@ -81,12 +81,12 @@ public class WebSocketHandler {
                     }
 
                     // Send Notification to others
-                    String notificationMsg = String.format("%s joined as %s player", rootClient, playerColor);
+                    String notificationMsg = String.format("%s joined as %s player\n", rootClient, playerColor);
                     Notification notification = new Notification(notificationMsg);
                     String notificationJson = gson.toJson(notification);
                     connections.broadcast(gameID, notificationJson, rootClient);
                 } else {
-                    String errorMsg = String.format("%s is already taken", playerColor);
+                    String errorMsg = String.format("%s is already taken\n", playerColor);
                     Error error = new Error(errorMsg);
                     String errorJson = gson.toJson(error);
                     if (session.isOpen()) {
@@ -94,7 +94,7 @@ public class WebSocketHandler {
                     }
                 }
             } else {
-                String errorMsg = String.format("game %s does not exist", gameID);
+                String errorMsg = String.format("game %s does not exist\n", gameID);
                 Error error = new Error(errorMsg);
                 String errorJson = gson.toJson(error);
                 if (session.isOpen()) {
@@ -102,7 +102,7 @@ public class WebSocketHandler {
                 }
             }
         } else {
-            String errorMsg = String.format("Invalid authToken: %S", authToken);
+            String errorMsg = String.format("Invalid authToken: %s\n", authToken);
             Error error = new Error(errorMsg);
             String errorJson = gson.toJson(error);
             if (session.isOpen()) {
@@ -141,7 +141,7 @@ public class WebSocketHandler {
                     }
 
                     // Build and send the notification to others
-                    String notificationMsg = String.format("%s joined as an observer.", username);
+                    String notificationMsg = String.format("%s joined as an observer.\n", username);
                     Notification notification = new Notification(notificationMsg);
                     String notificationJson = gson.toJson(notification);
 
@@ -149,7 +149,7 @@ public class WebSocketHandler {
                     connections.broadcast(gameID, notificationJson, username);
 
                 } else {
-                    String errorMSg = String.format("Sorry the gameID: %s, is incorrect", gameID);
+                    String errorMSg = String.format("Sorry the gameID: %s, is incorrect\n", gameID);
                     Error error = new Error(errorMSg);
                     String errorJson = gson.toJson(error);
                     if (session.isOpen()) {
@@ -162,7 +162,7 @@ public class WebSocketHandler {
                 e.printStackTrace();
             }
         } else {
-            String errorMSg = String.format("Sorry the authToken: %s, is incorrect", authToken);
+            String errorMSg = String.format("Sorry the authToken: %s, is incorrect\n", authToken);
             Error error = new Error(errorMSg);
             String errorJson = gson.toJson(error);
             if (session.isOpen()) {
@@ -215,25 +215,25 @@ public class WebSocketHandler {
 
                     // fixme: print the message to something nicer
 
-                    String notificationMsg = String.format("move was made");
+                    String notificationMsg = String.format("move was made\n");
                     Notification notification = new Notification(notificationMsg);
                     String notificationJson = gson.toJson(notification);
                     connections.broadcast(gameID, notificationJson, rootClient);
 
                 } else {
-                    Error errorMsg = new Error("Invalid move");
+                    Error errorMsg = new Error("Invalid move\n");
                     if (session.isOpen()) {
                         session.getRemote().sendString(gson.toJson(errorMsg));
                     }
                 }
             } else {
-                Error errorMsg = new Error("Sorry not your turn");
+                Error errorMsg = new Error("Sorry not your turn\n");
                 if (session.isOpen()) {
                     session.getRemote().sendString(gson.toJson(errorMsg));
                 }
             }
         } else {
-            Error errorMsg = new Error("authToken or gameID is invalid");
+            Error errorMsg = new Error("authToken or gameID is invalid\n");
             if (session.isOpen()) {
                 session.getRemote().sendString(gson.toJson(errorMsg));
             }
@@ -277,13 +277,13 @@ public class WebSocketHandler {
             gameDAO.updateGame(game);
 
             // build the notification for all other users/client
-            String notificationMsg = String.format("%s has left the game", rootClient);
+            String notificationMsg = String.format("%s has left the game\n", rootClient);
             Notification notification = new Notification(notificationMsg);
             String notificationJson = gson.toJson(notification);
             connections.broadcast(gameID, notificationJson, "");
         } else {
             // Build the Error server message
-            Error error = new Error("Error leaving the game");
+            Error error = new Error("Error leaving the game\n");
             String errorJson = gson.toJson(error);
             session.getRemote().sendString(errorJson);
         }
@@ -319,7 +319,7 @@ public class WebSocketHandler {
             System.out.println("After notification has been sent");
         } else {
             // Send an Error serverMessage
-            Error error = new Error("Error in resigning");
+            Error error = new Error("Error in resigning\n");
             String errorJson = gson.toJson(error);
             if (session.isOpen()) {
                 session.getRemote().sendString(errorJson);

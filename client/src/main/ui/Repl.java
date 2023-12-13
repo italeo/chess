@@ -37,7 +37,6 @@ public class Repl implements NotificationHandler {
 
 
     public void notify(Notification notification) {
-        System.out.print(notification.getMessage());
         printPrompt();
     }
 

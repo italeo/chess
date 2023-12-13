@@ -1,5 +1,7 @@
 package ui;
+
 import chess.*;
+import model.Game;
 
 public class ChessBoardDrawer {
 
@@ -9,25 +11,26 @@ public class ChessBoardDrawer {
     private static final String BORDER_COLOR = EscapeSequences.SET_BG_COLOR_LIGHT_GREY;
 
 
-
     private final ChessGame game = new ChessGameImpl();
 
 
-    public void drawBoard(Integer gameID, String playerColor) {
-        if (gameID != null) {
+    public void drawBoard(Game game) {
+        if (game != null && game.getGame().getBoard() != null) {
             System.out.print(EscapeSequences.ERASE_SCREEN);
 
-            // Determine which board to draw depending on the color
+            // Get the chessBoard
+            ChessBoard chessBoard = game.getGame().getBoard();
+            ChessGame.TeamColor playerColor = game.getGame().getTeamTurn();
+            Integer gameID = game.getGameID();
 
-            if (playerColor != null && (playerColor.equals("WHITE") || playerColor.equals("BLACK"))) {
-                if (playerColor.equals("WHITE")) {
+            // Determine which board to draw depending on the color
+            if ((playerColor == ChessGame.TeamColor.WHITE) || (playerColor == ChessGame.TeamColor.BLACK)) {
+                if (playerColor.equals(ChessGame.TeamColor.WHITE)) {
                     drawBoardWhite(gameID);
                 } else {
-                    drawBoardBlack(gameID);
+                    drawBoardWhite(gameID);
                 }
             } else {
-                // Prints the board with white pieces at the bottom first
-                // The default board
                 drawBoardWhite(gameID);
             }
         }
@@ -35,7 +38,7 @@ public class ChessBoardDrawer {
 
     public void drawBoardWhite(Integer gameID) {
 
-        if ( gameID != null) {
+        if (gameID != null) {
 
             // Get the board
             ChessBoard board = game.getBoard();
