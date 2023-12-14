@@ -44,7 +44,6 @@ public class WebSocketHandler {
             case LEAVE -> leaveCmd(session, message);
             case RESIGN -> resignCmd(session, message);
         }
-
     }
 
     private void joinPlayerCmd(Session session, String message) throws DataAccessException, IOException {
@@ -212,12 +211,7 @@ public class WebSocketHandler {
                         session.getRemote().sendString(loadGameJson);
                     }
 
-
-                    // Build the Notification server message
-
-                    // fixme: print the message to something nicer
-
-                    String notificationMsg = String.format("move was made\n");
+                    String notificationMsg = "move was made\n";
                     Notification notification = new Notification(notificationMsg);
                     String notificationJson = gson.toJson(notification);
                     connections.broadcast(gameID, notificationJson, rootClient);
@@ -255,8 +249,6 @@ public class WebSocketHandler {
         ChessGame chessGame = game.getGame();
         Collection<ChessMove> validMoves = chessGame.validMoves(move.getStartPosition());
         return !validMoves.isEmpty() && validMoves.contains(move);
-
-//        return false;
     }
 
     private void leaveCmd(Session session, String message) throws DataAccessException, IOException {
@@ -341,7 +333,6 @@ public class WebSocketHandler {
     // ----------------------------------------- Type Adapters ----------------------------------------------
     // --------------------------------- For ChessMove && ChessPosition -------------------------------------
     private static class ChessMoveDeserializer implements JsonDeserializer<ChessMove> {
-
         @Override
         public ChessMove deserialize(JsonElement el, Type type, JsonDeserializationContext ctx) throws JsonParseException {
             return ctx.deserialize(el, ChessMoveImpl.class);
@@ -349,7 +340,6 @@ public class WebSocketHandler {
     }
 
     private static class ChessPositionDeserializer implements JsonDeserializer<ChessPosition> {
-
         @Override
         public ChessPosition deserialize(JsonElement el, Type type, JsonDeserializationContext ctx) throws JsonParseException {
             return ctx.deserialize(el, ChessPositionImpl.class);

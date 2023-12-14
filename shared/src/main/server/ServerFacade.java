@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import exception.ResponseException;
 import request.*;
 import result.*;
+
 import java.io.*;
 import java.net.*;
 import java.util.List;
@@ -63,7 +64,6 @@ public class ServerFacade {
         return this.makeRequest("GET", path, null, ListGameResult.class);
     }
 
-
     // ----------------------------------- END -----------------------------------
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws Exception {
@@ -80,14 +80,14 @@ public class ServerFacade {
             }
 
             http.connect();
-            
+
             // Checks if the request body is empty or not
             if (request != null) {
                 writeBody(request, http);
             }
 
             return readBody(http, responseClass);
-            
+
         } catch (Exception e) {
             throw new ResponseException("Server request failed", e);
         }
@@ -96,7 +96,7 @@ public class ServerFacade {
     private void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
             String reqData = new Gson().toJson(request);
-            try(OutputStream reqBody = http.getOutputStream()) {
+            try (OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
             }
         }

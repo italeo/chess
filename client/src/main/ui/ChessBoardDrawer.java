@@ -4,15 +4,11 @@ import chess.*;
 import model.Game;
 
 public class ChessBoardDrawer {
-
     private static final int BOARD_SIZE_IN_SQUARES = 8;
     private static final String WHITE_SQUARE = EscapeSequences.SET_BG_COLOR_WHITE;
     private static final String BLACK_SQUARE = EscapeSequences.SET_BG_COLOR_BLACK;
     private static final String BORDER_COLOR = EscapeSequences.SET_BG_COLOR_LIGHT_GREY;
-
-
     private final ChessGame game = new ChessGameImpl();
-
 
     public void drawBoard(Game game) {
         if (game != null && game.getGame().getBoard() != null) {

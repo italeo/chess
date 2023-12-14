@@ -1,18 +1,16 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessMoveImpl;
+import chess.ChessPositionImpl;
 import request.*;
 import result.*;
 import server.ServerFacade;
 import server.SessionManager;
 import ui.websocket.WebSocketFacade;
-import webSeverMessages.serverMessages.Error;
 import webSeverMessages.userCommands.*;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 public class ChessClient {
@@ -258,7 +256,6 @@ public class ChessClient {
                         teamColor = ChessGame.TeamColor.BLACK;
                     }
 
-
                     // Send the UserCommand for joinPlayer
                     JoinPlayer joinPlayer = new JoinPlayer(authToken, gameID, teamColor);
                     webSocketFacade.joinPlayer(joinPlayer);
@@ -294,10 +291,111 @@ public class ChessClient {
     }
 
 
-    private String makeMove(String[] params) {
-        
-        return "";
+    private String makeMove(String[] params) throws Exception {
+        // Info needed to make a move
+        String authToken = SessionManager.getAuthToken();
+        int gameID = SessionManager.getGameID();
+
+        if (params.length == 1) {
+            String move = params[0];
+            if (move.length() == 4) {
+                String rowB = String.valueOf(move.charAt(0));
+                String colB = String.valueOf(move.charAt(1));
+                String rowT = String.valueOf(move.charAt(2));
+                String colT = String.valueOf(move.charAt(3));
+
+                // Since the original board in my chess implementation is flipped I'll need to reset the positions
+
+                // Resetting the rows
+                String rowBStr = convertRowInt(rowB);
+                String rowTStr = convertRowInt(rowT);
+
+                // Resetting the columns
+                String colBStr = convertColumnToInt(colB);
+                String colTStr = convertColumnToInt(colT);
+
+                // Convert the string positions to ints
+                // Starting positions
+                int rowBInt = Integer.parseInt(rowBStr);
+                int colBInt = Integer.parseInt(colBStr);
+
+                // End positions
+                int rowTInt = Integer.parseInt(rowTStr);
+                int colTInt = Integer.parseInt(colTStr);
+
+                // Get the Piece in that position
+                ChessPositionImpl startPosition = new ChessPositionImpl(rowBInt, colBInt);
+                ChessPositionImpl endPosition = new ChessPositionImpl(rowTInt, colTInt);
+
+                //
+                ChessMoveImpl chessMove = new ChessMoveImpl(startPosition, endPosition, null);
+
+                // Send the move to the server
+                MakeMove makeMove = new MakeMove(authToken, gameID, chessMove);
+                webSocketFacade.makeMove(makeMove);
+            }
+        }
+
+        return String.format("move: %s, made", params[0]);
     }
+
+    private String convertColumnToInt(String str) {
+        if (Objects.equals(str, "a")) {
+            return "7";
+        }
+        if (Objects.equals(str, "b")) {
+            return "6";
+        }
+        if (Objects.equals(str, "c")) {
+            return "5";
+        }
+        if (Objects.equals(str, "d")) {
+            return "4";
+        }
+        if (Objects.equals(str, "e")) {
+            return "3";
+        }
+        if (Objects.equals(str, "f")) {
+            return "2";
+        }
+        if (Objects.equals(str, "g")) {
+            return "1";
+        }
+        if (Objects.equals(str, "h")) {
+            return "0";
+        }
+
+        return "Sorry invalid input for rows";
+    }
+
+    private String convertRowInt(String str) {
+        if (Objects.equals(str, "1")) {
+            return "7";
+        }
+        if (Objects.equals(str, "2")) {
+            return "6";
+        }
+        if (Objects.equals(str, "3")) {
+            return "5";
+        }
+        if (Objects.equals(str, "4")) {
+            return "4";
+        }
+        if (Objects.equals(str, "5")) {
+            return "3";
+        }
+        if (Objects.equals(str, "6")) {
+            return "2";
+        }
+        if (Objects.equals(str, "7")) {
+            return "1";
+        }
+        if (Objects.equals(str, "8")) {
+            return "0";
+        }
+        return "Sorry invalid input for columns";
+    }
+
 
     private String highlight(String[] params) {
         return "";
@@ -317,11 +415,10 @@ public class ChessClient {
         return String.format("Successfully resigned from game: %s", gameID);
     }
 
-    // ----------------------------------------- END ----------------------------------------------------------
-    // --------------------------------------------------------------------------------------------------------
+    // ----------------------------------------- END OF WEBSOCKET FUNCTIONS -------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------------
 
-
-    // ----------------------------------------- END ------------------------------------------------------------
+    // ----------------------------------------- END OF HTTP FUNCTIONS -------------------------------------------------
 
     public String help() {
         if (state == State.LOGGED_OUT) {

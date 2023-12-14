@@ -39,7 +39,7 @@ public class ChessGameImpl implements ChessGame {
         // Generates the list of all possible moves for the piece if there is one in the starting position
         List<ChessMove> moves = (List<ChessMove>) piece.pieceMoves(board, startPosition);
         for (ChessMove move : moves) {
-            // ChessBoard temp = tempBoard(allMove, board);
+
             board.addPiece(startPosition, null);
             ChessPiece piecePosition = board.getPiece(move.getEndPosition());
             board.addPiece(move.getEndPosition(), piece);

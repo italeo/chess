@@ -8,10 +8,7 @@ import ui.ChessBoardDrawer;
 import webSeverMessages.serverMessages.Error;
 import webSeverMessages.serverMessages.LoadGame;
 import webSeverMessages.serverMessages.Notification;
-import webSeverMessages.userCommands.JoinObserver;
-import webSeverMessages.userCommands.JoinPlayer;
-import webSeverMessages.userCommands.Leave;
-import webSeverMessages.userCommands.Resign;
+import webSeverMessages.userCommands.*;
 import webSocketMessages.serverMessages.ServerMessage;
 
 import javax.websocket.*;
@@ -102,6 +99,10 @@ public class WebSocketFacade extends Endpoint {
 
     public void resignPlayer(Resign resign) throws Exception {
         this.session.getBasicRemote().sendText(new Gson().toJson(resign));
+    }
+
+    public void makeMove(MakeMove move) throws Exception {
+        this.session.getBasicRemote().sendText(new Gson().toJson(move));
     }
 
 
