@@ -272,11 +272,19 @@ public class WebSocketHandler {
         if (game != null && auth != null) {
             String rootClient = auth.getUsername();
 
-            // Remove the root client
-            connections.remove(session, gameID);
+            // Making sure we switch that the user has left the game by setting the teamTurn to null
+            if (Objects.equals(rootClient, game.getBlackUsername())) {
+                game.setBlackUsername(null);
+            } else if (Objects.equals(rootClient, game.getWhiteUsername())) {
+                game.setWhiteUsername(null);
+            }
 
             // update the changes in the game
             gameDAO.updateGame(game);
+
+            // Remove the root client
+            connections.remove(session, gameID);
+
 
             // build the notification for all other users/client
             String notificationMsg = String.format("%s has left the game\n", rootClient);
