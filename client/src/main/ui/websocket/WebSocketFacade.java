@@ -5,6 +5,7 @@ import com.google.gson.*;
 import model.Game;
 import server.SessionManager;
 import ui.ChessBoardDrawer;
+import ui.Repl;
 import webSeverMessages.serverMessages.Error;
 import webSeverMessages.serverMessages.LoadGame;
 import webSeverMessages.serverMessages.Notification;
@@ -51,7 +52,10 @@ public class WebSocketFacade extends Endpoint {
 
     // ---------------- Methods to display the Notifications on to the screen --------------------------
     private void errorNotification(String message) {
-        Error errorMsg = new Gson().fromJson(message, Error.class);
+        Error error = new Gson().fromJson(message, Error.class);
+        String errorMsg = error.getErrorMessage();
+        System.out.print(errorMsg);
+
     }
 
     private void loadGameNotification(String message) {
@@ -76,7 +80,6 @@ public class WebSocketFacade extends Endpoint {
         Notification notification = gson.fromJson(message, Notification.class);
         String notificationMsg = notification.getMessage();
         System.out.print(notificationMsg);
-
     }
 
     // Required method for EndPoint

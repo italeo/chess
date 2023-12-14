@@ -73,6 +73,8 @@ public class WebSocketHandler {
 
                     connections.add(gameID, session, authToken, rootClient, playerColor);
 
+                    game.getGame().setTeamTurn(playerColor);
+
                     // create LoadGame
                     LoadGame loadGame = new LoadGame(game);
                     String loadGameJson = gson.toJson(loadGame);

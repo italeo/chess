@@ -6,11 +6,13 @@ import result.*;
 import server.ServerFacade;
 import server.SessionManager;
 import ui.websocket.WebSocketFacade;
+import webSeverMessages.serverMessages.Error;
 import webSeverMessages.userCommands.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 
 public class ChessClient {
@@ -248,11 +250,14 @@ public class ChessClient {
                     String authToken = SessionManager.getAuthToken();
                     ChessGame.TeamColor teamColor;
 
+
                     if (playerColor.equals("WHITE")) {
                         teamColor = ChessGame.TeamColor.WHITE;
+
                     } else {
                         teamColor = ChessGame.TeamColor.BLACK;
                     }
+
 
                     // Send the UserCommand for joinPlayer
                     JoinPlayer joinPlayer = new JoinPlayer(authToken, gameID, teamColor);
@@ -264,7 +269,8 @@ public class ChessClient {
                     System.out.println(result.getMessage());
                 }
             } catch (Exception e) {
-                return "Oops! looks like you entered the wrong info. Try again please";
+                state = State.LOGGED_IN;
+                return String.format("Looks likes %s is already taken", playerColor);
             }
         }
         return "Entered wrong inputs, please try again";

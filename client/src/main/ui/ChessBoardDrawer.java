@@ -19,17 +19,14 @@ public class ChessBoardDrawer {
             System.out.print(EscapeSequences.ERASE_SCREEN);
 
             // Get the chessBoard
-            ChessBoard chessBoard = game.getGame().getBoard();
             ChessGame.TeamColor playerColor = game.getGame().getTeamTurn();
             Integer gameID = game.getGameID();
 
             // Determine which board to draw depending on the color
-            if ((playerColor == ChessGame.TeamColor.WHITE) || (playerColor == ChessGame.TeamColor.BLACK)) {
-                if (playerColor.equals(ChessGame.TeamColor.WHITE)) {
-                    drawBoardWhite(gameID);
-                } else {
-                    drawBoardBlack(gameID);
-                }
+            if (playerColor.equals(ChessGame.TeamColor.WHITE)) {
+                drawBoardWhite(gameID);
+            } else if (playerColor.equals(ChessGame.TeamColor.BLACK)) {
+                drawBoardBlack(gameID);
             } else {
                 drawBoardWhite(gameID);
             }
@@ -80,8 +77,8 @@ public class ChessBoardDrawer {
         if (piece != null) {
             String pieceSymbol = getPieceSymbols(piece);
             String pieceColor = (piece.getTeamColor() == ChessGame.TeamColor.WHITE)
-                    ? EscapeSequences.SET_TEXT_COLOR_MAGENTA
-                    : EscapeSequences.SET_TEXT_COLOR_RED;
+                    ? EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY
+                    : EscapeSequences.SET_TEXT_COLOR_DARK_GREY;
             System.out.print(pieceColor + pieceSymbol + EscapeSequences.SET_TEXT_BOLD);
         } else {
             System.out.print(EscapeSequences.EMPTY);
