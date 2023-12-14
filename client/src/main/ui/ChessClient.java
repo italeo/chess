@@ -284,6 +284,7 @@ public class ChessClient {
         String authToken = SessionManager.getAuthToken();
         Integer gameID = SessionManager.getGameID();
 
+        // Create Leave userCommand
         Leave leave = new Leave(authToken, gameID);
         webSocketFacade.leaveGame(leave);
 
@@ -294,6 +295,7 @@ public class ChessClient {
 
 
     private String makeMove(String[] params) {
+        
         return "";
     }
 
@@ -301,8 +303,18 @@ public class ChessClient {
         return "";
     }
 
-    private String resign() {
-        return "";
+    private String resign() throws Exception {
+        String authToken = SessionManager.getAuthToken();
+        Integer gameID = SessionManager.getGameID();
+
+        // Create resign userCommand
+        Resign resign = new Resign(authToken, gameID);
+        webSocketFacade.resignPlayer(resign);
+
+        // Making sure whoever is resigning leaves the Game Play state
+        state = State.LOGGED_IN;
+
+        return String.format("Successfully resigned from game: %s", gameID);
     }
 
     // ----------------------------------------- END ----------------------------------------------------------

@@ -312,21 +312,22 @@ public class WebSocketHandler {
         if (game != null && !game.getGame().isMarkEndOfGame() && (game.getBlackUsername().equals(rootClient) ||
                 game.getWhiteUsername().equals(rootClient))) {
 
-            // Check that the user attempting to resign is a player and not an observer
-            // Get the rootClient
-
-            System.out.println("The rootClient: " + rootClient);
             // Set the end of game status
             game.getGame().setMarkEndOfGame(true);
             // Update the new changes in the db
             gameDAO.updateGame(game);
 
             // Build the Notification serverMessage, which will be sent to all clients in the game
-            String notificationMsg = String.format("%s has left the game!", rootClient);
+            String notificationMsg = String.format("\n%s has resigned the game. And therefore forfeited the game!!\n", rootClient);
             Notification notification = new Notification(notificationMsg);
             String notificationJson = gson.toJson(notification);
-            connections.broadcast(gameID, notificationJson, "");
-            System.out.println("After notification has been sent");
+            connections.broadcast(gameID, notificationJson, rootClient);
+            if (session.isOpen()) {
+                String rootMsg = String.format("\nYou resigned from game: %s, and therefore forfeit the game. YOU LOST!!\n", gameID);
+                Notification notificationRoot = new Notification(rootMsg);
+                String notificationJsonRoot = gson.toJson(notificationRoot);
+                session.getRemote().sendString(notificationJsonRoot);
+            }
         } else {
             // Send an Error serverMessage
             Error error = new Error("Error in resigning\n");
