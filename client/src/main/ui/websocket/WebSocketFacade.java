@@ -5,7 +5,6 @@ import com.google.gson.*;
 import model.Game;
 import server.SessionManager;
 import ui.ChessBoardDrawer;
-import ui.Repl;
 import webSeverMessages.serverMessages.Error;
 import webSeverMessages.serverMessages.LoadGame;
 import webSeverMessages.serverMessages.Notification;
@@ -62,6 +61,7 @@ public class WebSocketFacade extends Endpoint {
 
         // Save game to sessionManager
         SessionManager.setGame(game);
+        SessionManager.setGameID(game.getGameID());
 
         // Draw the current state of the board
         ChessBoardDrawer chessBoardDrawer = new ChessBoardDrawer();

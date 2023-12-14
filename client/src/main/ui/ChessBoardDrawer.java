@@ -28,7 +28,7 @@ public class ChessBoardDrawer {
                 if (playerColor.equals(ChessGame.TeamColor.WHITE)) {
                     drawBoardWhite(gameID);
                 } else {
-                    drawBoardWhite(gameID);
+                    drawBoardBlack(gameID);
                 }
             } else {
                 drawBoardWhite(gameID);

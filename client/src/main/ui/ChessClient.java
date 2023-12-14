@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import request.*;
 import result.*;
 import server.ServerFacade;
@@ -50,7 +51,7 @@ public class ChessClient {
         }
     }
 
-    private String gamePlayCommands(String cmd, String[] params) {
+    private String gamePlayCommands(String cmd, String[] params) throws Exception {
         return switch (cmd) {
             case "redraw" -> redraw();
             case "leave" -> leaveGame();
@@ -214,14 +215,10 @@ public class ChessClient {
 
                 if (result.isSuccess()) {
 
-                    // Send the UserCommand??
+                    // Send the UserCommand for joinObserver
                     JoinObserver joinObserver = new JoinObserver(authToken, gameID);
                     webSocketFacade.joinObserver(joinObserver);
 
-                    // print the board here
-//                    ChessBoardDrawer boardDrawer = new ChessBoardDrawer();
-//                    boardDrawer.drawBoard(gameID, null);
-//                    System.out.flush();
                     return "\nSuccessfully Joined as an observer!\n";
                 }
 
@@ -247,10 +244,20 @@ public class ChessClient {
 
                 if (result.isSuccess()) {
 
-                    // Send the UserCommand??
+                    // Info for the JoinPlayer
+                    String authToken = SessionManager.getAuthToken();
+                    ChessGame.TeamColor teamColor;
 
+                    if (playerColor.equals("WHITE")) {
+                        teamColor = ChessGame.TeamColor.WHITE;
+                    } else {
+                        teamColor = ChessGame.TeamColor.BLACK;
+                    }
 
-                    // print the board here
+                    // Send the UserCommand for joinPlayer
+                    JoinPlayer joinPlayer = new JoinPlayer(authToken, gameID, teamColor);
+                    webSocketFacade.joinPlayer(joinPlayer);
+
                     return "Successfully Joined game: " + gameID + " as the " + playerColor.toUpperCase() + " player\n";
                 } else {
                     System.out.print("Error joining the game");
@@ -267,9 +274,16 @@ public class ChessClient {
         return "";
     }
 
-    private String leaveGame() {
+    private String leaveGame() throws Exception {
+        String authToken = SessionManager.getAuthToken();
+        Integer gameID = SessionManager.getGameID();
 
-        return "";
+        Leave leave = new Leave(authToken, gameID);
+        webSocketFacade.leaveGame(leave);
+
+        state = State.LOGGED_IN;
+
+        return String.format("Successfully left game: %s", gameID);
     }
 
 
